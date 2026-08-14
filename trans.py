@@ -1,0 +1,35 @@
+from deep_translator import GoogleTranslator
+
+# Initialize translator for English to Hausa
+translator = GoogleTranslator(source='auto', target='ha')
+
+# Text to translate
+text_to_translate = """ Seeds Of Destiny For Today 2026 MESSAGE
+Prayer is a form of communication between man and God on the basis of relationship. Therefore, for prayer to be effective, there must be relationship.
+In Mathew 6:9, Jesus began prayer with the words, “Our Father.” That connotes relationship, and it shows that relationship comes before requests. Requests are made on the strength of a pre-existing relationship.Astronomy
+You do not just stop anyone on the road and begin to make demands on them. Requests are possible where a relationship already exists. The stronger the relationship, the bolder the request.
+Some time ago, I attended a wedding in a Catholic church because of a a relationship. As the Chancellor of Wesley University in Nigeria, the Vice Chancellor invited me to his son’s wedding. Even though we were in the middle of a seven-day prayer and fasting programme, I had to consider his request because of the relationship we shared. Relationship was the basis for my response. A stranger would not expect me to adjust my schedule for such an occasion, but a relationship changes things.
+My children don’t need to beg me for anything; they are bold enough to approach me when they need anything because of the strength of our relationship. In the same manner, the stronger our relationship with God, the bolder our requests to Him.Prayer intention resources
+Sometime ago, we went to Port Harcourt for the first crusade of that year. As we landed at the airport, rain clouds filled the sky. By evening, the clouds became thicker, and it appeared the crusade would be disrupted by heavy rainfall.
+
+I stood by the hotel window looking at the clouds. My wife asked what I was doing, and I said, “I am telling God that if this rain falls, I will consider it as a sign that He does not want us to hold crusades this year.” She asked jokingly, “Are you threatening God?” I replied, “No, we are just agreeing on something.”
+And by God’s grace, not one drop of rain fell throughout the crusade. But immediately after the meeting, while we were leaving, it began to rain heavily.
+
+Beloved, a relationship with God produces confidence before God. When intimacy with Him grows, prayer becomes bold, natural, and effective."
+"""
+translated_text = translator.translate(text_to_translate)
+
+import datetime
+import random
+
+# Format: 20260814_040812_4829
+timestamp = f'{datetime.datetime.now().day}_{datetime.datetime.now().month}_{datetime.datetime.now().year}'
+random_suffix = random.randint(1000, 9999)
+filename = f"seed_of_destiny_{timestamp}_{random_suffix}.txt"
+
+with open(filename, "w", encoding="utf-8") as file:
+    file.write(translated_text)
+
+
+# print(translated_text)
+# Output: Barka da zuwa, yaya kake yau?
