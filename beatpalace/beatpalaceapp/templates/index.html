@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>OPFS Root Player</title>
+</head>
+<body>
+
+    <h2>Play Directly From Browser's Private Root Sandbox</h2>
+    <button onclick="playFromPrivateRoot()">Load & Play Saved Media</button>
+    <br><br>
+    <video id="sandboxPlayer" controls width="500"></video>
+
+    <script>
+        async function playFromPrivateRoot() {
+            try {
+                // 1. Access the browser's invisible, sandboxed root directory
+                const root = await navigator.storage.getDirectory();
+                
+                // 2. Fetch a specific file handle directly by its exact name
+                const fileHandle = await root.getFileHandle("C:\Users\HP\Documents\BeatPalace\beatpalace\media\mp3\load-and-gunshot-fire.mp3");
+                
+                // 3. Extract the raw file blob data
+                const fileData = await fileHandle.getFile();
+                
+                // 4. Bind it to the media element and play
+                const player = document.getElementById('sandboxPlayer');
+                player.src = URL.createObjectURL(fileData);
+                player.play();
+                
+            } catch (error) {
+                alert("File not found in browser root! You must write/initialize it to OPFS first.");
+                console.error(error);
+            }
+        }
+    </script>
+</body>
+</html>
