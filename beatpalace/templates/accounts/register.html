@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block title %}
+Create Account
+{% endblock %}
+
+{% block content %}
+
+<div class="auth-wrapper">
+
+    <div class="auth-card">
+
+        <div class="text-center mb-4">
+
+            <div class="brand-logo">
+                <i class="bi bi-music-note-beamed"></i>
+            </div>
+
+            <h2>Join BeatPalace</h2>
+
+            <p>
+                Connect. Create. Collaborate.
+            </p>
+
+        </div>
+
+
+        <form method="POST">
+
+          {% csrf_token %}
+
+<div class="mb-3">
+
+    <label class="form-label">
+        {{ form.username.label }}
+    </label>
+
+    {{ form.username }}
+
+    {% for error in form.username.errors %}
+        <div class="text-danger small">
+            {{ error }}
+        </div>
+    {% endfor %}
+
+</div>
+
+
+<div class="mb-3">
+
+    <label class="form-label">
+        {{ form.email.label }}
+    </label>
+
+    {{ form.email }}
+
+    {% for error in form.email.errors %}
+        <div class="text-danger small">
+            {{ error }}
+        </div>
+    {% endfor %}
+
+</div>
+
+
+<div class="mb-3">
+
+    <label class="form-label d-block">
+        Account Type
+    </label>
+
+    <div class="d-flex gap-4">
+
+        {% for radio in form.role %}
+
+            <div class="form-check">
+
+                {{ radio.tag }}
+
+                <label
+                    class="form-check-label"
+                    for="{{ radio.id_for_label }}"
+                >
+                    {{ radio.choice_label }}
+                </label>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% for error in form.role.errors %}
+        <div class="text-danger small">
+            {{ error }}
+        </div>
+    {% endfor %}
+
+</div>
+
+
+<div class="mb-3">
+
+    <label class="form-label">
+        {{ form.password1.label }}
+    </label>
+
+    {{ form.password1 }}
+
+    {% for error in form.password1.errors %}
+        <div class="text-danger small">
+            {{ error }}
+        </div>
+    {% endfor %}
+
+</div>
+
+
+<div class="mb-3">
+
+    <label class="form-label">
+        {{ form.password2.label }}
+    </label>
+
+    {{ form.password2 }}
+
+    {% for error in form.password2.errors %}
+        <div class="text-danger small">
+            {{ error }}
+        </div>
+    {% endfor %}
+
+</div>
+
+
+            <button
+                class="btn btn-primary w-100"
+                type="submit"
+            >
+
+                Create Account
+
+            </button>
+
+        </form>
+
+
+        <div class="text-center mt-4">
+
+            Already have an account?
+
+            <a href="{% url 'login' %}">
+                Login
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

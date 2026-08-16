@@ -1,13 +1,26 @@
-# /accounts/login/
-# /accounts/register/
-# /accounts/logout/
-
 from django.urls import path
-from . import views
+from django.contrib.auth.views import LogoutView
+from .views import register, UserLoginView
+
 
 urlpatterns = [
-    path("/accounts/login/", views.Index, name="login"),
-    path("/accounts/register/", views.Index, name="register"),
-    path("/accounts/logout/", views.Index, name="logout"),
+
+    path(
+        "register/",
+        register,
+        name="register"
+    ),
+
+    path(
+        "login/",
+        UserLoginView.as_view(),
+        name="login"
+    ),
+
+    path(
+        "logout/",
+        LogoutView.as_view(),
+        name="logout"
+    ),
 
 ]

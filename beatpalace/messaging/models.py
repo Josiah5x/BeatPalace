@@ -2,37 +2,24 @@ from django.conf import settings
 from django.db import models
 
 
-class Collaboration(models.Model):
-
-    STATUS_CHOICES = (
-        ("pending", "Pending"),
-        ("accepted", "Accepted"),
-        ("rejected", "Rejected"),
-        ("completed", "Completed"),
-    )
+class Message(models.Model):
 
     sender = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="sent_collaborations"
+        related_name="sent_messages"
     )
 
     receiver = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="received_collaborations"
-    )
-
-    title = models.CharField(
-        max_length=200
+        related_name="received_messages"
     )
 
     message = models.TextField()
 
-    status = models.CharField(
-        max_length=20,
-        choices=STATUS_CHOICES,
-        default="pending"
+    is_read = models.BooleanField(
+        default=False
     )
 
     created_at = models.DateTimeField(
@@ -40,4 +27,4 @@ class Collaboration(models.Model):
     )
 
     def __str__(self):
-        return self.title
+        return f"{self.sender} → {self.receiver}"

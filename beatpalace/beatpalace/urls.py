@@ -21,14 +21,21 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-        path('', include('accounts.urls')),
-        path('', include('artists.urls')),
-        path('', include('beatpalaceapp.urls')),
-        path('', include('beats.urls')),
-        path('', include('collaborations.urls')),
-        path('', include('dashboard.urls')),
-        path('', include('marketplace.urls')),
-        path('', include('messaging.urls')),
-        path('', include('notifications.urls')),
-        path('', include('producers.urls')),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+        path('accounts/', include('accounts.urls')),
+        # path('', include('artists.urls')),
+        # path('', include('beatpalaceapp.urls')),
+        # path('', include('beats.urls')),
+        # path('', include('collaborations.urls')),
+        path('dashboard/', include('dashboard.urls')),
+        # path('', include('marketplace.urls')),
+        # path('', include('messaging.urls')),
+        # path('', include('notifications.urls')),
+        # path('', include('producers.urls')),
+]
+
+if settings.DEBUG:
+
+    urlpatterns += static(
+        settings.MEDIA_URL,
+        document_root=settings.MEDIA_ROOT
+    )

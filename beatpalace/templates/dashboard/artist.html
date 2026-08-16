@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+
+{% block title %}
+Artist Dashboard
+{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-wrapper">
+
+    <aside class="sidebar">
+
+        <div class="brand">
+            <i class="bi bi-music-note-beamed"></i>
+            BeatPalace
+        </div>
+
+
+        <nav>
+
+            <a class="active">
+                <i class="bi bi-grid"></i>
+                Dashboard
+            </a>
+
+            <a>
+                <i class="bi bi-search"></i>
+                Discover
+            </a>
+
+            <a>
+                <i class="bi bi-music-note-list"></i>
+                My Songs
+            </a>
+
+            <a>
+                <i class="bi bi-headphones"></i>
+                Purchased Beats
+            </a>
+
+            <a>
+                <i class="bi bi-upload"></i>
+                Upload Song
+            </a>
+
+            <a>
+                <i class="bi bi-people"></i>
+                Collaborations
+            </a>
+
+            <a>
+                <i class="bi bi-chat"></i>
+                Messages
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <a>
+                <i class="bi bi-person"></i>
+                Profile
+            </a>
+
+            <a>
+                <i class="bi bi-gear"></i>
+                Settings
+            </a>
+
+            <a href="{% url 'logout' %}">
+                <i class="bi bi-box-arrow-right"></i>
+                Logout
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <main class="dashboard-content">
+
+        <header class="dashboard-header">
+
+            <div>
+
+                <h3>
+                    Welcome back,
+                    {{ user.username }}
+                </h3>
+
+                <p>
+                    Discover producers and build your next hit.
+                </p>
+
+            </div>
+
+
+            <div class="user-profile">
+
+                <div class="avatar">
+                    {{ user.username|first|upper }}
+                </div>
+
+                <span>
+                    {{ user.username }}
+                </span>
+
+            </div>
+
+        </header>
+
+
+        <div class="row g-4 mt-2">
+
+            <div class="col-md-4">
+
+                <div class="stat-card">
+
+                    <i class="bi bi-music-note-list"></i>
+
+                    <span>
+                        My Songs
+                    </span>
+
+                    <h2>0</h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <div class="stat-card">
+
+                    <i class="bi bi-headphones"></i>
+
+                    <span>
+                        Purchased Beats
+                    </span>
+
+                    <h2>0</h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <div class="stat-card">
+
+                    <i class="bi bi-bar-chart"></i>
+
+                    <span>
+                        Total Streams
+                    </span>
+
+                    <h2>0</h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="content-card mt-4">
+
+            <div class="card-header-custom">
+
+                <h5>
+                    Discover Producers
+                </h5>
+
+                <a class="btn btn-primary">
+                    Explore
+                </a>
+
+            </div>
+
+
+            <div class="producer-placeholder">
+
+                <i class="bi bi-music-note-beamed"></i>
+
+                <h5>
+                    Find your next producer
+                </h5>
+
+                <p>
+                    Discover producers, beats and collaborators
+                    for your next project.
+                </p>
+
+                <button class="btn btn-primary">
+                    Discover Beats
+                </button>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+{% endblock %}

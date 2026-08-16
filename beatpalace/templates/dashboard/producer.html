@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+
+{% block title %}
+Producer Dashboard
+{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-wrapper">
+
+    <aside class="sidebar">
+
+        <div class="brand">
+            <i class="bi bi-music-note-beamed"></i>
+            BeatPalace
+        </div>
+
+
+        <nav>
+
+            <a class="active">
+                <i class="bi bi-grid"></i>
+                Dashboard
+            </a>
+
+            <a>
+                <i class="bi bi-cloud-upload"></i>
+                Upload Beat
+            </a>
+
+            <a>
+                <i class="bi bi-music-note-list"></i>
+                My Beats
+            </a>
+
+            <a>
+                <i class="bi bi-bag"></i>
+                Orders
+            </a>
+
+            <a>
+                <i class="bi bi-people"></i>
+                Artists
+            </a>
+
+            <a>
+                <i class="bi bi-chat"></i>
+                Messages
+            </a>
+
+            <a>
+                <i class="bi bi-bar-chart"></i>
+                Analytics
+            </a>
+
+            <a>
+                <i class="bi bi-wallet2"></i>
+                Earnings
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <a>
+                <i class="bi bi-gear"></i>
+                Settings
+            </a>
+
+            <a href="{% url 'logout' %}">
+                <i class="bi bi-box-arrow-right"></i>
+                Logout
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <main class="dashboard-content">
+
+        <header class="dashboard-header">
+
+            <div>
+
+                <h3>
+                    Welcome back,
+                    {{ user.username }}
+                </h3>
+
+                <p>
+                    Here's what's happening with your music.
+                </p>
+
+            </div>
+
+
+            <div class="user-profile">
+
+                <div class="avatar">
+                    {{ user.username|first|upper }}
+                </div>
+
+                <span>
+                    {{ user.username }}
+                </span>
+
+            </div>
+
+        </header>
+
+
+        <div class="row g-4 mt-2">
+
+            <div class="col-md-4">
+
+                <div class="stat-card">
+
+                    <i class="bi bi-music-note"></i>
+
+                    <span>
+                        Total Beats
+                    </span>
+
+                    <h2>0</h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <div class="stat-card">
+
+                    <i class="bi bi-bar-chart"></i>
+
+                    <span>
+                        Total Streams
+                    </span>
+
+                    <h2>0</h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <div class="stat-card">
+
+                    <i class="bi bi-wallet2"></i>
+
+                    <span>
+                        Earnings
+                    </span>
+
+                    <h2>₦0</h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="content-card mt-4">
+
+            <div class="card-header-custom">
+
+                <h5>
+                    Producer Engagement
+                </h5>
+
+                <button class="btn btn-primary">
+                    Upload Beat
+                </button>
+
+            </div>
+
+
+            <div class="engagement-grid">
+
+                <div>
+                    <i class="bi bi-people"></i>
+                    <strong>0</strong>
+                    <span>Artists following you</span>
+                </div>
+
+                <div>
+                    <i class="bi bi-person-plus"></i>
+                    <strong>0</strong>
+                    <span>Collaboration requests</span>
+                </div>
+
+                <div>
+                    <i class="bi bi-chat-dots"></i>
+                    <strong>0</strong>
+                    <span>Unread messages</span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+{% endblock %}

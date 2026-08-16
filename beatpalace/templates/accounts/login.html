@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}
+Login
+{% endblock %}
+
+{% block content %}
+
+<div class="auth-wrapper">
+
+    <div class="auth-card">
+
+        <div class="text-center mb-4">
+
+            <div class="brand-logo">
+                <i class="bi bi-music-note-beamed"></i>
+            </div>
+
+            <h2>Welcome</h2>
+
+            <p>
+                Login to your BeatPalace account
+            </p>
+
+        </div>
+
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Username
+                </label>
+
+                <input
+                    type="text"
+                    name="username"
+                    class="form-control"
+                    required
+                >
+
+            </div>
+
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    name="password"
+                    class="form-control"
+                    required
+                >
+
+            </div>
+
+
+            <button
+                class="btn btn-primary w-100"
+                type="submit"
+            >
+
+                Login
+
+            </button>
+
+        </form>
+
+
+        <div class="text-center mt-4">
+
+            Don't have an account?
+
+            <a href="{% url 'register' %}">
+                Create account
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
