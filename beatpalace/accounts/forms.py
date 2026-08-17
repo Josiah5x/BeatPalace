@@ -41,7 +41,7 @@ class RegisterForm(UserCreationForm):
             else:
                 # Text, email and password fields
                 field.widget.attrs.update({
-                    "class": "form-control"
+                    "class": "form-controls form-control"
                 })
 
 

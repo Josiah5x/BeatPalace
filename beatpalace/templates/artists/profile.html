@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <h1>
+        {{ profile.artist_name }}
+    </h1>
+
+    <p>
+        {{ profile.bio }}
+    </p>
+
+    <p>
+        Genre: {{ profile.genre }}
+    </p>
+
+    <p>
+        Location: {{ profile.location }}
+    </p>
+
+    <a
+        href="{% url 'artist_edit_profile' %}"
+        class="btn btn-primary"
+    >
+        Edit Profile
+    </a>
+
+</div>
+
+{% endblock %}

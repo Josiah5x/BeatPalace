@@ -22,7 +22,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
         path('accounts/', include('accounts.urls')),
-        # path('', include('artists.urls')),
+        path('artist/', include('artists.urls')),
         # path('', include('beatpalaceapp.urls')),
         # path('', include('beats.urls')),
         # path('', include('collaborations.urls')),
@@ -30,7 +30,7 @@ urlpatterns = [
         # path('', include('marketplace.urls')),
         # path('', include('messaging.urls')),
         # path('', include('notifications.urls')),
-        # path('', include('producers.urls')),
+        path('producer/', include('producers.urls')),
 ]
 
 if settings.DEBUG:

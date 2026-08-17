@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.db import models
 
-
 class ProducerProfile(models.Model):
 
     user = models.OneToOneField(
@@ -10,12 +9,34 @@ class ProducerProfile(models.Model):
         related_name="producer_profile"
     )
 
-    stage_name = models.CharField(max_length=150)
+    stage_name = models.CharField(
+        max_length=100,
+        blank=True
+    )
 
-    bio = models.TextField(blank=True)
+    bio = models.TextField(
+        blank=True
+    )
 
-    studio_name = models.CharField(
-        max_length=150,
+    avatar = models.ImageField(
+        upload_to="producers/avatars/",
+        blank=True,
+        null=True
+    )
+
+    cover_image = models.ImageField(
+        upload_to="producers/covers/",
+        blank=True,
+        null=True
+    )
+
+    genre = models.CharField(
+        max_length=100,
+        blank=True
+    )
+
+    location = models.CharField(
+        max_length=100,
         blank=True
     )
 
@@ -23,15 +44,25 @@ class ProducerProfile(models.Model):
         blank=True
     )
 
-    followers = models.PositiveIntegerField(
+    instagram = models.URLField(
+        blank=True
+    )
+
+    twitter = models.URLField(
+        blank=True
+    )
+
+    followers_count = models.PositiveIntegerField(
         default=0
     )
 
-    total_sales = models.DecimalField(
-        max_digits=12,
-        decimal_places=2,
-        default=0
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True
     )
 
     def __str__(self):
-        return self.stage_name
+        return self.stage_name or self.user.username
