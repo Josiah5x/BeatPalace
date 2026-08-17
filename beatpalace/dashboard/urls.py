@@ -3,7 +3,8 @@ from django.urls import path
 from .views import (
     dashboard,
     producer_dashboard,
-    artist_dashboard
+    artist_dashboard,
+    discover,
 )
 
 
@@ -26,5 +27,11 @@ urlpatterns = [
         artist_dashboard,
         name="artist_dashboard"
     ),
+
+    path(
+    "discover/",
+    discover,
+    name="discover"
+),
 
 ]

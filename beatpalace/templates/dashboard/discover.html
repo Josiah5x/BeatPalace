@@ -1,0 +1,314 @@
+{% extends "base.html" %}
+
+{% block title %}
+Discover | BeatPalace
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- HEADER -->
+
+    <div class="mb-4">
+
+        <h1 class="fw-bold">
+            Discover
+        </h1>
+
+        <p class="text-muted">
+            Find artists and producers to work with.
+        </p>
+
+    </div>
+
+
+    <!-- SEARCH -->
+
+    <form
+        method="GET"
+        class="mb-4"
+    >
+
+        <div class="row g-2">
+
+            <div class="col-lg-6">
+
+                <input
+                    type="search"
+                    name="q"
+                    value="{{ query }}"
+                    class="form-control"
+                    placeholder="Search artists, producers..."
+                >
+
+            </div>
+
+
+            <div class="col-md-3">
+
+                <select
+                    name="role"
+                    class="form-select"
+                >
+
+                    <option value="">
+                        Everyone
+                    </option>
+
+                    <option
+                        value="artist"
+                        {% if role == "artist" %}
+                            selected
+                        {% endif %}
+                    >
+                        Artists
+                    </option>
+
+                    <option
+                        value="producer"
+                        {% if role == "producer" %}
+                            selected
+                        {% endif %}
+                    >
+                        Producers
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="col-md-3">
+
+                <input
+                    type="text"
+                    name="genre"
+                    value="{{ genre }}"
+                    class="form-control"
+                    placeholder="Genre"
+                >
+
+            </div>
+
+        </div>
+
+
+        <button
+            type="submit"
+            class="btn btn-primary mt-3"
+        >
+            <i class="bi bi-search"></i>
+            Search
+        </button>
+
+
+        {% if query or role or genre %}
+
+            <a
+                href="{% url 'discover' %}"
+                class="btn btn-outline-light mt-3"
+            >
+                Clear
+            </a>
+
+        {% endif %}
+
+    </form>
+
+
+    <!-- RESULTS -->
+
+    <div class="row g-4">
+
+        {% for user in users %}
+
+            <div class="col-xl-3 col-lg-4 col-md-6">
+
+                <div class="discover-card">
+
+                    <!-- IMAGE -->
+
+                    <div class="discover-cover">
+
+                        {% if user.role == "artist" %}
+
+                            {% if user.artist_profile.cover_image %}
+
+                                <img
+                                    src="{{ user.artist_profile.cover_image.url }}"
+                                    alt=""
+                                >
+
+                            {% endif %}
+
+                        {% elif user.role == "producer" %}
+
+                            {% if user.producer_profile.cover_image %}
+
+                                <img
+                                    src="{{ user.producer_profile.cover_image.url }}"
+                                    alt=""
+                                >
+
+                            {% endif %}
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- AVATAR -->
+
+                    <div class="discover-avatar">
+
+                        {% if user.role == "artist" %}
+
+                            {% if user.artist_profile.avatar %}
+
+                                <img
+                                    src="{{ user.artist_profile.avatar.url }}"
+                                    alt=""
+                                >
+
+                            {% else %}
+
+                                {{ user.artist_profile.artist_name|first|upper }}
+
+                            {% endif %}
+
+                        {% else %}
+
+                            {% if user.producer_profile.avatar %}
+
+                                <img
+                                    src="{{ user.producer_profile.avatar.url }}"
+                                    alt=""
+                                >
+
+                            {% else %}
+
+                                {{ user.producer_profile.stage_name|first|upper }}
+
+                            {% endif %}
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- INFORMATION -->
+
+                    <div class="discover-content">
+
+                        {% if user.role == "artist" %}
+
+                            <h4>
+                                {{ user.artist_profile.artist_name }}
+
+                                <i class="bi bi-patch-check-fill text-primary"></i>
+                            </h4>
+
+                            <span class="discover-role">
+                                Artist
+                            </span>
+
+                            <p>
+                                {{ user.artist_profile.genre }}
+                            </p>
+
+                        {% else %}
+
+                            <h4>
+                                {{ user.producer_profile.stage_name }}
+
+                                <i class="bi bi-patch-check-fill text-primary"></i>
+                            </h4>
+
+                            <span class="discover-role">
+                                Producer
+                            </span>
+
+                            <p>
+                                {{ user.producer_profile.genre }}
+                            </p>
+
+                        {% endif %}
+
+
+                        <!-- ACTIONS -->
+
+                        <div class="discover-actions">
+
+                            {% if user.role == "artist" %}
+
+                                <a
+                                    href="{% url 'artist_profile' user.username %}"
+                                    class="btn btn-primary btn-sm"
+                                >
+                                    View Profile
+                                </a>
+
+                            {% else %}
+
+                                <a
+                                    href="{% url 'producer_profile' user.username %}"
+                                    class="btn btn-primary btn-sm"
+                                >
+                                    View Profile
+                                </a>
+
+                            {% endif %}
+
+
+                            <form
+                                method="POST"
+                                action="{% url 'toggle_follow' user.username %}"
+                            >
+
+                                {% csrf_token %}
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-outline-light btn-sm"
+                                >
+                                    <i class="bi bi-person-plus"></i>
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% empty %}
+
+            <div class="col-12">
+
+                <div class="empty-state">
+
+                    <i class="bi bi-search"></i>
+
+                    <h4>
+                        No users found
+                    </h4>
+
+                    <p>
+                        Try another name or genre.
+                    </p>
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}

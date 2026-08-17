@@ -1,0 +1,655 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}
+Dashboard | BeatPalace
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- ========================================= -->
+    <!-- HEADER -->
+    <!-- ========================================= -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2 class="fw-bold mb-1">
+                Welcome back, {{ request.user.username }} 👋
+            </h2>
+
+            <p class="text-muted mb-0">
+                Discover artists, producers and new opportunities.
+            </p>
+
+        </div>
+
+
+        <div>
+
+            {% if request.user.role == "artist" %}
+
+                <a
+                    href="{% url 'artist_profile' request.user.username %}"
+                    class="btn btn-outline-light"
+                >
+                    <i class="bi bi-person"></i>
+                    My Profile
+                </a>
+
+            {% elif request.user.role == "producer" %}
+
+                <a
+                    href="{% url 'producer_profile' request.user.username %}"
+                    class="btn btn-outline-light"
+                >
+                    <i class="bi bi-person"></i>
+                    My Profile
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- STATISTICS -->
+    <!-- ========================================= -->
+
+    <div class="row g-4 mb-4">
+
+        <div class="col-xl-3 col-md-6">
+
+            <div class="dashboard-stat-card">
+
+                <div class="stat-icon">
+                    <i class="bi bi-people"></i>
+                </div>
+
+                <div>
+
+                    <span>
+                        Followers
+                    </span>
+
+                    <h3>
+                        {{ followers_count|default:"0" }}
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-xl-3 col-md-6">
+
+            <div class="dashboard-stat-card">
+
+                <div class="stat-icon">
+                    <i class="bi bi-person-plus"></i>
+                </div>
+
+                <div>
+
+                    <span>
+                        Following
+                    </span>
+
+                    <h3>
+                        {{ following_count|default:"0" }}
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-xl-3 col-md-6">
+
+            <div class="dashboard-stat-card">
+
+                <div class="stat-icon">
+                    <i class="bi bi-music-note-beamed"></i>
+                </div>
+
+                <div>
+
+                    <span>
+                        Tracks
+                    </span>
+
+                    <h3>
+                        {{ tracks_count|default:"0" }}
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-xl-3 col-md-6">
+
+            <div class="dashboard-stat-card">
+
+                <div class="stat-icon">
+                    <i class="bi bi-chat-dots"></i>
+                </div>
+
+                <div>
+
+                    <span>
+                        Messages
+                    </span>
+
+                    <h3>
+                        {{ messages_count|default:"0" }}
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- QUICK ACTIONS -->
+    <!-- ========================================= -->
+
+    <div class="mb-4">
+
+        <h4 class="fw-bold mb-3">
+            Quick Actions
+        </h4>
+
+        <div class="row g-3">
+
+            <div class="col-lg-3 col-md-6">
+
+                <a
+                    href="{% url 'discover' %}"
+                    class="quick-action"
+                >
+
+                    <div class="quick-action-icon">
+                        <i class="bi bi-compass"></i>
+                    </div>
+
+                    <div>
+
+                        <h6>
+                            Discover
+                        </h6>
+
+                        <small>
+                            Find artists & producers
+                        </small>
+
+                    </div>
+
+                </a>
+
+            </div>
+
+
+            <div class="col-lg-3 col-md-6">
+
+                <a
+                    href="#"
+                    class="quick-action"
+                >
+
+                    <div class="quick-action-icon">
+                        <i class="bi bi-cloud-arrow-up"></i>
+                    </div>
+
+                    <div>
+
+                        <h6>
+                            Upload Music
+                        </h6>
+
+                        <small>
+                            Share your latest track
+                        </small>
+
+                    </div>
+
+                </a>
+
+            </div>
+
+
+            <div class="col-lg-3 col-md-6">
+
+                <a
+                    href="#"
+                    class="quick-action"
+                >
+
+                    <div class="quick-action-icon">
+                        <i class="bi bi-people"></i>
+                    </div>
+
+                    <div>
+
+                        <h6>
+                            Collaborations
+                        </h6>
+
+                        <small>
+                            Manage collaboration requests
+                        </small>
+
+                    </div>
+
+                </a>
+
+            </div>
+
+
+            <div class="col-lg-3 col-md-6">
+
+                <a
+                    href="#"
+                    class="quick-action"
+                >
+
+                    <div class="quick-action-icon">
+                        <i class="bi bi-chat"></i>
+                    </div>
+
+                    <div>
+
+                        <h6>
+                            Messages
+                        </h6>
+
+                        <small>
+                            Connect with your network
+                        </small>
+
+                    </div>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- MAIN CONTENT -->
+    <!-- ========================================= -->
+
+    <div class="row g-4">
+
+        <!-- ===================================== -->
+        <!-- DISCOVER PEOPLE -->
+        <!-- ===================================== -->
+
+        <div class="col-xl-8">
+
+            <div class="dashboard-section">
+
+                <div class="section-header">
+
+                    <div>
+
+                        <h4>
+                            Discover People
+                        </h4>
+
+                        <p>
+                            Find new collaborators
+                        </p>
+
+                    </div>
+
+                    <a
+                        href="{% url 'discover' %}"
+                        class="btn btn-sm btn-outline-light"
+                    >
+                        View All
+                    </a>
+
+                </div>
+
+
+                <div class="row g-3">
+
+                    {% for user in suggested_users %}
+
+                        <div class="col-md-6">
+
+                            <div class="person-card">
+
+                                <!-- AVATAR -->
+
+                                <div class="person-avatar">
+
+                                    {% if user.role == "artist" %}
+
+                                        {% if user.artist_profile.avatar %}
+
+                                            <img
+                                                src="{{ user.artist_profile.avatar.url }}"
+                                                alt=""
+                                            >
+
+                                        {% else %}
+
+                                            {{ user.artist_profile.artist_name|first|upper }}
+
+                                        {% endif %}
+
+                                    {% elif user.role == "producer" %}
+
+                                        {% if user.producer_profile.avatar %}
+
+                                            <img
+                                                src="{{ user.producer_profile.avatar.url }}"
+                                                alt=""
+                                            >
+
+                                        {% else %}
+
+                                            {{ user.producer_profile.stage_name|first|upper }}
+
+                                        {% endif %}
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <!-- INFO -->
+
+                                <div class="person-info">
+
+                                    {% if user.role == "artist" %}
+
+                                        <h6>
+                                            {{ user.artist_profile.artist_name }}
+                                        </h6>
+
+                                        <span>
+                                            Artist
+                                        </span>
+
+                                        <small>
+                                            {{ user.artist_profile.genre }}
+                                        </small>
+
+                                    {% elif user.role == "producer" %}
+
+                                        <h6>
+                                            {{ user.producer_profile.stage_name }}
+                                        </h6>
+
+                                        <span>
+                                            Producer
+                                        </span>
+
+                                        <small>
+                                            {{ user.producer_profile.genre }}
+                                        </small>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <!-- PROFILE -->
+
+                                {% if user.role == "artist" %}
+
+                                    <a
+                                        href="{% url 'artist_profile' user.username %}"
+                                        class="btn btn-sm btn-outline-light"
+                                    >
+                                        View
+                                    </a>
+
+                                {% elif user.role == "producer" %}
+
+                                    <a
+                                        href="{% url 'producer_profile' user.username %}"
+                                        class="btn btn-sm btn-outline-light"
+                                    >
+                                        View
+                                    </a>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    {% empty %}
+
+                        <div class="col-12">
+
+                            <div class="empty-state">
+
+                                <i class="bi bi-people"></i>
+
+                                <h5>
+                                    No suggestions yet
+                                </h5>
+
+                                <p>
+                                    Visit Discover to find artists and producers.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ===================================== -->
+        <!-- ACTIVITY -->
+        <!-- ===================================== -->
+
+        <div class="col-xl-4">
+
+            <div class="dashboard-section">
+
+                <div class="section-header">
+
+                    <div>
+
+                        <h4>
+                            Recent Activity
+                        </h4>
+
+                        <p>
+                            Your latest engagement
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                {% for activity in activities %}
+
+                    <div class="activity-item">
+
+                        <div class="activity-icon">
+
+                            <i class="bi {{ activity.icon }}"></i>
+
+                        </div>
+
+                        <div>
+
+                            <p class="mb-1">
+                                {{ activity.message }}
+                            </p>
+
+                            <small>
+                                {{ activity.created_at|timesince }} ago
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                {% empty %}
+
+                    <div class="empty-state">
+
+                        <i class="bi bi-clock-history"></i>
+
+                        <p>
+                            No recent activity.
+                        </p>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- RECENT TRACKS -->
+    <!-- ========================================= -->
+
+    <div class="dashboard-section mt-4">
+
+        <div class="section-header">
+
+            <div>
+
+                <h4>
+                    Recent Tracks
+                </h4>
+
+                <p>
+                    Music from your network
+                </p>
+
+            </div>
+
+            <a
+                href="#"
+                class="btn btn-sm btn-outline-light"
+            >
+                View All
+            </a>
+
+        </div>
+
+
+        <div class="row g-3">
+
+            {% for track in recent_tracks %}
+
+                <div class="col-xl-3 col-md-6">
+
+                    <div class="track-card">
+
+                        {% if track.cover %}
+
+                            <img
+                                src="{{ track.cover.url }}"
+                                alt="{{ track.title }}"
+                            >
+
+                        {% else %}
+
+                            <div class="track-placeholder">
+
+                                <i class="bi bi-music-note-beamed"></i>
+
+                            </div>
+
+                        {% endif %}
+
+
+                        <div class="track-info">
+
+                            <h6>
+                                {{ track.title }}
+                            </h6>
+
+                            <small>
+                                {{ track.artist }}
+                            </small>
+
+                        </div>
+
+
+                        <button
+                            class="track-play"
+                            type="button"
+                        >
+
+                            <i class="bi bi-play-fill"></i>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            {% empty %}
+
+                <div class="col-12">
+
+                    <div class="empty-state">
+
+                        <i class="bi bi-music-note-list"></i>
+
+                        <h5>
+                            No tracks yet
+                        </h5>
+
+                        <p>
+                            Upload music to start building your profile.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
