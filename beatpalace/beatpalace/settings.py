@@ -135,6 +135,8 @@ STATICFILES_DIRS = [
     BASE_DIR / "static"
 ]
 
+#redirect
+LOGOUT_REDIRECT_URL = "login"
 
 # AUTHENTICATION
 AUTH_USER_MODEL = "accounts.User"

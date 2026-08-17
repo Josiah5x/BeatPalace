@@ -3,6 +3,7 @@ from django.shortcuts import redirect, render
 
 from .forms import RegisterForm
 from django.contrib.auth.views import LoginView
+from django.urls import reverse
 
 
 def register(request):
@@ -35,8 +36,6 @@ def register(request):
     )
 
 
-from django.contrib.auth.views import LoginView
-from django.urls import reverse
 
 
 class UserLoginView(LoginView):
