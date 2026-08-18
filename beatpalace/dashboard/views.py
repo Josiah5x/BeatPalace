@@ -8,17 +8,17 @@ from accounts.models import User
 @login_required
 def dashboard(request):
 
-    # if request.user.role == "producer":
+    if request.user.role == "producer":
 
-    #     return redirect(
-    #         "producer_dashboard"
-    #     )
+        return redirect(
+            "producer_dashboard"
+        )
 
-    # if request.user.role == "artist":
+    if request.user.role == "artist":
 
-    #     return redirect(
-    #         "artist_dashboard"
-    #     )
+        return redirect(
+            "artist_dashboard"
+        )
 
     return render(
         request,

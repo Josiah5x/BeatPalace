@@ -5,6 +5,14 @@ from .forms import ArtistProfileForm
 
 
 @login_required
+def artist_dashboard(request):
+
+    return render(
+        request,
+        "artists/dashboard.html"
+    )
+
+@login_required
 def artist_profile(request, username):
 
     user = get_object_or_404(

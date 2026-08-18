@@ -36,8 +36,6 @@ def register(request):
     )
 
 
-
-
 class UserLoginView(LoginView):
 
     template_name = "accounts/login.html"
