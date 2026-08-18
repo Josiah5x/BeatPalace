@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "producers",
     "artists",
     "beats",
+    "music",
     "collaborations",
     "messaging",
     "notifications",

@@ -31,9 +31,9 @@ Producer Dashboard
                 <span>Discover</span>
             </a>
 
-            <a>
-                <i class="bi bi-cloud-upload"></i>
-                Upload Beat
+            <a href="{% url 'upload_music' %}">
+                <i class="bi bi-upload"></i>
+                Upload Song
             </a>
 
             <a>
@@ -84,9 +84,14 @@ Producer Dashboard
                 Settings
             </a>
 
-            <a href="{% url 'logout' %}">
-                <i class="bi bi-box-arrow-right"></i>
-                Logout
+           <a class="mb-3">
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="dropdown-item">
+                        <i class="bi bi-box-arrow-right me-2"></i>
+                        Logout
+                    </button>
+                </form>
             </a>
 
         </div>

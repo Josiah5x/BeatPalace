@@ -27,6 +27,7 @@ urlpatterns = [
         # path('', include('beats.urls')),
         # path('', include('collaborations.urls')),
         path('dashboard/', include('dashboard.urls')),
+         path("music/",include("music.urls")),
         # path('', include('marketplace.urls')),
         # path('', include('messaging.urls')),
         # path('', include('notifications.urls')),

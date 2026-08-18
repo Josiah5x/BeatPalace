@@ -90,12 +90,13 @@ body {
     padding: 12px;
 }
 
-.form-control:focus {
+.form-controls:focus {
     background: #0e0e16;
     color: white;
     border-color: var(--primary);
     box-shadow: 0 0 0 3px rgba(124, 58, 237, .15);
 }
+
 
 .form-label {
     color: #c8c8d4;

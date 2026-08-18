@@ -53,3 +53,5 @@ class UserLoginView(LoginView):
             return reverse("artist_dashboard")
 
         return reverse("dashboard")
+    def get_redirect_url(self):
+        return None

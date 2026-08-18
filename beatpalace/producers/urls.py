@@ -8,6 +8,7 @@ from .views import (
 
 urlpatterns = [
 
+
     path(
         "profile/edit/",
         edit_profile,
@@ -19,6 +20,5 @@ urlpatterns = [
         producer_profile,
         name="producer_profile"
     ),
-
 
 ]
