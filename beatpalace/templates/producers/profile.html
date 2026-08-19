@@ -16,13 +16,17 @@ Artist Dashboard
             margin: 0;
             background: #212120;
             font-family: "Montserrat", sans-serif;
-            color: #5a211b;
+            color: #fdfbfa;
         }
 
         .cv-container {
             max-width: 1180px;
             margin: 30px auto;
-            background: #dedede;
+            background: #393838;
+            border-top-left-radius: 320px;
+            border-top-right-radius: 20px;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
             min-height: 1200px;
             padding: 45px 55px;
             position: relative;
@@ -73,8 +77,8 @@ Artist Dashboard
         ===================================== */
 
         .profile-image-wrapper {
-            width: 280px;
-            height: 280px;
+            width: 220px;
+            height: 220px;
             margin: 25px auto 15px;
         }
 
@@ -86,7 +90,7 @@ Artist Dashboard
         }
 
         .profile-name {
-            color: #950c08;
+            color: #e7e3e3;
             font-size: 40px;
             font-weight: 800;
             text-align: center;
@@ -112,9 +116,9 @@ Artist Dashboard
 
         .main-title {
             text-align: center;
-            color: #950c08;
-            font-size: 40px;
-            font-weight: 800;
+            color: #f8f6f6;
+            font-size: 30px;
+            font-weight: 700;
             line-height: 1.05;
             margin-bottom: 25px;
         }
@@ -391,7 +395,7 @@ Artist Dashboard
 
                 <!-- PROFILE IMAGE -->
 
-                <div class="profile-image-wrapper rounded-circle img-thumbnail" style="width: 220px; height: 220px; object-fit: cover;">
+                <div class="profile-image-wrapper rounded-circle img-thumbnail" style="object-fit: cover;">
 
                     {% if profile.profile_image %}
 
