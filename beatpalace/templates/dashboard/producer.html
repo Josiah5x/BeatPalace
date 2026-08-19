@@ -10,10 +10,10 @@ Producer Dashboard
 
     <aside class="sidebar">
 
-        <div class="brand">
+        <!-- <div class="brand">
             <i class="bi bi-music-note-beamed"></i>
             BeatPalace
-        </div>
+        </div> -->
 
 
         <nav>
@@ -36,7 +36,7 @@ Producer Dashboard
                 Upload Song
             </a>
 
-            <a>
+            <a href="{% url 'my_music' %}">
                 <i class="bi bi-music-note-list"></i>
                 My Beats
             </a>
@@ -117,17 +117,7 @@ Producer Dashboard
             </div>
 
 
-            <div class="user-profile">
-
-                <div class="avatar">
-                    {{ user.username|first|upper }}
-                </div>
-
-                <span>
-                    {{ user.username }}
-                </span>
-
-            </div>
+            
 
         </header>
 
@@ -195,9 +185,9 @@ Producer Dashboard
                     Producer Engagement
                 </h5>
 
-                <button class="btn btn-primary">
+                <a href="{% url 'upload_music' %}" class="btn btn-primary">
                     Upload Beat
-                </button>
+                </a>
 
             </div>
 

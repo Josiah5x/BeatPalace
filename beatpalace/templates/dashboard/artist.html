@@ -10,10 +10,10 @@ Artist Dashboard
 
     <aside class="sidebar">
 
-        <div class="brand">
+        <!-- <div class="brand">
             <i class="bi bi-music-note-beamed"></i>
             BeatPalace
-        </div>
+        </div> -->
 
 
         <nav>
@@ -28,7 +28,7 @@ Artist Dashboard
                 Discover
             </a>
 
-            <a>
+            <a href="{% url 'my_music' %}">
                 <i class="bi bi-music-note-list"></i>
                 My Songs
             </a>
@@ -67,6 +67,7 @@ Artist Dashboard
                 <i class="bi bi-gear"></i>
                 Settings
             </a>
+            
             <a class="mb-3">
                 <form method="post" action="{% url 'logout' %}">
                     {% csrf_token %}
@@ -100,17 +101,6 @@ Artist Dashboard
             </div>
 
 
-            <div class="user-profile">
-
-                <div class="avatar">
-                    {{ user.username|first|upper }}
-                </div>
-
-                <span>
-                    {{ user.username }}
-                </span>
-
-            </div>
 
         </header>
 

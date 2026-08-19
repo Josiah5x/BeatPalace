@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "notifications",
     "marketplace",
     "dashboard",
+    "engagement",
 ]
 
 MIDDLEWARE = [

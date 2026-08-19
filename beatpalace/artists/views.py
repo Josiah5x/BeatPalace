@@ -23,7 +23,7 @@ def artist_profile(request, username):
 
     profile = user.artist_profile
 
-    is_following = user.followers.filter(
+    is_following = user.users_followers.filter(
         follower=request.user
     ).exists()
 

@@ -5,14 +5,6 @@ from .forms import ProducerProfileForm
 
 
 @login_required
-def producer_dashboard(request):
-
-    return render(
-        request,
-        "producers/dashboard.html"
-    )
-
-@login_required
 def producer_profile(request, username):
 
     user = get_object_or_404(

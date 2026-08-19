@@ -36,7 +36,38 @@
     
 </head>
 
-<body>
+<!-- Dark Fixed Navbar with Split Items -->
+<nav class="navbar fixed-top bg-dark" data-bs-theme="dark">
+  <div class="container-fluid d-flex justify-content-between align-items-center">
+    
+    <!-- LEFT SIDE: Brand Name -->
+    <a class="navbar-brand" href="#"> 
+        <i class="bi bi-music-note-beamed"></i>
+        
+        BeatPalace</a>
+
+    <!-- RIGHT SIDE: Navigation Links or Actions -->
+    <div class="d-flex gap-2">
+      
+      <div class="user-profile">
+
+                <div class="avatar">
+                    {{ user.username|first|upper }}
+                </div>
+
+                <span>
+                    {{ user.username }}
+                </span>
+
+            </div>
+    </div>
+
+  </div>
+</nav>
+
+<!-- Content offset to prevent text from being hidden -->
+<div class="container-fluid pt-5 mt-4">
+</div>
 
 {% block content %}
 {% endblock %}
