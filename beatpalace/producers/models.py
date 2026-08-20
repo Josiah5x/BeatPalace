@@ -5,70 +5,46 @@ from django.conf import settings
 class ProducerProfile(models.Model):
 
     user = models.OneToOneField(
-    settings.AUTH_USER_MODEL,
-    on_delete=models.CASCADE,
-    related_name="producer_profile"
-)
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="producer_profile",
+    )
 
     # ==========================
     # BASIC INFORMATION
     # ==========================
 
-    full_name = models.CharField(
-        max_length=150
-    )
+    full_name = models.CharField(max_length=150, blank=True, default="")
 
     professional_title = models.CharField(
-        max_length=150,
-        default="Music Producer / Director"
+        max_length=150, default="Music Producer / Director"
     )
 
     profile_image = models.ImageField(
-        upload_to="producers/profile/",
-        blank=True,
-        null=True
+        upload_to="producers/profile/", blank=True, null=True
     )
 
-    bio = models.TextField(
-        blank=True,
-        null=True
-    )
+    bio = models.TextField(blank=True, null=True)
 
     # ==========================
     # EXPERIENCE PERIOD
     # ==========================
 
-    start_year = models.PositiveIntegerField(
-        blank=True,
-        null=True
-    )
+    start_year = models.PositiveIntegerField(blank=True, null=True)
 
-    end_year = models.PositiveIntegerField(
-        blank=True,
-        null=True
-    )
+    end_year = models.PositiveIntegerField(blank=True, null=True)
 
     # ==========================
     # CONTACT
     # ==========================
 
-    phone = models.CharField(
-        max_length=30,
-        blank=True
-    )
+    phone = models.CharField(max_length=30, blank=True)
 
-    email = models.EmailField(
-        blank=True
-    )
+    email = models.EmailField(blank=True)
 
-    instagram = models.CharField(
-        max_length=100,
-        blank=True
-    )
+    instagram = models.CharField(max_length=100, blank=True)
 
-    website = models.URLField(
-        blank=True
-    )
+    website = models.URLField(blank=True)
 
     # ==========================
     # SKILLS
@@ -76,7 +52,7 @@ class ProducerProfile(models.Model):
 
     skill_description = models.TextField(
         blank=True,
-        help_text="Example: Music Composition, Audio Production & Sound Design"
+        help_text="Example: Music Composition, Audio Production & Sound Design",
     )
 
     # ==========================
@@ -84,47 +60,32 @@ class ProducerProfile(models.Model):
     # ==========================
 
     software = models.TextField(
-        blank=True,
-        help_text="Example: Ableton Live, Cubase, Adobe Premiere, Logic Pro"
+        blank=True, help_text="Example: Ableton Live, Cubase, Adobe Premiere, Logic Pro"
     )
 
     # ==========================
     # EDUCATION
     # ==========================
 
-    education = models.TextField(
-        blank=True
-    )
+    education = models.TextField(blank=True)
 
     # ==========================
     # PERSONAL INFORMATION
     # ==========================
 
-    date_of_birth = models.DateField(
-        blank=True,
-        null=True
-    )
+    date_of_birth = models.DateField(blank=True, null=True)
 
-    marital_status = models.CharField(
-        max_length=50,
-        blank=True
-    )
+    marital_status = models.CharField(max_length=50, blank=True)
 
     # ==========================
     # STATUS
     # ==========================
 
-    is_published = models.BooleanField(
-        default=True
-    )
+    is_published = models.BooleanField(default=True)
 
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
+    created_at = models.DateTimeField(auto_now_add=True)
 
-    updated_at = models.DateTimeField(
-        auto_now=True
-    )
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.full_name
@@ -139,6 +100,7 @@ class ProducerProfile(models.Model):
 
         if not end_year:
             from django.utils import timezone
+
             end_year = timezone.now().year
 
         return end_year - self.start_year
@@ -151,6 +113,7 @@ class ProducerProfile(models.Model):
 
         if self.start_year:
             from django.utils import timezone
+
             return f"{self.start_year}-{timezone.now().year}"
 
         return ""
@@ -164,40 +127,22 @@ class ProducerProject(models.Model):
     )
 
     producer = models.ForeignKey(
-        ProducerProfile,
-        on_delete=models.CASCADE,
-        related_name="projects"
+        ProducerProfile, on_delete=models.CASCADE, related_name="projects"
     )
 
-    project_type = models.CharField(
-        max_length=20,
-        choices=PROJECT_TYPES
-    )
+    project_type = models.CharField(max_length=20, choices=PROJECT_TYPES)
 
-    title = models.CharField(
-        max_length=200
-    )
+    title = models.CharField(max_length=200)
 
-    description = models.TextField(
-        blank=True
-    )
+    description = models.TextField(blank=True)
 
-    year = models.PositiveIntegerField(
-        blank=True,
-        null=True
-    )
+    year = models.PositiveIntegerField(blank=True, null=True)
 
-    display_order = models.PositiveIntegerField(
-        default=0
-    )
+    display_order = models.PositiveIntegerField(default=0)
 
-    is_visible = models.BooleanField(
-        default=True
-    )
+    is_visible = models.BooleanField(default=True)
 
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ["display_order", "-year", "title"]
@@ -209,22 +154,14 @@ class ProducerProject(models.Model):
 class ProducerSkill(models.Model):
 
     producer = models.ForeignKey(
-        ProducerProfile,
-        on_delete=models.CASCADE,
-        related_name="skills"
+        ProducerProfile, on_delete=models.CASCADE, related_name="skills"
     )
 
-    name = models.CharField(
-        max_length=150
-    )
+    name = models.CharField(max_length=150)
 
-    rating = models.PositiveIntegerField(
-        default=1
-    )
+    rating = models.PositiveIntegerField(default=1)
 
-    display_order = models.PositiveIntegerField(
-        default=0
-    )
+    display_order = models.PositiveIntegerField(default=0)
 
     class Meta:
         ordering = ["display_order"]

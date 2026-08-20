@@ -5,34 +5,34 @@ from django.db import models
 
 class Collaboration(models.Model):
 
-    STATUS_CHOICES = (
-        ("pending", "Pending"),
-        ("accepted", "Accepted"),
-        ("rejected", "Rejected"),
-        ("completed", "Completed"),
-    )
-
-    sender = models.ForeignKey(
+    artist = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="sent_collaborations"
+        related_name="artist_collaborations"
     )
 
-    receiver = models.ForeignKey(
+    producer = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="received_collaborations"
+        related_name="producer_collaborations"
     )
 
     title = models.CharField(
         max_length=200
     )
 
-    message = models.TextField()
+    message = models.TextField(
+        blank=True
+    )
 
     status = models.CharField(
         max_length=20,
-        choices=STATUS_CHOICES,
+        choices=[
+            ("pending", "Pending"),
+            ("accepted", "Accepted"),
+            ("rejected", "Rejected"),
+            ("completed", "Completed"),
+        ],
         default="pending"
     )
 
@@ -40,5 +40,19 @@ class Collaboration(models.Model):
         auto_now_add=True
     )
 
-    def __str__(self):
-        return self.title
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )
+
+    class Meta:
+
+        permissions = [
+            (
+                "send_collaboration",
+                "Can send collaboration requests"
+            ),
+            (
+                "manage_collaboration",
+                "Can manage collaborations"
+            ),
+        ]
