@@ -9,6 +9,18 @@ ARTIST_GROUP = "Artist"
 PRODUCER_GROUP = "Producer"
 
 
+def get_permission(model, codename):
+
+    content_type = ContentType.objects.get_for_model(
+        model
+    )
+
+    return Permission.objects.get(
+        content_type=content_type,
+        codename=codename
+    )
+
+
 def setup_groups():
 
     artist_group, _ = Group.objects.get_or_create(
@@ -23,46 +35,38 @@ def setup_groups():
     # MUSIC PERMISSIONS
     # -----------------------------------------
 
-    music_content_type = ContentType.objects.get_for_model(
-        Music
+    upload_music = get_permission(
+        Music,
+        "upload_music"
     )
 
-    upload_music = Permission.objects.get(
-        content_type=music_content_type,
-        codename="upload_music"
+    edit_music = get_permission(
+        Music,
+        "edit_own_music"
     )
 
-    edit_music = Permission.objects.get(
-        content_type=music_content_type,
-        codename="edit_own_music"
+    delete_music = get_permission(
+        Music,
+        "delete_own_music"
     )
 
-    delete_music = Permission.objects.get(
-        content_type=music_content_type,
-        codename="delete_own_music"
-    )
-
-    manage_beats = Permission.objects.get(
-        content_type=music_content_type,
-        codename="manage_beats"
+    manage_beats = get_permission(
+        Music,
+        "manage_beats"
     )
 
     # -----------------------------------------
     # COLLABORATION PERMISSIONS
     # -----------------------------------------
 
-    collaboration_content_type = ContentType.objects.get_for_model(
-        Collaboration
+    send_collaboration = get_permission(
+        Collaboration,
+        "send_collaboration"
     )
 
-    send_collaboration = Permission.objects.get(
-        content_type=collaboration_content_type,
-        codename="send_collaboration"
-    )
-
-    manage_collaboration = Permission.objects.get(
-        content_type=collaboration_content_type,
-        codename="manage_collaboration"
+    manage_collaboration = get_permission(
+        Collaboration,
+        "manage_collaboration"
     )
 
     # -----------------------------------------

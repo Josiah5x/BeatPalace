@@ -1,4 +1,4 @@
-from django.db.models.signals import post_migrate, post_save
+from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 
@@ -29,14 +29,6 @@ def create_user_profile(sender, instance, created, **kwargs):
             user=instance,
             artist_name=instance.username
         )
-
-
-
-
-@receiver(post_migrate)
-def create_groups(sender, **kwargs):
-
-    setup_groups()
 
 
 @receiver(post_save, sender=User)
