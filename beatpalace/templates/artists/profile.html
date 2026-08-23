@@ -1,65 +1,775 @@
+
 {% extends "base.html" %}
 
 {% block content %}
 
-<div class="container py-5">
-<div class="row justify-content-center">
-    <form
-    method="POST"
-    action="{% url 'toggle_follow' profile.user.id %}"
+<style>
+
+    .profile-page {
+        background: #0b0d10;
+        min-height: 100vh;
+        color: #fff;
+    }
+
+    .profile-cover {
+        height: 280px;
+        position: relative;
+        overflow: hidden;
+        background:
+            linear-gradient(
+                135deg,
+                #151a22,
+                #0b0d10
+            );
+    }
+
+    .profile-cover::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+            linear-gradient(
+                to top,
+                rgba(11, 13, 16, 1),
+                rgba(11, 13, 16, 0.15)
+            );
+    }
+
+    .profile-container {
+        max-width: 1200px;
+        margin: auto;
+        padding: 0 24px 60px;
+    }
+
+    .profile-header {
+        position: relative;
+        margin-top: -70px;
+        z-index: 5;
+    }
+
+    .profile-avatar {
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 6px solid #0b0d10;
+        background: #181c23;
+    }
+
+    .avatar-placeholder {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        border: 6px solid #0b0d10;
+        background: #181c23;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 55px;
+        color: #777;
+    }
+
+    .profile-name {
+        font-size: 32px;
+        font-weight: 700;
+        margin-top: 15px;
+    }
+
+    .verified {
+        color: #4da3ff;
+        font-size: 20px;
+    }
+
+    .profile-title {
+        color: #9ca3af;
+        font-size: 15px;
+    }
+
+    .profile-location {
+        color: #777;
+        font-size: 14px;
+    }
+
+    .profile-stats {
+        display: flex;
+        gap: 35px;
+        margin-top: 25px;
+    }
+
+    .stat strong {
+        display: block;
+        font-size: 20px;
+    }
+
+    .stat span {
+        color: #8b929d;
+        font-size: 13px;
+    }
+
+    .profile-actions {
+        margin-top: 25px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .btn-primary-custom {
+        background: #fff;
+        color: #000;
+        border: none;
+        padding: 10px 22px;
+        border-radius: 8px;
+        font-weight: 600;
+    }
+
+    .btn-outline-custom {
+        background: transparent;
+        color: #fff;
+        border: 1px solid #333941;
+        padding: 10px 22px;
+        border-radius: 8px;
+        font-weight: 500;
+    }
+
+    .btn-outline-custom:hover {
+        background: #181c23;
+        color: #fff;
+    }
+
+    .profile-content {
+        margin-top: 50px;
+    }
+
+    .profile-card {
+        background: #111419;
+        border: 1px solid #20242b;
+        border-radius: 14px;
+        padding: 25px;
+        margin-bottom: 20px;
+    }
+
+    .section-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+
+    .bio {
+        color: #a8adb5;
+        line-height: 1.8;
+        font-size: 14px;
+    }
+
+    .tag {
+        display: inline-block;
+        padding: 6px 12px;
+        background: #1a1e25;
+        border: 1px solid #292e36;
+        border-radius: 20px;
+        color: #bfc4cc;
+        font-size: 12px;
+        margin: 4px;
+    }
+
+    .social-link {
+        color: #aaa;
+        text-decoration: none;
+        margin-right: 18px;
+        font-size: 14px;
+    }
+
+    .social-link:hover {
+        color: #fff;
+    }
+
+    .music-card {
+        background: #181c22;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 12px;
+    }
+
+    .music-cover {
+        width: 55px;
+        height: 55px;
+        object-fit: cover;
+        border-radius: 7px;
+    }
+
+    .music-title {
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .music-meta {
+        color: #777;
+        font-size: 12px;
+    }
+
+    @media (max-width: 768px) {
+
+        .profile-cover {
+            height: 220px;
+        }
+
+        .profile-avatar,
+        .avatar-placeholder {
+            width: 120px;
+            height: 120px;
+        }
+
+        .profile-name {
+            font-size: 26px;
+        }
+
+        .profile-stats {
+            gap: 20px;
+        }
+
+    }
+
+</style>
+
+
+<div class="profile-page">
+
+    <!-- COVER -->
+    <div class="profile-cover">
+
+        {% if profile.cover_image %}
+
+            <img
+                src="{{ profile.cover_image.url }}"
+                style="
+                    width:100%;
+                    height:100%;
+                    object-fit:cover;
+                "
+            >
+
+        {% endif %}
+
+    </div>
+
+
+    <div class="profile-container">
+
+        <!-- PROFILE HEADER -->
+        <div class="profile-header">
+
+            <div>
+
+                {% if profile.profile_image %}
+
+                    <img
+                    src="{{ profile.avatar.url }}"
+                    class="profile-image"
+                    alt="{{ profile.artist_name }}"
+                >
+
+                {% elif profile.user.avatar %}
+
+                    <img
+                    src="{{ profile.avatar.url }}"
+                    class="profile-image"
+                    alt="{{ profile.artist_name }}"
+                >
+
+                {% else %}
+
+                    <div class="avatar-placeholder">
+                        <i class="bi bi-person"></i>
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- NAME -->
+
+            <div class="profile-name">
+
+                {{ profile.artist_name }}
+
+                {% if profile.user.verified %}
+
+                    <i
+                        class="bi bi-patch-check-fill verified"
+                        title="Verified Artist"
+                    ></i>
+
+                {% endif %}
+
+            </div>
+
+
+            <div class="profile-title">
+
+                Artist
+
+            </div>
+
+
+            {% if profile.location %}
+
+                <div class="profile-location mt-2">
+
+                    <i class="bi bi-geo-alt"></i>
+
+                    {{ profile.location }}
+
+                </div>
+
+            {% endif %}
+
+
+            <!-- STATS -->
+
+            <div class="profile-stats">
+
+                <div class="stat">
+
+                    <strong>
+                        {{ profile.user.engagement_followers.count }}
+                    </strong>
+
+                    <span>
+                        Followers
+                    </span>
+
+                </div>
+
+
+                <div class="stat">
+
+                    <strong>
+                        {{ profile.user.engagement_following.count }}
+                    </strong>
+
+                    <span>
+                        Following
+                    </span>
+
+                </div>
+
+
+                <div class="stat">
+
+                    <strong>
+                        {{ profile.user.music_set.count }}
+                    </strong>
+
+                    <span>
+                        Tracks
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- ACTIONS -->
+
+            <div class="profile-actions">
+
+                {% if request.user != profile.user %}
+
+                    <form
+                        method="POST"
+                        action="{% url 'toggle_follow' profile.user.id %}"
+                    >
+
+                        {% csrf_token %}
+
+                        {% if is_following %}
+
+                            <button
+                                type="submit"
+                                class="btn-outline-custom"
+                            >
+                                <i class="bi bi-person-check"></i>
+                                Following
+                            </button>
+
+                        {% else %}
+
+                            <button
+                                type="submit"
+                                class="btn-primary-custom"
+                            >
+                                <i class="bi bi-person-plus"></i>
+                                Follow
+                            </button>
+
+                        {% endif %}
+
+                    </form>
+
+
+                    <button
+                        class="btn-outline-custom"
+                        data-bs-toggle="modal"
+                        data-bs-target="#collaborationModal"
+                    >
+
+                        <i class="bi bi-people"></i>
+
+                        Collaborate
+
+                    </button>
+
+                {% endif %}
+
+
+                {% if request.user == profile.user %}
+
+                    <a
+                        href="{% url 'artist_edit_profile' %}"
+                        class="btn-outline-custom"
+                    >
+
+                        <i class="bi bi-pencil"></i>
+
+                        Edit Profile
+
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <!-- CONTENT -->
+
+        <div class="profile-content">
+
+            <div class="row g-4">
+
+
+                <!-- LEFT -->
+
+                <div class="col-lg-8">
+
+
+                    <!-- ABOUT -->
+
+                    <div class="profile-card">
+
+                        <div class="section-title">
+
+                            About
+
+                        </div>
+
+                        <div class="bio">
+
+                            {% if profile.bio %}
+
+                                {{ profile.bio }}
+
+                            {% else %}
+
+                                This artist hasn't added a bio yet.
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- GENRES -->
+
+                    {% if profile.genre %}
+
+                    <div class="profile-card">
+
+                        <div class="section-title">
+
+                            Genres
+
+                        </div>
+
+                        <span class="tag">
+                            {{ profile.genre }}
+                        </span>
+
+                    </div>
+
+                    {% endif %}
+
+
+                    <!-- MUSIC -->
+
+                    <div class="profile-card">
+
+                        <div class="section-title">
+
+                            Music
+
+                        </div>
+
+
+                        <div class="music-card">
+
+                            <div class="d-flex align-items-center">
+
+                                <div
+                                    class="music-cover
+                                           d-flex
+                                           align-items-center
+                                           justify-content-center"
+                                    style="
+                                        background:#252a32;
+                                    "
+                                >
+
+                                    <i class="bi bi-music-note-beamed"></i>
+
+                                </div>
+
+
+                                <div class="ms-3">
+
+                                    <div class="music-title">
+
+                                        Latest Track
+
+                                    </div>
+
+                                    <div class="music-meta">
+
+                                        Artist
+
+                                    </div>
+
+                                </div>
+
+
+                                <button
+                                    class="btn btn-sm btn-dark ms-auto"
+                                >
+
+                                    <i class="bi bi-play-fill"></i>
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- RIGHT -->
+
+                <div class="col-lg-4">
+
+
+                    <!-- SOCIAL -->
+
+                    <div class="profile-card">
+
+                        <div class="section-title">
+
+                            Connect
+
+                        </div>
+
+
+                        {% if profile.instagram %}
+
+                            <a
+                                href="{{ profile.instagram }}"
+                                class="social-link d-block mb-3"
+                                target="_blank"
+                            >
+
+                                <i class="bi bi-instagram"></i>
+
+                                Instagram
+
+                            </a>
+
+                        {% endif %}
+
+
+                        {% if profile.twitter %}
+
+                            <a
+                                href="{{ profile.twitter }}"
+                                class="social-link d-block mb-3"
+                                target="_blank"
+                            >
+
+                                <i class="bi bi-twitter-x"></i>
+
+                                Twitter / X
+
+                            </a>
+
+                        {% endif %}
+
+
+                        {% if profile.website %}
+
+                            <a
+                                href="{{ profile.website }}"
+                                class="social-link d-block"
+                                target="_blank"
+                            >
+
+                                <i class="bi bi-globe"></i>
+
+                                Website
+
+                            </a>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- PROFILE INFO -->
+
+                    <div class="profile-card">
+
+                        <div class="section-title">
+
+                            Profile
+
+                        </div>
+
+                        <div class="bio">
+
+                            <div class="mb-3">
+
+                                <small class="text-muted">
+                                    Member since
+                                </small>
+
+                                <div>
+                                    {{ profile.user.created_at|date:"M Y" }}
+                                </div>
+
+                            </div>
+
+
+                            <div>
+
+                                <small class="text-muted">
+                                    Account
+                                </small>
+
+                                <div>
+                                    Artist
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- COLLABORATION MODAL -->
+
+{% if request.user.role == "artist" and request.user != profile.user %}
+
+<div
+    class="modal fade"
+    id="collaborationModal"
+    tabindex="-1"
 >
 
-    {% csrf_token %}
+    <div class="modal-dialog">
 
-    {% if request.user in profile.user.users_followers.all %}
+        <div class="modal-content bg-dark text-white">
 
-        <button class="btn btn-outline-secondary">
-            Following
-        </button>
+            <div class="modal-header">
 
-    {% else %}
+                <h5 class="modal-title">
+                    Collaboration Request
+                </h5>
 
-        <button class="btn btn-primary">
-            Follow
-        </button>
+                <button
+                    type="button"
+                    class="btn-close btn-close-white"
+                    data-bs-dismiss="modal"
+                ></button>
 
-    {% endif %}
+            </div>
 
-</form>
 
-        <div class="col-lg-8">
+            <form
+                method="POST"
+                action="{% url 'send_collaboration' profile.user.id %}"
+            >
 
-            <div class="card bg-dark text-light border-secondary">
+                {% csrf_token %}
 
-                <div class="card-body p-4">
+                <div class="modal-body">
 
-    <h1>
-        {{ profile.artist_name }}
-    </h1>
+                    <p class="text-muted">
 
-    <p>
-        {{ profile.bio }}
-    </p>
+                        Send a collaboration request to
+                        {{ profile.artist_name }}.
 
-    <p>
-        Genre: {{ profile.genre }}
-    </p>
+                    </p>
 
-    <p>
-        Location: {{ profile.location }}
-    </p>
 
-    <a
-        href="{% url 'artist_edit_profile' %}"
-        class="btn btn-primary"
-    >
-        Edit Profile
-    </a>
+                    <textarea
+                        name="message"
+                        class="form-control bg-dark text-white"
+                        rows="5"
+                        placeholder="Tell them about your collaboration..."
+                    ></textarea>
+
+                </div>
+
+
+                <div class="modal-footer">
+
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal"
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+                        Send Request
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
 
 </div>
-</div>
-</div>
-</div>
-</div>
+
+{% endif %}
 
 {% endblock %}

@@ -348,12 +348,71 @@ Artist Dashboard
 
 <body>
 
+  
 
 <!-- =====================================
      ACTION BUTTONS
 ===================================== -->
 
 <div class="profile-actions p-5">
+
+    <div class="d-flex gap-4 mt-3">
+
+    <div>
+        <strong class="d-block">
+            {{ profile.user.engagement_followers.count }}
+        </strong>
+
+        <small class="text-muted">
+            Followers
+        </small>
+    </div>
+
+    <div>
+        <strong class="d-block">
+            {{ profile.user.engagement_following.count }}
+        </strong>
+
+        <small class="text-muted">
+            Following
+        </small>
+    </div>
+
+</div>
+
+
+    <form
+        method="POST"
+        action="{% url 'toggle_follow' profile.user.id %}"
+        class="d-inline"
+    >
+
+        {% csrf_token %}
+
+        {% if is_following %}
+
+            <button
+                type="submit"
+                class="btn btn-outline-secondary"
+            >
+                <i class="bi bi-person-check"></i>
+                Following
+            </button>
+
+        {% else %}
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+                <i class="bi bi-person-plus"></i>
+                Follow
+            </button>
+
+        {% endif %}
+
+    </form>
+
 
     <a
         href="{% url 'producer_edit_profile' %}"
