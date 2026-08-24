@@ -23,6 +23,11 @@ class ProducerProfile(models.Model):
     profile_image = models.ImageField(
         upload_to="producers/profile/", blank=True, null=True
     )
+    cover_image = models.ImageField(
+        upload_to="producer/covers/",
+        blank=True,
+        null=True
+    )
 
     bio = models.TextField(blank=True, null=True)
 

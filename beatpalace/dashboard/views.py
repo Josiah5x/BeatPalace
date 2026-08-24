@@ -3,6 +3,7 @@ from django.shortcuts import redirect, render
 from django.db.models import Q
 
 from accounts.models import User
+from engagement.models import Follow
 
 
 @login_required
@@ -46,71 +47,85 @@ def artist_dashboard(request):
 
 
 
+
+
 @login_required
 def discover(request):
 
     query = request.GET.get("q", "").strip()
-    role = request.GET.get("role", "")
+    role = request.GET.get("role", "").strip()
     genre = request.GET.get("genre", "").strip()
 
     users = User.objects.exclude(
         id=request.user.id
     ).filter(
-        is_active=True
+        role__in=["artist", "producer"]
     )
 
-    # Search
+    # --------------------------------------------------
+    # SEARCH
+    # --------------------------------------------------
+
     if query:
 
         users = users.filter(
             Q(username__icontains=query)
-            | Q(
-                artist_profile__artist_name__icontains=query
-            )
-            | Q(
-                producer_profile__stage_name__icontains=query
-            )
+            |
+            Q(artist_profile__artist_name__icontains=query)
+            |
+            Q(artist_profile__bio__icontains=query)
+            |
+            Q(artist_profile__genre__icontains=query)
+            |
+            Q(producer_profile__full_name__icontains=query)
+            |
+            Q(producer_profile__professional_title__icontains=query)
+            |
+            Q(producer_profile__bio__icontains=query)
         )
 
-    # Role filter
+    # --------------------------------------------------
+    # ROLE FILTER
+    # --------------------------------------------------
+
     if role in ["artist", "producer"]:
+        users = users.filter(role=role)
 
-        users = users.filter(
-            role=role
-        )
+    # --------------------------------------------------
+    # GENRE
+    # --------------------------------------------------
 
-    # Genre filter
     if genre:
 
         users = users.filter(
-            Q(
-                artist_profile__genre__icontains=genre
-            )
-            |
-            Q(
-                producer_profile__genre__icontains=genre
-            )
+            Q(artist_profile__genre__icontains=genre)
         )
 
-    users = users.distinct()
+    users = users.select_related(
+        "artist_profile",
+        "producer_profile",
+    ).distinct()
 
-    artists = users.filter(
-        role="artist"
+    #------------------------------------
+    Follow
+    #------------------------------------
+
+    following_ids = set(
+    Follow.objects.filter(
+        follower=request.user
+    ).values_list(
+        "following_id",
+        flat=True
     )
-
-    producers = users.filter(
-        role="producer"
     )
-
     return render(
         request,
         "dashboard/discover.html",
         {
             "users": users,
-            "artists": artists,
-            "producers": producers,
             "query": query,
             "role": role,
             "genre": genre,
+            "following_ids": following_ids,
         }
     )

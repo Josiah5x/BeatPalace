@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "marketplace",
     "dashboard",
     "engagement",
+    "discovery",
 ]
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

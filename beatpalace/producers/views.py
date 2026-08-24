@@ -1,74 +1,11 @@
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, redirect, render
-from accounts.models import User
-from .forms import ProducerProfileForm
 
-
-@login_required
-def producer_profile(request, username):
-
-    user = get_object_or_404(
-        User,
-        username=username,
-        role="producer"
-    )
-
-    profile = user.producer_profile
-
-    is_following = user.followers.filter(
-        follower=request.user
-    ).exists()
-
-    return render(
-        request,
-        "producers/profile.html",
-        {
-            "profile_user": user,
-            "profile": profile,
-            "is_following": is_following,
-        }
-    )
-
-
-@login_required
-def edit_profile(request):
-
-    profile = request.user.producer_profile
-
-    if request.method == "POST":
-
-        form = ProducerProfileForm(
-            request.POST,
-            request.FILES,
-            instance=profile
-        )
-
-        if form.is_valid():
-
-            form.save()
-
-            return redirect(
-                "producer_profile",
-                username=request.user.username
-            )
-
-    else:
-
-        form = ProducerProfileForm(
-            instance=profile
-        )
-
-    return render(
-        request,
-        "producers/edit_profile.html",
-        {
-            "form": form
-        }
-    )
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
+
+from accounts.models import User
+from engagement.models import Follow
 
 from .models import (
     ProducerProfile,
@@ -115,6 +52,53 @@ def producer_profile(request):
     )
 
 
+
+# ==========================================================
+# PUBLIC PRODUCER PROFILE
+# ==========================================================
+
+@login_required
+def public_producer_profile(request, username):
+
+    # Find the producer from the URL
+    user = get_object_or_404(
+        User,
+        username=username,
+        role="producer",
+    )
+
+    # Find that producer's profile
+    profile = get_object_or_404(
+        ProducerProfile,
+        user=user,
+    )
+
+    # Visible projects
+    projects = profile.projects.filter(
+        is_visible=True
+    )
+
+    # Producer skills
+    skills = profile.skills.all()
+
+    # Is the current user following this producer?
+    is_following = Follow.objects.filter(
+        follower=request.user,
+        following=user,
+    ).exists()
+
+    return render(
+        request,
+        "producers/public_producer_profile.html",
+        {
+            "profile": profile,
+            "projects": projects,
+            "skills": skills,
+            "is_following": is_following,
+            "is_owner": request.user == user,
+        },
+    )
+
 # ==========================================================
 # EDIT PRODUCER PROFILE
 # ==========================================================
@@ -151,7 +135,7 @@ def producer_edit_profile(request):
                 "Your producer profile has been updated successfully."
             )
 
-            return redirect("producer_profile")
+            return redirect("producers:producer_profile")
 
     else:
 
@@ -339,3 +323,6 @@ def producer_delete_skill(
     return redirect(
         "producer_edit_profile"
     )
+
+
+

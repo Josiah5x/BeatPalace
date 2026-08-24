@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from accounts.models import User
 from .forms import ArtistProfileForm
 from .models import ArtistProfile
-
+from engagement.models import Follow
 
 
 @login_required
@@ -50,7 +50,7 @@ def public_artist_profile(request, username):
 
     return render(
         request,
-        "artists/profile.html",
+        "artists/public_artist_profile.html",
         {
             "profile": profile,
             "is_following": is_following,
@@ -83,10 +83,14 @@ def public_artist_profile(request, username):
 #     )
 
 
+
 @login_required
 def edit_profile(request):
 
-    profile = request.user.artist_profile
+    profile = get_object_or_404(
+        ArtistProfile,
+        user=request.user
+    )
 
     if request.method == "POST":
 
@@ -114,6 +118,26 @@ def edit_profile(request):
         request,
         "artists/edit_profile.html",
         {
-            "form": form
+            "form": form,
+            "profile": profile,
+        }
+    )
+
+@login_required
+def discover_artists(request):
+
+    artists = ArtistProfile.objects.select_related(
+        "user"
+    ).filter(
+        is_published=True
+    ).order_by(
+        "-created_at"
+    )
+
+    return render(
+        request,
+        "artists/artist_discover.html",
+        {
+            "artists": artists
         }
     )

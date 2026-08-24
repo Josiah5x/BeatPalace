@@ -1,0 +1,963 @@
+{% extends "base.html" %}
+
+{% block title %}
+profile edit
+{% endblock %}
+
+{% block content %}
+
+    <style>
+
+        body {
+            background: #0b0d10;
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
+
+
+        /* =========================================
+           PAGE
+        ========================================= */
+
+        .profile-page {
+            max-width: 1200px;
+            margin: auto;
+            padding-bottom: 60px;
+        }
+
+
+        /* =========================================
+           COVER
+        ========================================= */
+
+        .cover-wrapper {
+            height: 330px;
+            position: relative;
+            overflow: hidden;
+            background:
+                linear-gradient(
+                    135deg,
+                    #181c23,
+                    #0b0d10
+                );
+        }
+
+
+        .cover-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: .75;
+        }
+
+
+        .cover-overlay {
+            position: absolute;
+            inset: 0;
+
+            background:
+                linear-gradient(
+                    to top,
+                    #0b0d10 0%,
+                    rgba(11, 13, 16, .15) 70%
+                );
+        }
+
+
+        /* =========================================
+           PROFILE HEADER
+        ========================================= */
+
+        .profile-header {
+            position: relative;
+            margin-top: -90px;
+            padding: 0 40px;
+        }
+
+
+        .avatar-wrapper {
+            position: relative;
+            width: 170px;
+            height: 170px;
+        }
+
+
+        .profile-avatar {
+            width: 170px;
+            height: 170px;
+
+            object-fit: cover;
+
+            border-radius: 50%;
+
+            border: 6px solid #0b0d10;
+
+            background: #181c23;
+        }
+
+
+        .avatar-placeholder {
+            width: 170px;
+            height: 170px;
+
+            border-radius: 50%;
+
+            border: 6px solid #0b0d10;
+
+            background: #181c23;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 70px;
+            color: #555;
+        }
+
+
+        /* =========================================
+           PROFILE INFO
+        ========================================= */
+
+        .profile-info {
+            padding-top: 15px;
+        }
+
+
+        .profile-name {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+
+        .verified {
+            color: #3da9ff;
+            font-size: 20px;
+        }
+
+
+        .profile-title {
+            color: #999;
+            font-size: 15px;
+        }
+
+
+        .profile-bio {
+            max-width: 700px;
+            color: #b7b7b7;
+            line-height: 1.7;
+            margin-top: 15px;
+        }
+
+
+        /* =========================================
+           ACTIONS
+        ========================================= */
+
+        .profile-actions {
+            margin-top: 20px;
+        }
+
+
+        .btn-follow {
+            background: #fff;
+            color: #000;
+            border: none;
+
+            padding: 10px 25px;
+
+            font-weight: 600;
+
+            border-radius: 8px;
+        }
+
+
+        .btn-follow:hover {
+            background: #ddd;
+        }
+
+
+        .btn-edit {
+            border: 1px solid #444;
+            color: #fff;
+
+            padding: 10px 20px;
+
+            border-radius: 8px;
+        }
+
+
+        .btn-edit:hover {
+            background: #1b1f26;
+            color: #fff;
+        }
+
+
+        /* =========================================
+           STATS
+        ========================================= */
+
+        .stats {
+            display: flex;
+            gap: 35px;
+            margin-top: 25px;
+        }
+
+
+        .stat strong {
+            display: block;
+            font-size: 21px;
+        }
+
+
+        .stat span {
+            color: #888;
+            font-size: 13px;
+        }
+
+
+        /* =========================================
+           CONTENT
+        ========================================= */
+
+        .content-section {
+            margin-top: 50px;
+        }
+
+
+        .section-title {
+            font-size: 21px;
+            font-weight: 600;
+
+            margin-bottom: 20px;
+        }
+
+
+        /* =========================================
+           CARDS
+        ========================================= */
+
+        .profile-card {
+            background: #12151a;
+
+            border: 1px solid #222831;
+
+            border-radius: 12px;
+
+            padding: 25px;
+
+            height: 100%;
+        }
+
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+
+            padding: 12px 0;
+
+            border-bottom: 1px solid #222;
+        }
+
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+
+        .info-label {
+            color: #777;
+        }
+
+
+        .info-value {
+            color: #fff;
+        }
+
+
+        /* =========================================
+           SOCIAL
+        ========================================= */
+
+        .social-links {
+            display: flex;
+            gap: 12px;
+        }
+
+
+        .social-link {
+            width: 42px;
+            height: 42px;
+
+            border-radius: 50%;
+
+            background: #1a1e24;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            color: #fff;
+
+            text-decoration: none;
+
+            transition: .2s;
+        }
+
+
+        .social-link:hover {
+            background: #2a3038;
+            transform: translateY(-2px);
+        }
+
+
+        /* =========================================
+           MOBILE
+        ========================================= */
+
+        @media (max-width: 768px) {
+
+            .cover-wrapper {
+                height: 240px;
+            }
+
+
+            .profile-header {
+                padding: 0 20px;
+            }
+
+
+            .avatar-wrapper,
+            .profile-avatar,
+            .avatar-placeholder {
+                width: 130px;
+                height: 130px;
+            }
+
+
+            .avatar-placeholder {
+                font-size: 50px;
+            }
+
+
+            .profile-name {
+                font-size: 25px;
+            }
+
+
+            .stats {
+                gap: 20px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="profile-page">
+
+
+    <!-- =========================================
+         COVER
+    ========================================== -->
+
+    <div class="cover-wrapper">
+
+        {% if profile.cover_image %}
+
+            <img
+                src="{{ profile.cover_image.url }}"
+                class="cover-image"
+                alt="{{ profile.artist_name }} cover"
+            >
+
+        {% endif %}
+
+        <div class="cover-overlay"></div>
+
+    </div>
+
+
+
+    <!-- =========================================
+         PROFILE HEADER
+    ========================================== -->
+
+    <div class="profile-header">
+
+
+        <div class="avatar-wrapper">
+
+            {% if profile.avatar %}
+
+                <img
+                    src="{{ profile.avatar.url }}"
+                    class="profile-avatar"
+                    alt="{{ profile.artist_name }}"
+                >
+
+            {% elif profile.user.avatar %}
+
+                <img
+                    src="{{ profile.user.avatar.url }}"
+                    class="profile-avatar"
+                    alt="{{ profile.artist_name }}"
+                >
+
+            {% else %}
+
+                <div class="avatar-placeholder">
+
+                    <i class="bi bi-person"></i>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+
+        <!-- Profile information -->
+
+        <div class="profile-info">
+
+
+            <div
+                class="d-flex align-items-center gap-2"
+            >
+
+                <h1 class="profile-name mb-0">
+
+                    {{ profile.artist_name|default:profile.user.username }}
+
+                </h1>
+
+
+                {% if profile.user.verified %}
+
+                    <i
+                        class="bi bi-patch-check-fill verified"
+                        title="Verified Artist"
+                    ></i>
+
+                {% endif %}
+
+            </div>
+
+
+            {% if profile.genre %}
+
+                <div class="profile-title">
+
+                    {{ profile.genre }} Artist
+
+                    {% if profile.location %}
+                        · {{ profile.location }}
+                    {% endif %}
+
+                </div>
+
+            {% endif %}
+
+
+
+            {% if profile.bio %}
+
+                <p class="profile-bio">
+
+                    {{ profile.bio }}
+
+                </p>
+
+            {% endif %}
+
+
+
+            <!-- =====================================
+                 ACTIONS
+            ====================================== -->
+
+            <div class="profile-actions d-flex gap-2">
+
+
+                {% if request.user == profile.user %}
+
+                    <a
+                        href="{% url 'artists:artist_profile' %}"
+                        class="btn btn-edit"
+                    >
+
+                        <i class="bi bi-pencil"></i>
+
+                        Edit Profile
+
+                    </a>
+
+                {% else %}
+
+
+                    <form
+                        method="POST"
+                        action="{% url 'engagement:toggle_follow' profile.user.id %}"
+                    >
+
+                        {% csrf_token %}
+
+
+                        {% if is_following %}
+
+                            <button
+                                type="submit"
+                                class="btn btn-follow"
+                            >
+
+                                <i class="bi bi-person-check"></i>
+
+                                Following
+
+                            </button>
+
+                        {% else %}
+
+                            <button
+                                type="submit"
+                                class="btn btn-follow"
+                            >
+
+                                <i class="bi bi-person-plus"></i>
+
+                                Follow
+
+                            </button>
+
+                        {% endif %}
+
+                    </form>
+
+
+                {% endif %}
+
+
+            </div>
+
+
+
+            <!-- =====================================
+                 STATS
+            ====================================== -->
+
+            <div class="stats">
+
+
+                <div class="stat">
+
+                    <strong>
+
+                        {{ profile.user.engagement_followers.count }}
+
+                    </strong>
+
+                    <span>
+                        Followers
+                    </span>
+
+                </div>
+
+
+                <div class="stat">
+
+                    <strong>
+
+                        {{ profile.user.engagement_following.count }}
+
+                    </strong>
+
+                    <span>
+                        Following
+                    </span>
+
+                </div>
+
+
+                <div class="stat">
+
+                    <strong>
+
+                        {{ profile.monthly_listeners|default:0 }}
+
+                    </strong>
+
+                    <span>
+                        Monthly Listeners
+                    </span>
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================================
+         PROFILE CONTENT
+    ========================================== -->
+
+    <div class="container-fluid px-4">
+
+
+        <div class="row g-4">
+
+
+            <!-- =====================================
+                 ABOUT
+            ====================================== -->
+
+            <div class="col-lg-8">
+
+
+                <div class="content-section">
+
+                    <h2 class="section-title">
+
+                        About
+
+                    </h2>
+
+
+                    <div class="profile-card">
+
+                        {% if profile.bio %}
+
+                            <p
+                                class="text-secondary mb-0"
+                                style="line-height: 1.8;"
+                            >
+
+                                {{ profile.bio }}
+
+                            </p>
+
+                        {% else %}
+
+                            <p class="text-secondary mb-0">
+
+                                This artist hasn't added a biography yet.
+
+                            </p>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =================================
+                     PROFESSIONAL INFORMATION
+                ================================== -->
+
+                <div class="content-section">
+
+                    <h2 class="section-title">
+
+                        Professional Information
+
+                    </h2>
+
+
+                    <div class="profile-card">
+
+
+                        {% if profile.genre %}
+
+                            <div class="info-row">
+
+                                <span class="info-label">
+                                    Genre
+                                </span>
+
+                                <span class="info-value">
+                                    {{ profile.genre }}
+                                </span>
+
+                            </div>
+
+                        {% endif %}
+
+
+                        {% if profile.location %}
+
+                            <div class="info-row">
+
+                                <span class="info-label">
+                                    Location
+                                </span>
+
+                                <span class="info-value">
+                                    {{ profile.location }}
+                                </span>
+
+                            </div>
+
+                        {% endif %}
+
+
+                        {% if profile.start_year %}
+
+                            <div class="info-row">
+
+                                <span class="info-label">
+                                    Active Since
+                                </span>
+
+                                <span class="info-value">
+
+                                    {{ profile.start_year }}
+
+                                    {% if profile.end_year %}
+                                        - {{ profile.end_year }}
+                                    {% else %}
+                                        - Present
+                                    {% endif %}
+
+                                </span>
+
+                            </div>
+
+                        {% endif %}
+
+
+                        {% if profile.skill_description %}
+
+                            <div class="info-row">
+
+                                <span class="info-label">
+                                    Skills
+                                </span>
+
+                                <span class="info-value text-end">
+                                    {{ profile.skill_description }}
+                                </span>
+
+                            </div>
+
+                        {% endif %}
+
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =====================================
+                 SIDEBAR
+            ====================================== -->
+
+            <div class="col-lg-4">
+
+
+                <!-- Contact -->
+
+                <div class="content-section">
+
+                    <h2 class="section-title">
+
+                        Contact
+
+                    </h2>
+
+
+                    <div class="profile-card">
+
+
+                        {% if profile.email %}
+
+                            <div class="info-row">
+
+                                <span class="info-label">
+                                    Email
+                                </span>
+
+                                <span class="info-value">
+
+                                    {{ profile.email }}
+
+                                </span>
+
+                            </div>
+
+                        {% endif %}
+
+
+                        {% if profile.phone %}
+
+                            <div class="info-row">
+
+                                <span class="info-label">
+                                    Phone
+                                </span>
+
+                                <span class="info-value">
+
+                                    {{ profile.phone }}
+
+                                </span>
+
+                            </div>
+
+                        {% endif %}
+
+
+                        {% if profile.website %}
+
+                            <div class="info-row">
+
+                                <span class="info-label">
+                                    Website
+                                </span>
+
+                                <a
+                                    href="{{ profile.website }}"
+                                    target="_blank"
+                                    class="text-white"
+                                >
+
+                                    Visit
+
+                                </a>
+
+                            </div>
+
+                        {% endif %}
+
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- Social -->
+
+                <div class="content-section">
+
+                    <h2 class="section-title">
+
+                        Connect
+
+                    </h2>
+
+
+                    <div class="profile-card">
+
+
+                        <div class="social-links">
+
+
+                            {% if profile.instagram %}
+
+                                <a
+                                    href="{{ profile.instagram }}"
+                                    target="_blank"
+                                    class="social-link"
+                                >
+
+                                    <i class="bi bi-instagram"></i>
+
+                                </a>
+
+                            {% endif %}
+
+
+                            {% if profile.twitter %}
+
+                                <a
+                                    href="{{ profile.twitter }}"
+                                    target="_blank"
+                                    class="social-link"
+                                >
+
+                                    <i class="bi bi-twitter-x"></i>
+
+                                </a>
+
+                            {% endif %}
+
+
+                            {% if profile.website %}
+
+                                <a
+                                    href="{{ profile.website }}"
+                                    target="_blank"
+                                    class="social-link"
+                                >
+
+                                    <i class="bi bi-globe"></i>
+
+                                </a>
+
+                            {% endif %}
+
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- Education -->
+
+                {% if profile.education %}
+
+                    <div class="content-section">
+
+                        <h2 class="section-title">
+
+                            Education
+
+                        </h2>
+
+
+                        <div class="profile-card">
+
+                            <p class="text-secondary mb-0">
+
+                                {{ profile.education }}
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                {% endif %}
+
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

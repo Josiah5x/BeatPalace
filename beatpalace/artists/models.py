@@ -2,7 +2,6 @@ from django.conf import settings
 from django.db import models
 
 
-
 class ArtistProfile(models.Model):
 
     user = models.OneToOneField(
@@ -10,6 +9,10 @@ class ArtistProfile(models.Model):
         on_delete=models.CASCADE,
         related_name="artist_profile"
     )
+
+    # ==========================================
+    # BASIC INFORMATION
+    # ==========================================
 
     artist_name = models.CharField(
         max_length=100,
@@ -32,6 +35,10 @@ class ArtistProfile(models.Model):
         null=True
     )
 
+    # ==========================================
+    # MUSIC INFORMATION
+    # ==========================================
+
     genre = models.CharField(
         max_length=100,
         blank=True
@@ -39,6 +46,19 @@ class ArtistProfile(models.Model):
 
     location = models.CharField(
         max_length=100,
+        blank=True
+    )
+
+    # ==========================================
+    # SOCIAL / CONTACT
+    # ==========================================
+
+    phone = models.CharField(
+        max_length=30,
+        blank=True
+    )
+
+    email = models.EmailField(
         blank=True
     )
 
@@ -54,12 +74,60 @@ class ArtistProfile(models.Model):
         blank=True
     )
 
+    # ==========================================
+    # PROFESSIONAL INFORMATION
+    # ==========================================
+
+    start_year = models.PositiveIntegerField(
+        blank=True,
+        null=True
+    )
+
+    end_year = models.PositiveIntegerField(
+        blank=True,
+        null=True
+    )
+
+    skill_description = models.TextField(
+        blank=True
+    )
+
+    education = models.TextField(
+        blank=True
+    )
+
+    # ==========================================
+    # PERSONAL INFORMATION
+    # ==========================================
+
+    date_of_birth = models.DateField(
+        blank=True,
+        null=True
+    )
+
+    marital_status = models.CharField(
+        max_length=50,
+        blank=True
+    )
+
+    # ==========================================
+    # STATISTICS
+    # ==========================================
+
     followers_count = models.PositiveIntegerField(
         default=0
     )
 
     monthly_listeners = models.PositiveIntegerField(
         default=0
+    )
+
+    # ==========================================
+    # PROFILE STATUS
+    # ==========================================
+
+    is_published = models.BooleanField(
+        default=True
     )
 
     created_at = models.DateTimeField(

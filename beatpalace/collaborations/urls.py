@@ -1,11 +1,17 @@
-# /collaborations/
-# /collaborations/create/
+from django.urls import path
 
-# from django.urls import path
-# from . import views
+from .views import send_collaboration
 
-# urlpatterns = [
-#     path("/collaborations/", views.Index, name="collaboration"),
-#     path("/collaborations/create/", views.Index, name="collaborations_create"),
 
-# ]
+app_name = "collaborations"
+
+
+urlpatterns = [
+
+    path(
+        "send/<str:username>/",
+        send_collaboration,
+        name="send_collaboration",
+    ),
+
+]

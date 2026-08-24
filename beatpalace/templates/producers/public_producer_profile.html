@@ -1,0 +1,605 @@
+{% extends "base.html" %} {% block content %}
+
+<style>
+  .producer-page {
+    min-height: 100vh;
+    background: #0b0d10;
+    color: #fff;
+  }
+
+  /* COVER */
+
+  .producer-cover {
+    height: 300px;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #171b23, #0b0d10);
+  }
+
+  .producer-cover::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, #0b0d10, transparent);
+  }
+
+  .producer-container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 0 25px 60px;
+  }
+
+  /* HEADER */
+
+  .producer-header {
+    position: relative;
+    margin-top: -75px;
+    z-index: 10;
+  }
+
+  .producer-image {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 6px solid #0b0d10;
+    background: #171b23;
+  }
+
+  .producer-placeholder {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 6px solid #0b0d10;
+    background: #171b23;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 55px;
+    color: #666;
+  }
+
+  .producer-name {
+    margin-top: 18px;
+    font-size: 34px;
+    font-weight: 700;
+  }
+
+  .producer-title {
+    color: #a0a6b0;
+    font-size: 16px;
+    margin-top: 5px;
+  }
+
+  .verified {
+    color: #4da3ff;
+    font-size: 19px;
+  }
+
+  /* STATS */
+
+  .producer-stats {
+    display: flex;
+    gap: 40px;
+    margin-top: 25px;
+  }
+
+  .producer-stat strong {
+    display: block;
+    font-size: 21px;
+  }
+
+  .producer-stat span {
+    color: #7f8691;
+    font-size: 13px;
+  }
+
+  /* BUTTONS */
+
+  .producer-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 25px;
+    flex-wrap: wrap;
+  }
+
+  .btn-follow {
+    background: #fff;
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 22px;
+    font-weight: 600;
+  }
+
+  .btn-action {
+    background: transparent;
+    color: #fff;
+    border: 1px solid #343942;
+    border-radius: 8px;
+    padding: 10px 22px;
+  }
+
+  .btn-action:hover {
+    background: #171b23;
+    color: #fff;
+  }
+
+  /* CONTENT */
+
+  .producer-content {
+    margin-top: 50px;
+  }
+
+  .producer-card {
+    background: #111419;
+    border: 1px solid #20242c;
+    border-radius: 14px;
+    padding: 25px;
+    margin-bottom: 20px;
+  }
+
+  .section-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+
+  .producer-bio {
+    color: #a5aab3;
+    line-height: 1.8;
+    font-size: 14px;
+  }
+
+  /* TAGS */
+
+  .producer-tag {
+    display: inline-block;
+    padding: 7px 13px;
+    margin: 4px;
+    border-radius: 20px;
+    background: #191d24;
+    border: 1px solid #292e37;
+    color: #b8bec7;
+    font-size: 12px;
+  }
+
+  /* INFO */
+
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #20242b;
+  }
+
+  .info-row:last-child {
+    border-bottom: none;
+  }
+
+  .info-label {
+    color: #737b86;
+    font-size: 13px;
+  }
+
+  .info-value {
+    color: #ddd;
+    font-size: 14px;
+    text-align: right;
+  }
+
+  /* SOCIAL */
+
+  .social-link {
+    display: block;
+    color: #aaa;
+    text-decoration: none;
+    margin-bottom: 15px;
+  }
+
+  .social-link:hover {
+    color: #fff;
+  }
+
+  /* SKILLS */
+
+  .skill-item {
+    margin-bottom: 18px;
+  }
+
+  .skill-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 7px;
+    font-size: 13px;
+  }
+
+  .skill-bar {
+    height: 5px;
+    background: #252a32;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .skill-progress {
+    height: 100%;
+    background: #fff;
+    border-radius: 10px;
+  }
+
+  /* MOBILE */
+
+  @media (max-width: 768px) {
+    .producer-cover {
+      height: 220px;
+    }
+
+    .producer-image,
+    .producer-placeholder {
+      width: 120px;
+      height: 120px;
+    }
+
+    .producer-name {
+      font-size: 27px;
+    }
+
+    .producer-stats {
+      gap: 20px;
+    }
+  }
+</style>
+
+<div class="producer-page">
+  <!-- COVER -->
+
+  <div class="producer-cover">
+    {% if profile.cover_image %}
+
+    <img
+      src="{{ profile.cover_image.url }}"
+      style="width: 100%; height: 100%; object-fit: cover"
+      alt=""
+    />
+
+    {% endif %}
+  </div>
+
+  <div class="producer-container">
+    <!-- HEADER -->
+
+    <div class="producer-header">
+      <!-- PROFILE IMAGE -->
+
+      {% if profile.profile_image %}
+
+      <img
+        src="{{ profile.profile_image.url }}"
+        class="producer-image"
+        alt="{{ profile.full_name }}"
+      />
+
+      {% else %}
+
+      <div class="producer-placeholder">
+        <i class="bi bi-person"></i>
+      </div>
+
+      {% endif %}
+
+      <!-- NAME -->
+
+      <div class="producer-name">
+        {{ profile.full_name }} {% if profile.user.verified %}
+
+        <i
+          class="bi bi-patch-check-fill verified"
+          title="Verified Producer"
+        ></i>
+
+        {% endif %}
+      </div>
+
+      <!-- TITLE -->
+
+      {% if profile.professional_title %}
+
+      <div class="producer-title">{{ profile.professional_title }}</div>
+
+      {% endif %}
+
+      <!-- STATS -->
+
+      <div class="producer-stats">
+        <div class="producer-stat">
+          <strong> {{ profile.user.engagement_followers.count }} </strong>
+
+          <span> Followers </span>
+        </div>
+
+        <div class="producer-stat">
+          <strong> {{ profile.user.engagement_following.count }} </strong>
+
+          <span> Following </span>
+        </div>
+
+        <div class="producer-stat">
+          <strong> {{ profile.projects.count }} </strong>
+
+          <span> Projects </span>
+        </div>
+      </div>
+
+      <!-- ACTIONS -->
+
+      <div class="producer-actions">
+        {% if request.user != profile.user %}
+
+        <form method="POST" action="{% url 'engagement:toggle_follow' profile.user.id %}">
+          {% csrf_token %} 
+          {% if is_following %}
+
+          <button type="submit" class="btn-action">
+            <i class="bi bi-person-check"></i>
+
+            Following
+          </button>
+
+          {% else %}
+
+          <button type="submit" class="btn-follow">
+            <i class="bi bi-person-plus"></i>
+
+            Follow
+          </button>
+
+          {% endif %}
+        </form>
+
+        <button
+          type="button"
+          class="btn-action"
+          data-bs-toggle="modal"
+          data-bs-target="#collaborationModal"
+        >
+          <i class="bi bi-people"></i>
+
+          Collaborate
+        </button>
+
+        {% endif %} 
+        {% if request.user == profile.user %}
+
+        <a href="{% url 'producers:producer_edit_profile' %}" class="btn-action">
+          <i class="bi bi-pencil"></i>
+
+          Edit Profile
+        </a>
+
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+
+    <div class="producer-content">
+      <div class="row g-4">
+        <!-- LEFT -->
+
+        <div class="col-lg-8">
+          <!-- ABOUT -->
+
+          <div class="producer-card">
+            <div class="section-title">About</div>
+
+            <div class="producer-bio">
+              {% if profile.bio %} 
+              {{ profile.bio }} 
+              {% else %} This producer
+              hasn't added a bio yet. {% endif %}
+            </div>
+          </div>
+
+          <!-- SKILLS -->
+
+          {% if profile.skill_description %}
+
+          <div class="producer-card">
+            <div class="section-title">Skills</div>
+
+            <div class="producer-bio">{{ profile.skill_description }}</div>
+          </div>
+
+          {% endif %}
+
+          <!-- SOFTWARE -->
+
+          {% if profile.software %}
+
+          <div class="producer-card">
+            <div class="section-title">Software & Tools</div>
+
+            <div>
+              {% for software in profile.software.splitlines %} 
+              {% if software%}
+
+              <span class="producer-tag"> {{ software }} </span>
+
+              {% endif %} 
+              {% endfor %}
+            </div>
+          </div>
+
+          {% endif %}
+
+          <!-- PROJECTS -->
+
+          <div class="producer-card">
+            <div class="section-title">Projects</div>
+
+            {% for project in profile.projects.all %} 
+            {% if project.is_visible%}
+
+            <div class="mb-4">
+              <div class="d-flex justify-content-between">
+                <strong> {{ project.title }} </strong>
+
+                <small class="text-muted"> {{ project.year }} </small>
+              </div>
+
+              <div class="producer-bio mt-2">{{ project.description }}</div>
+            </div>
+
+            {% endif %} {% empty %}
+
+            <div class="producer-bio">No projects have been added yet.</div>
+
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- RIGHT -->
+
+        <div class="col-lg-4">
+          <!-- PROFILE INFO -->
+
+          <div class="producer-card">
+            <div class="section-title">Profile</div>
+
+            {% if profile.start_year %}
+
+            <div class="info-row">
+              <span class="info-label"> Experience </span>
+
+              <span class="info-value">
+                {{ profile.start_year }} 
+                {% if profile.end_year %} - {{profile.end_year }} 
+                {% else %} 
+                - Present 
+                {% endif %}
+              </span>
+            </div>
+
+            {% endif %} {% if profile.education %}
+
+            <div class="info-row">
+              <span class="info-label"> Education </span>
+
+              <span class="info-value"> {{ profile.education }} </span>
+            </div>
+
+            {% endif %}
+          </div>
+
+          <!-- CONTACT -->
+
+          <div class="producer-card">
+            <div class="section-title">Connect</div>
+
+            {% if profile.instagram %}
+
+            <a
+              href="{{ profile.instagram }}"
+              target="_blank"
+              class="social-link"
+            >
+              <i class="bi bi-instagram"></i>
+
+              Instagram
+            </a>
+
+            {% endif %} {% if profile.website %}
+
+            <a href="{{ profile.website }}" target="_blank" class="social-link">
+              <i class="bi bi-globe"></i>
+
+              Website
+            </a>
+
+            {% endif %} {% if profile.email %}
+
+            <a href="mailto:{{ profile.email }}" class="social-link">
+              <i class="bi bi-envelope"></i>
+
+              {{ profile.email }}
+            </a>
+
+            {% endif %}
+          </div>
+
+          <!-- LOCATION -->
+
+          {% if profile.location %}
+
+          <div class="producer-card">
+            <div class="section-title">Location</div>
+
+            <div class="producer-bio">
+              <i class="bi bi-geo-alt"></i>
+
+              {{ profile.location }}
+            </div>
+          </div>
+
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- COLLABORATION MODAL -->
+
+{% if request.user != profile.user %}
+
+<div class="modal fade" id="collaborationModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content bg-dark text-white">
+      <div class="modal-header">
+        <h5 class="modal-title">Collaboration Request</h5>
+
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          data-bs-dismiss="modal"
+        ></button>
+      </div>
+
+      <form
+        method="POST"
+        action="{% url 'collaborations:send_collaboration' profile.user.id %}"
+      >
+        {% csrf_token %}
+
+        <div class="modal-body">
+          <p class="text-muted">
+            Send a collaboration request to {{ profile.full_name }}.
+          </p>
+
+          <textarea
+            name="message"
+            class="form-control bg-dark text-white"
+            rows="5"
+            placeholder="Tell them about your project..."
+          ></textarea>
+        </div>
+
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Cancel
+          </button>
+
+          <button type="submit" class="btn btn-primary">Send Request</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endif %} {% endblock %}

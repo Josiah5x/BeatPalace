@@ -1,0 +1,1427 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+
+    Discover Artists | BeatPalace
+
+{% endblock %}
+
+{% block content %}
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+            margin: 0;
+            background: #090b0f;
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
+
+
+        /* ========================================
+           NAVBAR
+        ======================================== */
+
+        .bp-navbar {
+            height: 70px;
+
+            background: #0d1015;
+
+            border-bottom: 1px solid #20242b;
+
+            display: flex;
+            align-items: center;
+
+            padding: 0 30px;
+
+            position: sticky;
+            top: 0;
+
+            z-index: 1000;
+        }
+
+
+        .bp-logo {
+            color: #fff;
+
+            font-size: 23px;
+
+            font-weight: 800;
+
+            text-decoration: none;
+        }
+
+
+        .bp-logo span {
+            color: #7c5cff;
+        }
+
+
+        .bp-nav {
+            display: flex;
+
+            align-items: center;
+
+            gap: 25px;
+
+            margin-left: 50px;
+        }
+
+
+        .bp-nav a {
+            color: #8e949d;
+
+            text-decoration: none;
+
+            font-size: 14px;
+
+            transition: .2s;
+        }
+
+
+        .bp-nav a:hover,
+        .bp-nav a.active {
+            color: #fff;
+        }
+
+
+        .bp-user {
+            margin-left: auto;
+        }
+
+
+        .bp-user a {
+            color: #fff;
+
+            text-decoration: none;
+
+            font-size: 14px;
+        }
+
+
+        /* ========================================
+           PAGE
+        ======================================== */
+
+        .discovery-container {
+            max-width: 1200px;
+
+            margin: auto;
+
+            padding: 45px 25px 80px;
+        }
+
+
+        /* ========================================
+           HERO
+        ======================================== */
+
+        .discover-hero {
+            padding: 45px 0 35px;
+        }
+
+
+        .discover-hero h1 {
+            font-size: 38px;
+
+            font-weight: 800;
+
+            margin-bottom: 10px;
+        }
+
+
+        .discover-hero p {
+            color: #858b95;
+
+            max-width: 600px;
+
+            line-height: 1.7;
+        }
+
+
+        /* ========================================
+           SEARCH
+        ======================================== */
+
+        .search-box {
+            background: #11151b;
+
+            border: 1px solid #252a32;
+
+            border-radius: 12px;
+
+            padding: 7px;
+
+            display: flex;
+
+            align-items: center;
+
+            max-width: 700px;
+        }
+
+
+        .search-box i {
+            color: #777;
+
+            font-size: 18px;
+
+            margin-left: 12px;
+        }
+
+
+        .search-box input {
+            flex: 1;
+
+            background: transparent;
+
+            border: none;
+
+            outline: none;
+
+            color: #fff;
+
+            padding: 13px;
+
+            font-size: 14px;
+        }
+
+
+        .search-box input::placeholder {
+            color: #666;
+        }
+
+
+        .search-btn {
+            background: #fff;
+
+            color: #000;
+
+            border: none;
+
+            border-radius: 8px;
+
+            padding: 11px 22px;
+
+            font-weight: 600;
+        }
+
+
+        /* ========================================
+           SECTION
+        ======================================== */
+
+        .discover-section {
+            margin-top: 45px;
+        }
+
+
+        .section-header {
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            margin-bottom: 20px;
+        }
+
+
+        .section-header h2 {
+            font-size: 21px;
+
+            font-weight: 700;
+
+            margin: 0;
+        }
+
+
+        .section-header a {
+            color: #8d7cff;
+
+            text-decoration: none;
+
+            font-size: 14px;
+        }
+
+
+        /* ========================================
+           CARDS
+        ======================================== */
+
+        .discover-card {
+            background: #11151b;
+
+            border: 1px solid #20252d;
+
+            border-radius: 14px;
+
+            padding: 22px;
+
+            transition: .25s;
+
+            height: 100%;
+        }
+
+
+        .discover-card:hover {
+            transform: translateY(-4px);
+
+            border-color: #343a45;
+
+            background: #14181f;
+        }
+
+
+        .discover-avatar {
+            width: 90px;
+
+            height: 90px;
+
+            object-fit: cover;
+
+            border-radius: 50%;
+
+            display: block;
+
+            margin-bottom: 18px;
+        }
+
+
+        .discover-avatar-placeholder {
+            width: 90px;
+
+            height: 90px;
+
+            border-radius: 50%;
+
+            background: #1b2028;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            color: #555;
+
+            font-size: 35px;
+
+            margin-bottom: 18px;
+        }
+
+
+        .discover-card h5 {
+            font-size: 17px;
+
+            font-weight: 700;
+
+            margin-bottom: 6px;
+        }
+
+
+        .discover-role {
+            color: #8d7cff;
+
+            font-size: 13px;
+        }
+
+
+        .discover-meta {
+            color: #777e89;
+
+            font-size: 13px;
+
+            margin-top: 8px;
+        }
+
+
+        .discover-stats {
+            color: #8a9099;
+
+            font-size: 12px;
+
+            margin-top: 12px;
+        }
+
+
+        .card-actions {
+            display: flex;
+
+            gap: 8px;
+
+            margin-top: 18px;
+        }
+
+
+        .btn-profile {
+            flex: 1;
+
+            border: 1px solid #303640;
+
+            background: transparent;
+
+            color: #fff;
+
+            border-radius: 7px;
+
+            padding: 8px;
+
+            text-decoration: none;
+
+            text-align: center;
+
+            font-size: 13px;
+        }
+
+
+        .btn-profile:hover {
+            background: #1d222a;
+
+            color: #fff;
+        }
+
+
+        .btn-follow {
+            border: none;
+
+            background: #fff;
+
+            color: #000;
+
+            border-radius: 7px;
+
+            padding: 8px 14px;
+
+            font-size: 13px;
+
+            font-weight: 600;
+        }
+
+
+        /* ========================================
+           FILTERS
+        ======================================== */
+
+        .filters {
+            background: #11151b;
+
+            border: 1px solid #222831;
+
+            border-radius: 12px;
+
+            padding: 15px;
+
+            margin-top: 25px;
+        }
+
+
+        .filters label {
+            display: block;
+
+            color: #777e89;
+
+            font-size: 12px;
+
+            margin-bottom: 6px;
+        }
+
+
+        .filters input,
+        .filters select {
+            width: 100%;
+
+            background: #0b0e13;
+
+            border: 1px solid #292f38;
+
+            color: #fff;
+
+            border-radius: 7px;
+
+            padding: 10px;
+
+            outline: none;
+        }
+
+
+        .filters select option {
+            background: #11151b;
+        }
+
+
+        /* ========================================
+           EMPTY
+        ======================================== */
+
+        .empty-state {
+            text-align: center;
+
+            padding: 70px 20px;
+
+            background: #11151b;
+
+            border: 1px solid #20252d;
+
+            border-radius: 14px;
+
+            color: #777e89;
+        }
+
+
+        .empty-state i {
+            font-size: 45px;
+
+            margin-bottom: 15px;
+        }
+
+
+        /* ========================================
+           MOBILE
+        ======================================== */
+
+        @media (max-width: 768px) {
+
+            .bp-navbar {
+                padding: 0 15px;
+            }
+
+
+            .bp-nav {
+                display: none;
+            }
+
+
+            .discovery-container {
+                padding-left: 15px;
+
+                padding-right: 15px;
+            }
+
+
+            .discover-hero h1 {
+                font-size: 30px;
+            }
+
+        }
+
+
+        /* =========================================
+   DISCOVERY CARD
+========================================= */
+
+.discover-card {
+    position: relative;
+    overflow: hidden;
+
+    background: #111318;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    border-radius: 18px;
+
+    color: #ffffff;
+
+    transition:
+        transform 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
+
+    height: 100%;
+}
+
+
+.discover-card:hover {
+    transform: translateY(-6px);
+
+    border-color: rgba(255, 255, 255, 0.18);
+
+    box-shadow:
+        0 15px 40px rgba(0, 0, 0, 0.35);
+}
+
+
+/* =========================================
+   COVER
+========================================= */
+
+.discover-cover {
+    position: relative;
+
+    width: 100%;
+    height: 170px;
+
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            135deg,
+            #20232a,
+            #111318
+        );
+}
+
+
+.discover-cover img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    display: block;
+
+    transition:
+        transform 0.5s ease;
+}
+
+
+.discover-card:hover .discover-cover img {
+    transform: scale(1.06);
+}
+
+
+/* =========================================
+   COVER OVERLAY
+========================================= */
+
+.discover-cover-overlay {
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0.05),
+            rgba(17, 19, 24, 0.95)
+        );
+}
+
+
+/* =========================================
+   AVATAR
+========================================= */
+
+.discover-avatar-wrapper {
+    position: relative;
+
+    margin-top: -48px;
+
+    margin-left: 24px;
+
+    width: 92px;
+    height: 92px;
+
+    z-index: 2;
+}
+
+
+.discover-avatar {
+    width: 92px;
+    height: 92px;
+
+    object-fit: cover;
+
+    border-radius: 50%;
+
+    border: 4px solid #111318;
+
+    background: #20232a;
+
+    display: block;
+}
+
+
+.discover-avatar-placeholder {
+    width: 92px;
+    height: 92px;
+
+    border-radius: 50%;
+
+    border: 4px solid #111318;
+
+    background:
+        linear-gradient(
+            135deg,
+            #292d36,
+            #15171c
+        );
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 32px;
+
+    color: rgba(255, 255, 255, 0.65);
+}
+
+
+/* =========================================
+   CONTENT
+========================================= */
+
+.discover-content {
+    padding: 18px 24px 24px;
+}
+
+
+/* =========================================
+   NAME
+========================================= */
+
+.discover-name {
+    margin: 0;
+
+    font-size: 1.2rem;
+
+    font-weight: 700;
+
+    color: #ffffff;
+}
+
+
+/* =========================================
+   ROLE
+========================================= */
+
+.discover-role {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    margin-top: 6px;
+
+    font-size: 0.82rem;
+
+    font-weight: 600;
+
+    color: #aeb4c0;
+}
+
+
+/* =========================================
+   META
+========================================= */
+
+.discover-meta {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    margin-top: 10px;
+
+    color: #9ca3af;
+
+    font-size: 0.88rem;
+}
+
+
+.discover-meta i {
+    font-size: 0.9rem;
+}
+
+
+/* =========================================
+   STATS
+========================================= */
+
+.discover-stats {
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    margin-top: 18px;
+
+    padding-top: 15px;
+
+    border-top:
+        1px solid rgba(255, 255, 255, 0.07);
+
+    color: #aeb4c0;
+
+    font-size: 0.85rem;
+}
+
+
+/* =========================================
+   ACTIONS
+========================================= */
+
+.card-actions {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin-top: 20px;
+}
+
+
+/* =========================================
+   VIEW PROFILE
+========================================= */
+
+.btn-profile {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 40px;
+
+    padding: 0 16px;
+
+    border-radius: 9px;
+
+    border: 1px solid rgba(255, 255, 255, 0.12);
+
+    background: rgba(255, 255, 255, 0.05);
+
+    color: #ffffff;
+
+    text-decoration: none;
+
+    font-size: 0.85rem;
+
+    font-weight: 600;
+
+    transition:
+        background 0.25s ease,
+        border-color 0.25s ease;
+}
+
+
+.btn-profile:hover {
+    background: rgba(255, 255, 255, 0.1);
+
+    border-color: rgba(255, 255, 255, 0.2);
+
+    color: #ffffff;
+}
+
+
+/* =========================================
+   FOLLOW BUTTON
+========================================= */
+
+.btn-follow {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 6px;
+
+    min-height: 40px;
+
+    padding: 0 16px;
+
+    border: none;
+
+    border-radius: 9px;
+
+    background: #ffffff;
+
+    color: #111318;
+
+    font-size: 0.85rem;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease;
+}
+
+
+.btn-follow:hover {
+    transform: translateY(-1px);
+
+    opacity: 0.9;
+}
+
+
+/* =========================================
+   FOLLOWING
+========================================= */
+
+.btn-follow.following {
+    background: #292d36;
+
+    color: #ffffff;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.1);
+}
+
+
+/* =========================================
+   EMPTY STATE
+========================================= */
+
+.empty-state {
+    text-align: center;
+
+    padding: 70px 20px;
+
+    background: #111318;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.07);
+
+    border-radius: 18px;
+
+    color: #ffffff;
+}
+
+
+.empty-state > i {
+    font-size: 42px;
+
+    color: #7f8693;
+
+    display: block;
+
+    margin-bottom: 15px;
+}
+
+
+.empty-state h5 {
+    margin-bottom: 8px;
+
+    font-weight: 700;
+}
+
+
+.empty-state p {
+    margin: 0;
+
+    color: #8c929e;
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 575px) {
+
+    .discover-cover {
+        height: 150px;
+    }
+
+    .discover-content {
+        padding: 16px 18px 20px;
+    }
+
+    .discover-avatar-wrapper {
+        margin-left: 18px;
+    }
+
+    .card-actions {
+        flex-direction: column;
+
+        align-items: stretch;
+    }
+
+    .btn-profile,
+    .btn-follow {
+        width: 100%;
+    }
+
+}
+
+    </style>
+
+
+
+<div class="discover-hero">
+
+    <h1>
+        Discover Artists
+    </h1>
+
+    <p>
+        Find artists by name, genre, location and
+        musical style.
+    </p>
+
+
+    <form
+        method="GET"
+        class="filters"
+    >
+
+        <div class="row g-3 align-items-end">
+
+
+            <div class="col-lg-6">
+
+                <label>
+                    Search
+                </label>
+
+                <input
+                    type="text"
+                    name="q"
+                    value="{{ query }}"
+                    placeholder="Artist, genre, location..."
+                >
+
+            </div>
+
+
+            <div class="col-lg-3">
+
+                <label>
+                    Genre
+                </label>
+
+                <input
+                    type="text"
+                    name="genre"
+                    value="{{ genre }}"
+                    placeholder="Afrobeats"
+                >
+
+            </div>
+
+
+            <div class="col-lg-3">
+
+                <label>
+                    Location
+                </label>
+
+                <input
+                    type="text"
+                    name="location"
+                    value="{{ location }}"
+                    placeholder="Abuja"
+                >
+
+            </div>
+
+
+            <div class="col-12">
+
+                <button
+                    type="submit"
+                    class="search-btn"
+                >
+
+                    <i class="bi bi-search"></i>
+
+                    Search Artists
+
+                </button>
+
+            </div>
+
+
+        </div>
+
+    </form>
+
+</div>
+
+
+
+<div class="section-header">
+
+    <h2>
+        Artists
+    </h2>
+
+    <span class="text-secondary small">
+
+        {{ users|length }} results
+
+    </span>
+
+</div>
+
+
+<div class="row g-4">
+
+    {% for user in users %}
+
+        <div class="col-md-6 col-lg-4">
+
+            <div class="discover-card">
+
+                <!-- ================================= -->
+                <!-- COVER IMAGE -->
+                <!-- ================================= -->
+
+                <div class="discover-cover">
+
+                    {% if user.role == "artist" %}
+
+                        {% if user.artist_profile.cover_image %}
+
+                            <img
+                                src="{{ user.artist_profile.cover_image.url }}"
+                                alt="{{ user.artist_profile.artist_name }}"
+                            >
+
+                        {% endif %}
+
+                    {% elif user.role == "producer" %}
+
+                        {% if user.producer_profile.cover_image %}
+
+                            <img
+                                src="{{ user.producer_profile.cover_image.url }}"
+                                alt="{{ user.producer_profile.full_name }}"
+                            >
+
+                        {% endif %}
+
+                    {% endif %}
+
+                    <!-- Dark overlay -->
+
+                    <div class="discover-cover-overlay"></div>
+
+                </div>
+
+
+                <!-- ================================= -->
+                <!-- PROFILE AVATAR -->
+                <!-- ================================= -->
+
+                <div class="discover-avatar-wrapper">
+
+                    {% if user.role == "artist" %}
+
+                        {% if user.artist_profile.avatar %}
+
+                            <img
+                                src="{{ user.artist_profile.avatar.url }}"
+                                class="discover-avatar"
+                                alt="{{ user.artist_profile.artist_name }}"
+                            >
+
+                        {% elif user.avatar %}
+
+                            <img
+                                src="{{ user.avatar.url }}"
+                                class="discover-avatar"
+                                alt="{{ user.username }}"
+                            >
+
+                        {% else %}
+
+                            <div class="discover-avatar-placeholder">
+
+                                <i class="bi bi-mic"></i>
+
+                            </div>
+
+                        {% endif %}
+
+
+                    {% elif user.role == "producer" %}
+
+                        {% if user.producer_profile.profile_image %}
+
+                            <img
+                                src="{{ user.producer_profile.profile_image.url }}"
+                                class="discover-avatar"
+                                alt="{{ user.producer_profile.full_name }}"
+                            >
+
+                        {% elif user.avatar %}
+
+                            <img
+                                src="{{ user.avatar.url }}"
+                                class="discover-avatar"
+                                alt="{{ user.username }}"
+                            >
+
+                        {% else %}
+
+                            <div class="discover-avatar-placeholder">
+
+                                <i class="bi bi-headphones"></i>
+
+                            </div>
+
+                        {% endif %}
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- ================================= -->
+                <!-- CARD CONTENT -->
+                <!-- ================================= -->
+
+                <div class="discover-content">
+
+
+                    <!-- ================================= -->
+                    <!-- NAME -->
+                    <!-- ================================= -->
+
+                    <h5 class="discover-name">
+
+                        {% if user.role == "artist" %}
+
+                            {{ user.artist_profile.artist_name|default:user.username }}
+
+                        {% elif user.role == "producer" %}
+
+                            {{ user.producer_profile.full_name|default:user.username }}
+
+                        {% endif %}
+
+                    </h5>
+
+
+                    <!-- ================================= -->
+                    <!-- ROLE -->
+                    <!-- ================================= -->
+
+                    <div class="discover-role">
+
+                        {% if user.role == "artist" %}
+
+                            <i class="bi bi-mic"></i>
+                            Artist
+
+                        {% elif user.role == "producer" %}
+
+                            <i class="bi bi-headphones"></i>
+                            Producer
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- ================================= -->
+                    <!-- ARTIST INFORMATION -->
+                    <!-- ================================= -->
+
+                    {% if user.role == "artist" %}
+
+                        {% if user.artist_profile.genre %}
+
+                            <div class="discover-meta">
+
+                                <i class="bi bi-music-note"></i>
+
+                                {{ user.artist_profile.genre }}
+
+                            </div>
+
+                        {% endif %}
+
+
+                        {% if user.artist_profile.location %}
+
+                            <div class="discover-meta">
+
+                                <i class="bi bi-geo-alt"></i>
+
+                                {{ user.artist_profile.location }}
+
+                            </div>
+
+                        {% endif %}
+
+                    {% endif %}
+
+
+                    <!-- ================================= -->
+                    <!-- PRODUCER INFORMATION -->
+                    <!-- ================================= -->
+
+                    {% if user.role == "producer" %}
+
+                        {% if user.producer_profile.professional_title %}
+
+                            <div class="discover-meta">
+
+                                <i class="bi bi-award"></i>
+
+                                {{ user.producer_profile.professional_title }}
+
+                            </div>
+
+                        {% endif %}
+
+
+                        {% if user.producer_profile.experience_years %}
+
+                            <div class="discover-meta">
+
+                                <i class="bi bi-clock"></i>
+
+                                {{ user.producer_profile.experience_years }}
+
+                                years experience
+
+                            </div>
+
+                        {% endif %}
+
+                    {% endif %}
+
+
+                    <!-- ================================= -->
+                    <!-- FOLLOWERS -->
+                    <!-- ================================= -->
+
+                    <div class="discover-stats">
+
+                        <i class="bi bi-people"></i>
+
+                        {{ user.engagement_followers.count }}
+
+                        followers
+
+                    </div>
+
+
+                    <!-- ================================= -->
+                    <!-- ACTIONS -->
+                    <!-- ================================= -->
+
+                    <div class="card-actions">
+
+
+                        <!-- VIEW PROFILE -->
+
+                        {% if user.role == "artist" %}
+
+                            <a
+                                href="{% url 'artists:public_artist_profile' user.username %}"
+                                class="btn-profile"
+                            >
+
+                                View Profile
+
+                            </a>
+
+                        {% elif user.role == "producer" %}
+
+                            <a
+                                href="{% url 'artists:public_artist_profile' user.username %}"
+                                class="btn-profile"
+                            >
+
+                                View Profile
+
+                            </a>
+
+                        {% endif %}
+
+
+                        <!-- ================================= -->
+                        <!-- FOLLOW -->
+                        <!-- ================================= -->
+
+                        {% if user.id in following_ids %}
+
+                            <form
+                                method="POST"
+                                action="{% url 'engagement:toggle_follow' user.id %}"
+                            >
+
+                                {% csrf_token %}
+
+                                <button
+                                    type="submit"
+                                    class="btn-follow following"
+                                >
+
+                                    <i class="bi bi-person-check"></i>
+
+                                    Following
+
+                                </button>
+
+                            </form>
+
+                        {% else %}
+
+                            <form
+                                method="POST"
+                                action="{% url 'engagement:toggle_follow' user.id %}"
+                            >
+
+                                {% csrf_token %}
+
+                                <button
+                                    type="submit"
+                                    class="btn-follow"
+                                >
+
+                                    <i class="bi bi-person-plus"></i>
+
+                                    Follow
+
+                                </button>
+
+                            </form>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    {% empty %}
+
+        <div class="col-12">
+
+            <div class="empty-state">
+
+                <i class="bi bi-search"></i>
+
+                <h5>
+                    No artists or producers found
+                </h5>
+
+                <p>
+                    Try another name, genre or location.
+                </p>
+
+            </div>
+
+        </div>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}
+
+

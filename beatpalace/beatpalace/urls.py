@@ -33,6 +33,14 @@ urlpatterns = [
         # path('', include('notifications.urls')),
         path('producer/', include('producers.urls')),
         path("engagement/", include("engagement.urls")),
+        path(
+        "collaborations/",
+        include("collaborations.urls")
+        ),
+        path(
+            "discover/",
+            include("discovery.urls")
+        ),
 ]
 
 if settings.DEBUG:

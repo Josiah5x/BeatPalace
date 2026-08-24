@@ -115,6 +115,15 @@ profile edit
                         {{ form.profile_image }}
 
                     </div>
+                    <div class="col-12 mb-">
+
+                        <label class="form-label">
+                            Cover Image
+                        </label>
+
+                        {{ form.cover_image }}
+
+                    </div>
 
 
                     <div class="col-12 mb-3">
@@ -328,7 +337,7 @@ profile edit
                 <div class="d-flex justify-content-between">
 
                     <a
-                        href="{% url 'producer_profile' %}"
+                        href="{% url 'producers:producer_profile' %}"
                         class="btn btn-outline-secondary"
                     >
                         Cancel
@@ -379,7 +388,7 @@ profile edit
                         </span>
 
                         <a
-                            href="{% url 'producer_add_project' %}" target="_blank"
+                            href="{% url 'producers:producer_add_project' %}" target="_blank"
                             class="btn btn-sm btn-light"
                         >
                             <i class="bi bi-plus"></i>
@@ -418,7 +427,7 @@ profile edit
 
                             <form
                                 method="POST"
-                                action="{% url 'producer_delete_project' project.id %}"
+                                action="{% url 'producers:producer_delete_project' project.id %}"
                             >
 
                                 {% csrf_token %}
@@ -465,7 +474,7 @@ profile edit
                         </span>
 
                         <a
-                            href="{% url 'producer_add_skill' %}" target="_blank"
+                            href="{% url 'producers:producer_add_skill' %}" target="_blank"
                             class="btn btn-sm btn-light"
                         >
                             <i class="bi bi-plus"></i>
@@ -500,7 +509,7 @@ profile edit
 
                             <form
                                 method="POST"
-                                action="{% url 'producer_delete_skill' skill.id %}"
+                                action="{% url 'producers:producer_delete_skill' skill.id %}"
                             >
 
                                 {% csrf_token %}

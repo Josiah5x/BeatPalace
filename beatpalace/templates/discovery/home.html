@@ -1,0 +1,957 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    Discover | BeatPalace
+{% endblock %}
+
+
+{% block content %}
+<style>
+    .discovery-page {
+    min-height: 100vh;
+    background: #0b0d11;
+    color: #fff;
+    padding-bottom: 70px;
+}
+
+
+/* ==========================================
+   HERO
+========================================== */
+
+.discovery-hero {
+    position: relative;
+    padding: 90px 30px 70px;
+    background:
+        radial-gradient(
+            circle at 70% 20%,
+            rgba(90, 80, 180, .18),
+            transparent 40%
+        ),
+        radial-gradient(
+            circle at 20% 40%,
+            rgba(40, 120, 180, .12),
+            transparent 40%
+        );
+}
+
+
+.discovery-hero-content {
+    max-width: 900px;
+    margin: auto;
+    text-align: center;
+}
+
+
+.discovery-eyebrow {
+    font-size: .72rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: #8d95a3;
+}
+
+
+.discovery-hero h1 {
+    margin: 15px 0;
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    font-weight: 900;
+    letter-spacing: -2px;
+}
+
+
+.discovery-hero h1 span {
+    background: linear-gradient(
+        90deg,
+        #ffffff,
+        #8e96a7
+    );
+}
+
+
+.discovery-hero p {
+    max-width: 650px;
+    margin: 0 auto 30px;
+
+    color: #9299a6;
+    font-size: 1rem;
+    line-height: 1.7;
+}
+
+
+/* ==========================================
+   SEARCH
+========================================== */
+
+.discovery-search {
+    max-width: 650px;
+    margin: auto;
+
+    display: flex;
+    align-items: center;
+
+    padding: 6px;
+
+    background: #15181f;
+
+    border: 1px solid rgba(255,255,255,.08);
+
+    border-radius: 14px;
+}
+
+
+.discovery-search i {
+    margin-left: 15px;
+    color: #777f8d;
+}
+
+
+.discovery-search input {
+    flex: 1;
+
+    height: 48px;
+
+    border: none;
+    outline: none;
+
+    background: transparent;
+
+    color: #fff;
+
+    padding: 0 14px;
+}
+
+
+.discovery-search input::placeholder {
+    color: #6f7682;
+}
+
+
+.discovery-search button {
+    height: 48px;
+
+    padding: 0 22px;
+
+    border: none;
+    border-radius: 10px;
+
+    background: #fff;
+    color: #111;
+
+    font-weight: 700;
+}
+
+
+/* ==========================================
+   QUICK FILTERS
+========================================== */
+
+.discovery-quick-filters {
+    display: flex;
+
+    justify-content: center;
+
+    gap: 10px;
+
+    margin-top: 20px;
+}
+
+
+.quick-filter {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    padding: 8px 15px;
+
+    border-radius: 30px;
+
+    border: 1px solid rgba(255,255,255,.08);
+
+    color: #9ba2af;
+
+    text-decoration: none;
+
+    font-size: .85rem;
+
+    transition: .2s ease;
+}
+
+
+.quick-filter:hover,
+.quick-filter.active {
+    color: #111;
+
+    background: #fff;
+}
+
+
+/* ==========================================
+   SECTION
+========================================== */
+
+.discovery-section {
+    max-width: 1250px;
+
+    margin: 0 auto;
+
+    padding: 55px 25px 0;
+}
+
+
+.section-heading {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: end;
+
+    margin-bottom: 22px;
+}
+
+
+.section-heading span {
+    font-size: .7rem;
+
+    letter-spacing: 1.5px;
+
+    font-weight: 800;
+
+    color: #747c89;
+}
+
+
+.section-heading h2 {
+    margin: 5px 0 0;
+
+    font-size: 1.6rem;
+
+    font-weight: 800;
+}
+
+
+.section-heading a {
+    color: #9ba2af;
+
+    text-decoration: none;
+
+    font-size: .85rem;
+}
+
+
+.section-heading a:hover {
+    color: #fff;
+}
+
+
+/* ==========================================
+   GRID
+========================================== */
+
+.creator-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 20px;
+}
+
+
+/* ==========================================
+   CREATOR CARD
+========================================== */
+
+.creator-card {
+    overflow: hidden;
+
+    background: #11141a;
+
+    border: 1px solid rgba(255,255,255,.07);
+
+    border-radius: 17px;
+
+    transition:
+        transform .3s ease,
+        border-color .3s ease,
+        box-shadow .3s ease;
+}
+
+
+.creator-card:hover {
+    transform: translateY(-5px);
+
+    border-color: rgba(255,255,255,.15);
+
+    box-shadow:
+        0 20px 50px rgba(0,0,0,.3);
+}
+
+
+/* ==========================================
+   COVER
+========================================== */
+
+.creator-cover {
+    height: 140px;
+
+    position: relative;
+
+    overflow: hidden;
+
+    background: #20232b;
+}
+
+
+.creator-cover img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    transition: transform .5s ease;
+}
+
+
+.creator-card:hover .creator-cover img {
+    transform: scale(1.06);
+}
+
+
+.creator-cover-overlay {
+    position: absolute;
+    inset: 0;
+
+    background:
+        linear-gradient(
+            to bottom,
+            transparent,
+            rgba(17,20,26,.95)
+        );
+}
+
+
+/* ==========================================
+   AVATAR
+========================================== */
+
+.creator-avatar-wrapper {
+    position: relative;
+
+    margin-top: -42px;
+
+    margin-left: 18px;
+
+    width: 80px;
+    height: 80px;
+
+    z-index: 2;
+}
+
+
+.creator-avatar,
+.creator-avatar-placeholder {
+    width: 80px;
+    height: 80px;
+
+    border-radius: 50%;
+
+    border: 4px solid #11141a;
+
+    object-fit: cover;
+}
+
+
+.creator-avatar-placeholder {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background: #252a33;
+
+    color: #9ca3af;
+
+    font-size: 28px;
+}
+
+
+/* ==========================================
+   CONTENT
+========================================== */
+
+.creator-content {
+    padding: 15px 18px 20px;
+}
+
+
+.creator-content h3 {
+    margin: 0;
+
+    font-size: 1rem;
+
+    font-weight: 750;
+}
+
+
+.creator-role {
+    margin-top: 4px;
+
+    color: #7f8794;
+
+    font-size: .78rem;
+}
+
+
+.creator-meta {
+    margin-top: 10px;
+
+    color: #9ca3af;
+
+    font-size: .8rem;
+
+    display: flex;
+
+    gap: 6px;
+
+    align-items: center;
+}
+
+
+.creator-followers {
+    margin-top: 14px;
+
+    padding-top: 12px;
+
+    border-top: 1px solid rgba(255,255,255,.06);
+
+    color: #858d99;
+
+    font-size: .78rem;
+}
+
+
+.creator-actions {
+    display: flex;
+
+    gap: 7px;
+
+    margin-top: 16px;
+}
+
+
+.creator-profile-button,
+.creator-follow-button {
+    flex: 1;
+
+    min-height: 38px;
+
+    border-radius: 8px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: .76rem;
+
+    font-weight: 700;
+}
+
+
+.creator-profile-button {
+    background: rgba(255,255,255,.06);
+
+    color: #fff;
+
+    text-decoration: none;
+
+    border: 1px solid rgba(255,255,255,.08);
+}
+
+
+.creator-follow-button {
+    border: none;
+
+    background: #fff;
+
+    color: #111;
+
+    cursor: pointer;
+}
+
+
+.creator-follow-button.following {
+    background: #292e37;
+
+    color: #fff;
+}
+
+
+/* ==========================================
+   CTA
+========================================== */
+
+.discovery-cta {
+    max-width: 1200px;
+
+    margin: 80px auto 0;
+
+    padding: 45px;
+
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #171b23,
+            #101218
+        );
+
+    border: 1px solid rgba(255,255,255,.07);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 30px;
+}
+
+
+.discovery-cta span {
+    font-size: .7rem;
+
+    letter-spacing: 1.5px;
+
+    color: #7d8592;
+
+    font-weight: 800;
+}
+
+
+.discovery-cta h2 {
+    max-width: 650px;
+
+    margin: 8px 0;
+
+    font-size: 2rem;
+
+    font-weight: 850;
+}
+
+
+.discovery-cta p {
+    color: #8f97a4;
+
+    margin: 0;
+}
+
+
+.cta-button {
+    white-space: nowrap;
+
+    padding: 13px 20px;
+
+    border-radius: 10px;
+
+    background: #fff;
+
+    color: #111;
+
+    text-decoration: none;
+
+    font-weight: 700;
+
+    font-size: .85rem;
+}
+
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media (max-width: 1000px) {
+
+    .creator-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+@media (max-width: 650px) {
+
+    .discovery-hero {
+        padding: 60px 18px;
+    }
+
+    .discovery-search {
+        flex-direction: column;
+
+        padding: 8px;
+    }
+
+    .discovery-search i {
+        display: none;
+    }
+
+    .discovery-search input {
+        width: 100%;
+    }
+
+    .discovery-search button {
+        width: 100%;
+    }
+
+    .creator-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .section-heading {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .discovery-cta {
+        margin: 60px 18px 0;
+
+        padding: 30px;
+
+        flex-direction: column;
+
+        align-items: flex-start;
+    }
+
+    .cta-button {
+        width: 100%;
+
+        text-align: center;
+    }
+
+}
+</style>
+
+
+<div class="discovery-page">
+
+
+    <!-- ================================================= -->
+    <!-- HERO -->
+    <!-- ================================================= -->
+
+    <section class="discovery-hero">
+
+        <div class="discovery-hero-content">
+
+            <span class="discovery-eyebrow">
+                BEATP​ALACE DISCOVERY
+            </span>
+
+            <h1>
+                Discover the
+                <span>next sound.</span>
+            </h1>
+
+            <p>
+                Find talented artists, producers and music creators
+                to connect, collaborate and create with.
+            </p>
+
+
+            <!-- SEARCH -->
+
+            <form
+                method="GET"
+                action="{% url 'discover' %}"
+                class="discovery-search"
+            >
+
+                <i class="bi bi-search"></i>
+
+                <input
+                    type="text"
+                    name="q"
+                    placeholder="Search artists, producers..."
+                >
+
+                <button type="submit">
+                    Search
+                </button>
+
+            </form>
+
+
+            <!-- QUICK FILTERS -->
+
+            <div class="discovery-quick-filters">
+
+                <a
+                    href="{% url 'discover' %}"
+                    class="quick-filter active"
+                >
+                    All
+                </a>
+
+                <a
+                    href="{% url 'discover' %}?role=artist"
+                    class="quick-filter"
+                >
+                    <i class="bi bi-mic"></i>
+                    Artists
+                </a>
+
+                <a
+                    href="{% url 'discover' %}?role=producer"
+                    class="quick-filter"
+                >
+                    <i class="bi bi-headphones"></i>
+                    Producers
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ================================================= -->
+    <!-- RECOMMENDED -->
+    <!-- ================================================= -->
+
+    {% if recommended_users %}
+
+    <section class="discovery-section">
+
+        <div class="section-heading">
+
+            <div>
+
+                <span>
+                    FOR YOU
+                </span>
+
+                <h2>
+                    Recommended Creators
+                </h2>
+
+            </div>
+
+            <a href="{% url 'discover' %}">
+                View all
+                <i class="bi bi-arrow-right"></i>
+            </a>
+
+        </div>
+
+
+        <div class="creator-grid">
+
+            {% for user in recommended_users %}
+
+                {% include "discovery/partials/creator_card.html" %}
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+    {% endif %}
+
+
+
+    <!-- ================================================= -->
+    <!-- POPULAR ARTISTS -->
+    <!-- ================================================= -->
+
+    {% if popular_artists %}
+
+    <section class="discovery-section">
+
+        <div class="section-heading">
+
+            <div>
+
+                <span>
+                    ARTISTS
+                </span>
+
+                <h2>
+                    Popular Artists
+                </h2>
+
+            </div>
+
+            <a href="{% url 'discover' %}?role=artist">
+
+                View all
+
+                <i class="bi bi-arrow-right"></i>
+
+            </a>
+
+        </div>
+
+
+        <div class="creator-grid">
+
+            {% for user in popular_artists %}
+
+                {% include "discovery/partials/creator_card.html" %}
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+    {% endif %}
+
+
+
+    <!-- ================================================= -->
+    <!-- POPULAR PRODUCERS -->
+    <!-- ================================================= -->
+
+    {% if popular_producers %}
+
+    <section class="discovery-section">
+
+        <div class="section-heading">
+
+            <div>
+
+                <span>
+                    PRODUCERS
+                </span>
+
+                <h2>
+                    Popular Producers
+                </h2>
+
+            </div>
+
+            <a href="{% url 'discover' %}?role=producer">
+
+                View all
+
+                <i class="bi bi-arrow-right"></i>
+
+            </a>
+
+        </div>
+
+
+        <div class="creator-grid">
+
+            {% for user in popular_producers %}
+
+                {% include "discovery/partials/creator_card.html" %}
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+    {% endif %}
+
+
+
+    <!-- ================================================= -->
+    <!-- RECENTLY JOINED -->
+    <!-- ================================================= -->
+
+    {% if recent_users %}
+
+    <section class="discovery-section">
+
+        <div class="section-heading">
+
+            <div>
+
+                <span>
+                    NEW ON BEATP​ALACE
+                </span>
+
+                <h2>
+                    Recently Joined
+                </h2>
+
+            </div>
+
+            <a href="{% url 'discover' %}">
+                Explore creators
+                <i class="bi bi-arrow-right"></i>
+            </a>
+
+        </div>
+
+
+        <div class="creator-grid">
+
+            {% for user in recent_users %}
+
+                {% include "discovery/partials/creator_card.html" %}
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+    {% endif %}
+
+
+
+    <!-- ================================================= -->
+    <!-- CALL TO ACTION -->
+    <!-- ================================================= -->
+
+    <section class="discovery-cta">
+
+        <div>
+
+            <span>
+                BUILD YOUR NETWORK
+            </span>
+
+            <h2>
+                Your next collaboration
+                could be one connection away.
+            </h2>
+
+            <p>
+                Follow artists and producers, discover new sounds
+                and start building your music network.
+            </p>
+
+        </div>
+
+
+        <a
+            href="{% url 'discover' %}"
+            class="cta-button"
+        >
+
+            Discover Creators
+
+            <i class="bi bi-arrow-right"></i>
+
+        </a>
+
+    </section>
+
+
+</div>
+
+{% endblock %}

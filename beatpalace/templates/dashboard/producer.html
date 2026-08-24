@@ -6,6 +6,8 @@ Producer Dashboard
 
 {% block content %}
 
+
+
 <div class="dashboard-wrapper">
 
     <aside class="sidebar">
@@ -24,7 +26,7 @@ Producer Dashboard
             </a>
 
             <a
-                href="{% url 'discover' %}"
+                href="{% url 'discover:discover' %}"
                 class="nav-link"
             >
                 <i class="bi bi-compass"></i>
@@ -72,14 +74,14 @@ Producer Dashboard
         <div class="sidebar-bottom">
 
             <a
-            href="{% url 'producer_profile' %}"  target="_blank"
+            href="{% url 'producers:producer_profile' %}"  target="_blank"
             class="btn btn-outline-light"
                     >
                 <i class="bi bi-pencil"></i>
                 View Profile
             </a>
             <a
-            href="{% url 'producer_edit_profile' %}"  target="_blank"
+            href="{% url 'producers:producer_edit_profile' %}"  target="_blank"
             class="btn btn-outline-light"
                     >
                 <i class="bi bi-pencil"></i>

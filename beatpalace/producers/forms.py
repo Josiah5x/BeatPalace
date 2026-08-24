@@ -17,6 +17,7 @@ class ProducerProfileForm(forms.ModelForm):
             "full_name",
             "professional_title",
             "profile_image",
+            "cover_image",
             "bio",
             "start_year",
             "end_year",
@@ -43,6 +44,7 @@ class ProducerProfileForm(forms.ModelForm):
                 }
             ),
             "profile_image": forms.ClearableFileInput(attrs={"class": "form-control"}),
+            "cover_image": forms.ClearableFileInput(attrs={"class": "form-control"}),
             "bio": forms.Textarea(
                 attrs={
                     "class": "form-controls form-control",
