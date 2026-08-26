@@ -355,7 +355,7 @@
             <div class="producer-stats">
 
                 <div class="producer-stat">
-
+kkkkkk
                     <strong>
                         {{ profile.user.engagement_followers.count }}
                     </strong>
@@ -363,6 +363,26 @@
                     <span>
                         Followers
                     </span>
+
+
+                    {% if request.user.is_authenticated %}
+
+                    {% if request.user.role == "artist" %}
+
+                    <a
+                        href="{% url 'collaborations:send_collaboration' producer.user.username %}"
+                        class="btn btn-primary"
+                    >
+
+                        <i class="bi bi-people"></i>
+
+                        Collaborate
+
+                    </a>
+
+                {% endif %}
+
+            {% endif %}
 
                 </div>
 
@@ -794,53 +814,66 @@
             </div>
 
 
-            <form
-                method="POST"
-                action="{% url 'collaborations:send_collaboration' profile.user.id %}"
-            >
 
-                {% csrf_token %}
+                   
 
-                <div class="modal-body">
 
-                    <p class="text-muted">
+                    <form method="POST">
 
-                        Send a collaboration request to
-                        {{ profile.full_name }}.
+                        {% csrf_token %}
 
-                    </p>
 
-                    <textarea
-                        name="message"
-                        class="form-control bg-dark text-white"
-                        rows="5"
-                        placeholder="Tell them about your project..."
-                    ></textarea>
+                        <div class="mb-4">
+
+                            <label class="form-label">
+                                Message
+                            </label>
+
+                            {{ form.message }}
+
+                            {% if form.message.errors %}
+
+                                <div class="text-danger small mt-2">
+
+                                    {{ form.message.errors }}
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="d-flex gap-2">
+                            <button
+                                type="submit"
+                                class="btn btn-primary"
+                            >
+                                <i class="bi bi-send"></i>
+                                Send Request
+                            </button>
+
+
+                            <a
+                                href="{% url 'producers:public_producer_profile' producer.username %}"
+                                class="btn btn-outline-secondary"
+                            >
+
+                                Cancel
+
+                            </a>
+
+                        </div>
+
+                    </form>
 
                 </div>
 
+            </div>
 
-                <div class="modal-footer">
+        </div>
 
-                    <button
-                        type="button"
-                        class="btn btn-secondary"
-                        data-bs-dismiss="modal"
-                    >
-                        Cancel
-                    </button>
-
-                    <button
-                        type="submit"
-                        class="btn btn-primary"
-                    >
-                        Send Request
-                    </button>
-
-                </div>
-
-            </form>
-
+    </div>
         </div>
 
     </div>

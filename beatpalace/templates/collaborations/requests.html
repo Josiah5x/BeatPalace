@@ -1,0 +1,309 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Collaboration Requests
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- HEADER -->
+
+    <div class="mb-4">
+
+        <span class="text-primary small fw-bold">
+            <i class="bi bi-people"></i>
+            COLLABORATIONS
+        </span>
+
+        <h2 class="mt-2">
+            Collaboration Requests
+        </h2>
+
+        <p class="text-secondary">
+            Manage your artist and producer collaboration requests.
+        </p>
+
+    </div>
+
+
+    <!-- REQUESTS -->
+
+    <div class="row g-4">
+
+        {% for collaboration in requests %}
+
+        <div class="col-12 col-lg-8">
+
+            <div class="card bg-dark text-white border-secondary">
+
+                <div class="card-body p-4">
+
+                    <div class="d-flex align-items-center gap-3">
+
+
+                        <!-- ARTIST -->
+
+                        <div>
+
+                            {% if collaboration.artist.avatar %}
+
+                                <img
+                                    src="{{ collaboration.artist.avatar.url }}"
+                                    width="60"
+                                    height="60"
+                                    class="rounded-circle object-fit-cover"
+                                >
+
+                            {% elif collaboration.artist.artist_profile.avatar %}
+
+                                <img
+                                    src="{{ collaboration.artist.artist_profile.avatar.url }}"
+                                    width="60"
+                                    height="60"
+                                    class="rounded-circle object-fit-cover"
+                                >
+
+                            {% else %}
+
+                                <div
+                                    class="rounded-circle bg-secondary d-flex align-items-center justify-content-center"
+                                    style="width:60px;height:60px;"
+                                >
+
+                                    <i class="bi bi-person"></i>
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- INFORMATION -->
+
+                        <div class="flex-grow-1">
+
+                            {% if request.user.role == "producer" %}
+
+                                <h5 class="mb-1">
+
+                                    {{ collaboration.artist.artist_profile.artist_name|default:collaboration.artist.username }}
+
+                                </h5>
+
+                                <div class="text-secondary small">
+
+                                    @{{ collaboration.artist.username }}
+
+                                </div>
+
+                            {% else %}
+
+                                <h5 class="mb-1">
+
+                                    {{ collaboration.producer.producer_profile.full_name|default:collaboration.producer.username }}
+
+                                </h5>
+
+                                <div class="text-secondary small">
+
+                                    @{{ collaboration.producer.username }}
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- STATUS -->
+
+                        <div>
+
+                            {% if collaboration.status == "pending" %}
+
+                                <span class="badge bg-warning text-dark">
+                                    Pending
+                                </span>
+
+                            {% elif collaboration.status == "accepted" %}
+
+                                <span class="badge bg-success">
+                                    Accepted
+                                </span>
+
+                            {% elif collaboration.status == "rejected" %}
+
+                                <span class="badge bg-danger">
+                                    Rejected
+                                </span>
+
+                            {% elif collaboration.status == "cancelled" %}
+
+                                <span class="badge bg-secondary">
+                                    Cancelled
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- MESSAGE -->
+
+                    {% if collaboration.message %}
+
+                    <div class="mt-4 p-3 rounded bg-black">
+
+                        <div class="small text-secondary mb-2">
+                            Message
+                        </div>
+
+                        <p class="mb-0">
+                            {{ collaboration.message }}
+                        </p>
+
+                    </div>
+
+                    {% endif %}
+
+
+                    <!-- DATE -->
+
+                    <div class="text-secondary small mt-3">
+
+                        <i class="bi bi-clock"></i>
+
+                        {{ collaboration.created_at|date:"M d, Y H:i" }}
+
+                    </div>
+
+
+                    <!-- ACTIONS -->
+
+                    {% if collaboration.status == "pending" %}
+
+
+                        {% if request.user.role == "producer" %}
+
+                            <div class="d-flex gap-2 mt-4">
+
+
+                                <form
+                                    method="POST"
+                                    action="{% url 'collaborations:accept_collaboration' collaboration.id %}"
+                                >
+
+                                    {% csrf_token %}
+
+                                    <button
+                                        type="submit"
+                                        class="btn btn-success"
+                                    >
+
+                                        <i class="bi bi-check-lg"></i>
+
+                                        Accept
+
+                                    </button>
+
+                                </form>
+
+
+                                <form
+                                    method="POST"
+                                    action="{% url 'collaborations:reject_collaboration' collaboration.id %}"
+                                >
+
+                                    {% csrf_token %}
+
+                                    <button
+                                        type="submit"
+                                        class="btn btn-outline-danger"
+                                    >
+
+                                        <i class="bi bi-x-lg"></i>
+
+                                        Reject
+
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+
+                        {% elif request.user.role == "artist" %}
+
+                            <div class="mt-4">
+
+                                <form
+                                    method="POST"
+                                    action="{% url 'collaborations:cancel_collaboration' collaboration.id %}"
+                                >
+
+                                    {% csrf_token %}
+
+                                    <button
+                                        type="submit"
+                                        class="btn btn-outline-secondary"
+                                    >
+
+                                        <i class="bi bi-x-circle"></i>
+
+                                        Cancel Request
+
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        {% endif %}
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        {% empty %}
+
+        <!-- EMPTY -->
+
+        <div class="col-12">
+
+            <div class="text-center py-5">
+
+                <i
+                    class="bi bi-people"
+                    style="font-size:50px;"
+                ></i>
+
+                <h4 class="mt-3">
+                    No collaboration requests
+                </h4>
+
+                <p class="text-secondary">
+                    Your collaboration requests will appear here.
+                </p>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}

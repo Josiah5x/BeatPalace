@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import send_collaboration
+from . import views
 
 
 app_name = "collaborations"
@@ -9,9 +9,33 @@ app_name = "collaborations"
 urlpatterns = [
 
     path(
-        "send/<str:username>/",
-        send_collaboration,
+        "u/<str:username>/",
+        views.send_collaboration,
         name="send_collaboration",
+    ),
+
+    path(
+        "requests/",
+        views.collaboration_requests,
+        name="requests",
+    ),
+
+    path(
+        "<int:pk>/accept/",
+        views.accept_collaboration,
+        name="accept_collaboration",
+    ),
+
+    path(
+        "<int:pk>/reject/",
+        views.reject_collaboration,
+        name="reject_collaboration",
+    ),
+
+    path(
+        "<int:pk>/cancel/",
+        views.cancel_collaboration,
+        name="cancel_collaboration",
     ),
 
 ]

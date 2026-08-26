@@ -1,100 +1,262 @@
-from django.contrib.auth import get_user_model
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
-from django.contrib import messages
 
+from accounts.models import User
+from .forms import CollaborationRequestForm
 from .models import Collaboration
 
 
-User = get_user_model()
 
 
 @login_required
 def send_collaboration(request, username):
 
-    # Person receiving the collaboration request
-    receiver = get_object_or_404(
+    recipient = get_object_or_404(
         User,
-        username=username,
+        username=username
     )
 
-    # Prevent sending to yourself
-    if receiver == request.user:
+    # -----------------------------------------
+    # CANNOT COLLABORATE WITH YOURSELF
+    # -----------------------------------------
+
+    if recipient == request.user:
 
         messages.error(
             request,
             "You cannot send a collaboration request to yourself."
         )
 
-        return redirect(
-            request.META.get("HTTP_REFERER", "/")
+        return redirect("dashboard")
+
+
+    # -----------------------------------------
+    # ONLY ARTIST CAN SEND FOR NOW
+    # -----------------------------------------
+
+    if request.user.role != "artist":
+
+        messages.error(
+            request,
+            "Only artists can send collaboration requests."
         )
+
+        return redirect("dashboard")
+
+
+    # -----------------------------------------
+    # RECIPIENT MUST BE PRODUCER
+    # -----------------------------------------
+
+    if recipient.role != "producer":
+
+        messages.error(
+            request,
+            "Collaboration requests can only be sent to producers."
+        )
+
+        return redirect(
+            "dashboard:discover"
+        )
+
+
+    # -----------------------------------------
+    # CHECK EXISTING PENDING REQUEST
+    # -----------------------------------------
+
+    existing = Collaboration.objects.filter(
+        artist=request.user,
+        producer=recipient,
+        status="pending"
+    ).first()
+
+
+    if existing:
+
+        messages.warning(
+            request,
+            "You already have a pending collaboration request."
+        )
+
+        return redirect(
+            "producers:public_producer_profile",
+            username=recipient.username
+        )
+
+
+    # -----------------------------------------
+    # FORM
+    # -----------------------------------------
 
     if request.method == "POST":
 
-        message = request.POST.get(
-            "message",
-            ""
-        ).strip()
+        form = CollaborationRequestForm(
+            request.POST
+        )
 
-        # Determine artist/producer
-        sender = request.user
+        if form.is_valid():
 
-        if sender.role == "artist" and receiver.role == "producer":
-
-            artist = sender
-            producer = receiver
-
-        elif sender.role == "producer" and receiver.role == "artist":
-
-            artist = receiver
-            producer = sender
-
-        else:
-
-            messages.error(
-                request,
-                "Collaboration is only available between artists and producers."
+            collaboration = form.save(
+                commit=False
             )
+
+            collaboration.artist = request.user
+
+            collaboration.producer = recipient
+
+            collaboration.status = "pending"
+
+            collaboration.save()
+
+
+            messages.success(
+                request,
+                "Collaboration request sent successfully."
+            )
+
 
             return redirect(
-                request.META.get("HTTP_REFERER", "/")
+                "producers:public_producer_profile",
+                username=recipient.username
             )
 
-        # Prevent duplicate pending requests
-        existing = Collaboration.objects.filter(
-            artist=artist,
-            producer=producer,
-            status="pending",
-        ).first()
+    else:
 
-        if existing:
+        form = CollaborationRequestForm()
 
-            messages.warning(
-                request,
-                "You already have a pending collaboration request."
-            )
 
-            return redirect(
-                request.META.get("HTTP_REFERER", "/")
-            )
+    return render(
+        request,
+        "collaborations/send_request.html",
+        {
+            "form": form,
+            "producer": recipient,
+        }
+    )
 
-        Collaboration.objects.create(
-            artist=artist,
-            producer=producer,
-            message=message,
-            status="pending",
+
+@login_required
+def collaboration_requests(request):
+
+    # Producer receives requests
+    if request.user.role == "producer":
+
+        requests = Collaboration.objects.filter(
+            producer=request.user
+        ).select_related(
+            "artist",
+            "producer",
+        )
+
+    # Artist sees requests they sent
+    elif request.user.role == "artist":
+
+        requests = Collaboration.objects.filter(
+            artist=request.user
+        ).select_related(
+            "artist",
+            "producer",
+        )
+
+    else:
+
+        requests = Collaboration.objects.none()
+
+    return render(
+        request,
+        "collaborations/requests.html",
+        {
+            "requests": requests,
+        }
+    )
+
+
+@login_required
+def accept_collaboration(request, pk):
+
+    collaboration = get_object_or_404(
+        Collaboration,
+        pk=pk,
+        producer=request.user,
+        status="pending",
+    )
+
+    if request.method == "POST":
+
+        collaboration.status = "accepted"
+        collaboration.save(
+            update_fields=[
+                "status",
+                "updated_at",
+            ]
         )
 
         messages.success(
             request,
-            f"Collaboration request sent to {receiver.username}."
-        )
-
-        return redirect(
-            request.META.get("HTTP_REFERER", "/")
+            "Collaboration request accepted."
         )
 
     return redirect(
-        request.META.get("HTTP_REFERER", "/")
+        "collaborations:requests"
+    )
+
+
+@login_required
+def reject_collaboration(request, pk):
+
+    collaboration = get_object_or_404(
+        Collaboration,
+        pk=pk,
+        producer=request.user,
+        status="pending",
+    )
+
+    if request.method == "POST":
+
+        collaboration.status = "rejected"
+        collaboration.save(
+            update_fields=[
+                "status",
+                "updated_at",
+            ]
+        )
+
+        messages.info(
+            request,
+            "Collaboration request rejected."
+        )
+
+    return redirect(
+        "collaborations:requests"
+    )
+
+
+@login_required
+def cancel_collaboration(request, pk):
+
+    collaboration = get_object_or_404(
+        Collaboration,
+        pk=pk,
+        artist=request.user,
+        status="pending",
+    )
+
+    if request.method == "POST":
+
+        collaboration.status = "cancelled"
+        collaboration.save(
+            update_fields=[
+                "status",
+                "updated_at",
+            ]
+        )
+
+        messages.info(
+            request,
+            "Collaboration request cancelled."
+        )
+
+    return redirect(
+        "collaborations:requests"
     )

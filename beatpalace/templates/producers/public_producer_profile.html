@@ -569,12 +569,12 @@
 
       <form
         method="POST"
-        action="{% url 'collaborations:send_collaboration' profile.user.id %}"
+        action="{% url 'collaborations:send_collaboration' profile.user %}"
       >
         {% csrf_token %}
 
         <div class="modal-body">
-          <p class="text-muted">
+          <p class="text-light">
             Send a collaboration request to {{ profile.full_name }}.
           </p>
 
@@ -602,4 +602,6 @@
   </div>
 </div>
 
-{% endif %} {% endblock %}
+{% endif %} 
+
+{% endblock %}
