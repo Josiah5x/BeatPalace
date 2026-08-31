@@ -9,6 +9,12 @@ app_name = "collaborations"
 urlpatterns = [
 
     path(
+    "",
+    views.collaboration_dashboard,
+    name="collaboration_dashboard",
+    ),
+
+    path(
         "u/<str:username>/",
         views.send_collaboration,
         name="send_collaboration",

@@ -3,6 +3,7 @@ from django.shortcuts import redirect, render
 from django.db.models import Q
 
 from accounts.models import User
+from collaborations.models import Collaboration
 from engagement.models import Follow
 
 
@@ -17,9 +18,7 @@ def dashboard(request):
 
     if request.user.role == "artist":
 
-        return redirect(
-            "artist_dashboard"
-        )
+        return redirect("artist_dashboard")
 
     return render(
         request,
@@ -29,15 +28,24 @@ def dashboard(request):
 
 @login_required
 def producer_dashboard(request):
+    accepted = Collaboration.objects.filter(
+    producer=request.user,
+    status="accepted"
+    ).count()
 
-    return render(
-        request,
-        "dashboard/producer.html"
-    )
+    following_ids = Follow.objects.filter(follower=request.user).count()
+    print(following_ids)
+    context = {
+    "count":accepted,
+    "following":following_ids
+    }
+
+    return render(request,"dashboard/producer.html", context)
 
 
 @login_required
 def artist_dashboard(request):
+  
 
     return render(
         request,

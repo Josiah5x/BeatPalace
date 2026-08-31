@@ -10,6 +10,56 @@ from .models import Collaboration
 
 
 @login_required
+def collaboration_dashboard(request):
+
+    received_requests = Collaboration.objects.filter(
+        receiver=request.user
+    ).select_related(
+        "sender",
+        "receiver",
+    )
+
+    sent_requests = Collaboration.objects.filter(
+        sender=request.user
+    ).select_related(
+        "sender",
+        "receiver",
+    )
+
+    active_collaborations = Collaboration.objects.filter(
+        Q(sender=request.user) | Q(receiver=request.user),
+        status__in=[
+            "accepted",
+            "in_progress",
+        ]
+    ).select_related(
+        "sender",
+        "receiver",
+    )
+
+    completed_collaborations = Collaboration.objects.filter(
+        Q(sender=request.user) | Q(receiver=request.user),
+        status="completed",
+    ).select_related(
+        "sender",
+        "receiver",
+    )
+
+    context = {
+        "received_requests": received_requests,
+        "sent_requests": sent_requests,
+        "active_collaborations": active_collaborations,
+        "completed_collaborations": completed_collaborations,
+    }
+
+    return render(
+        request,
+        "collaborations/dashboard.html",
+        context
+    )
+
+
+@login_required
 def send_collaboration(request, username):
 
     recipient = get_object_or_404(
@@ -162,6 +212,7 @@ def collaboration_requests(request):
     else:
 
         requests = Collaboration.objects.none()
+    
 
     return render(
         request,
