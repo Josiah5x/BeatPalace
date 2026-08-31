@@ -131,9 +131,13 @@
 
                             {% elif collaboration.status == "accepted" %}
 
-                                <span class="badge bg-success">
-                                    Accepted
-                                </span>
+                                <a
+                                    href="{% url 'collaborations:workspace' collaboration.id %}"
+                                    class="btn btn-success btn-sm"
+                                >
+                                    <i class="bi bi-folder2-open me-1"></i>
+                                    Open Workspace
+                                </a>
 
                             {% elif collaboration.status == "rejected" %}
 

@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from accounts.models import User
 from .forms import CollaborationRequestForm
 from .models import Collaboration
+from messaging.models import Conversation
 
 
 
@@ -235,14 +236,24 @@ def accept_collaboration(request, pk):
 
     if request.method == "POST":
 
-        collaboration.status = "accepted"
-        collaboration.save(
-            update_fields=[
-                "status",
-                "updated_at",
-            ]
-        )
+        # collaboration.status = "accepted"
+        # collaboration.save(
+        #     update_fields=[
+        #         "status",
+        #         "updated_at",
+        #     ]
+        # )
 
+        if action == "accept":
+
+            collaboration.status = "accepted"
+            collaboration.save()
+
+            Conversation.objects.get_or_create(
+                collaboration=collaboration
+            )
+
+  
         messages.success(
             request,
             "Collaboration request accepted."
@@ -310,4 +321,40 @@ def cancel_collaboration(request, pk):
 
     return redirect(
         "collaborations:requests"
+    )
+
+
+@login_required
+def collaboration_workspace(request, collaboration_id):
+
+    collaboration = get_object_or_404(
+        Collaboration.objects.select_related(
+            "artist",
+            "producer",
+            "artist__artist_profile",
+            "producer__producer_profile",
+        ),
+        id=collaboration_id,
+    )
+
+    # Only the two participants can access
+    # the workspace.
+    if request.user not in [
+        collaboration.artist,
+        collaboration.producer,
+    ]:
+
+        messages.error(
+            request,
+            "You do not have access to this collaboration."
+        )
+
+        return redirect("dashboard")
+
+    return render(
+        request,
+        "collaborations/workspace.html",
+        {
+            "collaboration": collaboration,
+        }
     )

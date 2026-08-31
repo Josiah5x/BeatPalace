@@ -1,0 +1,388 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .workspace-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.workspace-card {
+    background: #151515;
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 16px;
+    color: white;
+}
+
+.workspace-icon {
+    font-size: 35px;
+    opacity: .7;
+}
+
+.workspace-user {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.workspace-avatar,
+.workspace-avatar-placeholder {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+
+.workspace-avatar {
+    object-fit: cover;
+}
+
+.workspace-avatar-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #292929;
+    color: #aaa;
+    font-size: 20px;
+}
+
+.workspace-empty {
+    text-align: center;
+    padding: 55px 20px;
+}
+
+.workspace-empty i {
+    display: block;
+    font-size: 45px;
+    color: #777;
+    margin-bottom: 15px;
+}
+
+.workspace-detail {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255,255,255,.06);
+}
+
+.workspace-detail:last-child {
+    border-bottom: 0;
+}
+
+.workspace-detail span {
+    color: #777;
+}
+
+.workspace-detail strong {
+    color: #ddd;
+}
+
+@media (max-width: 768px) {
+
+    .workspace-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+}
+</style>
+
+<div class="container pt-5">
+
+    <!-- HEADER -->
+
+    <div class="workspace-header mb-4 pt-5">
+
+        <div>
+
+            <span class="text-primary">
+                COLLABORATION WORKSPACE
+            </span>
+
+            <h2 class="text-white mt-2">
+
+                {{ collaboration.project_title|default:"Untitled Project" }}
+
+            </h2>
+
+            <p class="text-secondary mb-0">
+
+                {% if request.user == collaboration.artist %}
+
+                    Working with
+                    {{ collaboration.producer.producer_profile.full_name|default:collaboration.producer.username }}
+
+                {% else %}
+
+                    Working with
+                    {{ collaboration.artist.artist_profile.artist_name|default:collaboration.artist.username }}
+
+                {% endif %}
+
+            </p>
+
+        </div>
+
+
+        <div>
+
+            <span class="badge bg-success fs-6">
+                {{ collaboration.get_status_display }}
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div class="row g-4">
+
+        <!-- ================================= -->
+        <!-- LEFT -->
+        <!-- ================================= -->
+
+        <div class="col-lg-8">
+
+            <!-- PROJECT -->
+
+            <div class="card workspace-card mb-4">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+
+                            <small class="text-secondary">
+                                PROJECT
+                            </small>
+
+                            <h4 class="text-white mt-1">
+
+                                {{ collaboration.project_title|default:"Untitled Project" }}
+
+                            </h4>
+
+                        </div>
+
+                        <i class="bi bi-music-note-beamed workspace-icon"></i>
+
+                    </div>
+
+                    <hr class="border-secondary">
+
+                    <h6 class="text-white">
+                        Original Request
+                    </h6>
+
+                    <p class="text-secondary">
+
+                        {{ collaboration.message|default:"No project description provided." }}
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- CHAT PLACEHOLDER -->
+
+            <div class="card workspace-card">
+
+                <div class="card-header bg-transparent border-secondary">
+
+                    <h5 class="text-white mb-0">
+
+                        <i class="bi bi-chat-dots me-2"></i>
+
+                        Collaboration Chat
+
+                    </h5>
+
+                </div>
+
+                <div class="card-body">
+
+                    <div class="workspace-empty">
+
+                        <i class="bi bi-chat-square-text"></i>
+
+                        <h5 class="text-white">
+                            Start communicating
+                        </h5>
+
+                        <p class="text-secondary">
+                            Messaging for this collaboration will appear here.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================================= -->
+        <!-- RIGHT -->
+        <!-- ================================= -->
+
+        <div class="col-lg-4">
+
+            <!-- MEMBERS -->
+
+            <div class="card workspace-card mb-4">
+
+                <div class="card-header bg-transparent border-secondary">
+
+                    <h5 class="text-white mb-0">
+                        Collaborators
+                    </h5>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <!-- ARTIST -->
+
+                    <div class="workspace-user">
+
+                        {% if collaboration.artist.artist_profile.avatar %}
+
+                            <img
+                                src="{{ collaboration.artist.artist_profile.avatar.url }}"
+                                class="workspace-avatar"
+                            >
+
+                        {% elif collaboration.artist.avatar %}
+
+                            <img
+                                src="{{ collaboration.artist.avatar.url }}"
+                                class="workspace-avatar"
+                            >
+
+                        {% else %}
+
+                            <div class="workspace-avatar-placeholder">
+                                <i class="bi bi-mic"></i>
+                            </div>
+
+                        {% endif %}
+
+
+                        <div>
+
+                            <strong class="text-white">
+
+                                {{ collaboration.artist.artist_profile.artist_name|default:collaboration.artist.username }}
+
+                            </strong>
+
+                            <div class="text-secondary small">
+                                Artist
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PRODUCER -->
+
+                    <div class="workspace-user mt-4">
+
+                        {% if collaboration.producer.producer_profile.profile_image %}
+
+                            <img
+                                src="{{ collaboration.producer.producer_profile.profile_image.url }}"
+                                class="workspace-avatar"
+                            >
+
+                        {% elif collaboration.producer.avatar %}
+
+                            <img
+                                src="{{ collaboration.producer.avatar.url }}"
+                                class="workspace-avatar"
+                            >
+
+                        {% else %}
+
+                            <div class="workspace-avatar-placeholder">
+                                <i class="bi bi-headphones"></i>
+                            </div>
+
+                        {% endif %}
+
+
+                        <div>
+
+                            <strong class="text-white">
+
+                                {{ collaboration.producer.producer_profile.full_name|default:collaboration.producer.username }}
+
+                            </strong>
+
+                            <div class="text-secondary small">
+                                Producer
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- DETAILS -->
+
+            <div class="card workspace-card">
+
+                <div class="card-body">
+
+                    <h6 class="text-white mb-3">
+                        Collaboration Details
+                    </h6>
+
+                    <div class="workspace-detail">
+
+                        <span>
+                            Started
+                        </span>
+
+                        <strong>
+                            {{ collaboration.created_at|date:"M d, Y" }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="workspace-detail">
+
+                        <span>
+                            Status
+                        </span>
+
+                        <strong>
+                            {{ collaboration.get_status_display }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

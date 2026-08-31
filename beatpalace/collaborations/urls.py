@@ -44,4 +44,10 @@ urlpatterns = [
         name="cancel_collaboration",
     ),
 
+    path(
+    "workspace/<int:collaboration_id>/",
+    views.collaboration_workspace,
+    name="workspace",
+),
+
 ]
