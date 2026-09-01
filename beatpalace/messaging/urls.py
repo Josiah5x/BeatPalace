@@ -1,11 +1,17 @@
-# /messages/
-# /messages/<username>/
+from django.urls import path
 
-# from django.urls import path
-# from . import views
+from . import views
 
-# urlpatterns = [
-#     path("/messages/", views.Index, name="message"),
-#     path("/messages/<username>", views.Index, name="message_username"),
 
-# ]
+app_name = "messaging"
+
+
+urlpatterns = [
+
+    path(
+        "chat/<int:collaboration_id>/",
+        views.chat,
+        name="chat",
+    ),
+
+]
