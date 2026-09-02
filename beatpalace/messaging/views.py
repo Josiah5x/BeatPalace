@@ -84,3 +84,4 @@ def chat(request, collaboration_id):
             "collaboration": collaboration,
         },
     )
+

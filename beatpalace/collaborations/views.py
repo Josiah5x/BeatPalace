@@ -6,6 +6,7 @@ from accounts.models import User
 from .forms import CollaborationRequestForm
 from .models import Collaboration
 from messaging.models import Conversation
+from django.db.models import Q
 
 
 
@@ -225,6 +226,87 @@ def collaboration_requests(request):
 
 
 @login_required
+def respond_collaboration(request, collaboration_id, action):
+
+    collaboration = get_object_or_404(
+        Collaboration,
+        id=collaboration_id
+    )
+
+    # Only the producer who received
+    # the request can respond
+    if collaboration.producer != request.user:
+
+        messages.error(
+            request,
+            "You are not allowed to manage this request."
+        )
+
+        return redirect(
+            "collaborations:requests"
+        )
+
+    if request.method != "POST":
+
+        return redirect(
+            "collaborations:requests"
+        )
+
+    if collaboration.status != "pending":
+
+        messages.warning(
+            request,
+            "This request has already been processed."
+        )
+
+        return redirect(
+            "collaborations:requests"
+        )
+
+    if action == "accept":
+
+        collaboration.status = "accepted"
+
+        collaboration.save(
+            update_fields=[
+                "status",
+                "updated_at",
+            ]
+        )
+
+        messages.success(
+            request,
+            "Collaboration request accepted."
+        )
+
+    elif action == "reject":
+
+        collaboration.status = "rejected"
+
+        collaboration.save(
+            update_fields=[
+                "status",
+                "updated_at",
+            ]
+        )
+
+        messages.success(
+            request,
+            "Collaboration request rejected."
+        )
+
+    else:
+
+        messages.error(
+            request,
+            "Invalid action."
+        )
+
+    return redirect(
+        "collaborations:requests"
+    )
+
+@login_required
 def accept_collaboration(request, pk):
 
     collaboration = get_object_or_404(
@@ -244,14 +326,13 @@ def accept_collaboration(request, pk):
         #     ]
         # )
 
-        if action == "accept":
 
-            collaboration.status = "accepted"
-            collaboration.save()
+        collaboration.status = "accepted"
+        collaboration.save()
 
-            Conversation.objects.get_or_create(
-                collaboration=collaboration
-            )
+        Conversation.objects.get_or_create(
+            collaboration=collaboration
+        )
 
   
         messages.success(

@@ -9,13 +9,7 @@ app_name = "collaborations"
 urlpatterns = [
 
     path(
-    "",
-    views.collaboration_dashboard,
-    name="collaboration_dashboard",
-    ),
-
-    path(
-        "u/<str:username>/",
+        "send/<str:user_id>/",
         views.send_collaboration,
         name="send_collaboration",
     ),
@@ -27,27 +21,21 @@ urlpatterns = [
     ),
 
     path(
-        "<int:pk>/accept/",
-        views.accept_collaboration,
-        name="accept_collaboration",
+        "requests/<int:collaboration_id>/<str:action>/",
+        views.respond_collaboration,
+        name="respond_collaboration",
     ),
 
     path(
-        "<int:pk>/reject/",
-        views.reject_collaboration,
-        name="reject_collaboration",
-    ),
-
-    path(
-        "<int:pk>/cancel/",
-        views.cancel_collaboration,
-        name="cancel_collaboration",
+        "workspace/<int:collaboration_id>/",
+        views.collaboration_workspace,
+        name="workspace",
     ),
 
     path(
     "workspace/<int:collaboration_id>/",
     views.collaboration_workspace,
     name="workspace",
-),
+    ),
 
 ]

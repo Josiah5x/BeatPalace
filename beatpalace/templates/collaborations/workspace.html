@@ -208,17 +208,25 @@
 
                     <div class="workspace-empty">
 
-                        <i class="bi bi-chat-square-text"></i>
+                    <i class="bi bi-chat-square-text"></i>
 
-                        <h5 class="text-white">
-                            Start communicating
-                        </h5>
+                    <h5 class="text-white">
+                        Collaboration Chat
+                    </h5>
 
-                        <p class="text-secondary">
-                            Messaging for this collaboration will appear here.
-                        </p>
+                    <p class="text-secondary">
+                        Communicate directly with your collaborator.
+                    </p>
 
-                    </div>
+                    <a
+                        href="{% url 'messaging:chat' collaboration.id %}"
+                        class="btn btn-primary"
+                    >
+                        <i class="bi bi-chat-dots me-1"></i>
+                        Open Chat
+                    </a>
+
+                </div>
 
                 </div>
 
