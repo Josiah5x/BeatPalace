@@ -405,6 +405,9 @@ def cancel_collaboration(request, pk):
     )
 
 
+#################################################
+
+
 @login_required
 def collaboration_workspace(request, collaboration_id):
 
@@ -412,24 +415,19 @@ def collaboration_workspace(request, collaboration_id):
         Collaboration.objects.select_related(
             "artist",
             "producer",
-            "artist__artist_profile",
-            "producer__producer_profile",
         ),
         id=collaboration_id,
     )
 
-    # Only the two participants can access
-    # the workspace.
+    # Only the artist or producer involved can access it
     if request.user not in [
         collaboration.artist,
         collaboration.producer,
     ]:
-
         messages.error(
             request,
             "You do not have access to this collaboration."
         )
-
         return redirect("dashboard")
 
     return render(
@@ -437,5 +435,73 @@ def collaboration_workspace(request, collaboration_id):
         "collaborations/workspace.html",
         {
             "collaboration": collaboration,
-        }
+        },
+    )
+
+@login_required
+def update_collaboration_status(
+    request,
+    collaboration_id,
+    status,
+):
+
+    collaboration = get_object_or_404(
+        Collaboration.objects.select_related(
+            "artist",
+            "producer",
+        ),
+        id=collaboration_id,
+    )
+
+    # Only the producer can respond
+    if request.user != collaboration.producer:
+        messages.error(
+            request,
+            "Only the producer can respond to this request."
+        )
+        return redirect("dashboard")
+
+    if request.method != "POST":
+        return redirect(
+            "collaborations:workspace",
+            collaboration_id=collaboration.id,
+        )
+
+    if collaboration.status != "pending":
+        messages.warning(
+            request,
+            "This collaboration request has already been processed."
+        )
+        return redirect(
+            "collaborations:workspace",
+            collaboration_id=collaboration.id,
+        )
+
+    if status not in ["accepted", "rejected"]:
+        messages.error(
+            request,
+            "Invalid collaboration status."
+        )
+        return redirect(
+            "collaborations:workspace",
+            collaboration_id=collaboration.id,
+        )
+
+    collaboration.status = status
+    collaboration.save(update_fields=["status"])
+
+    if status == "accepted":
+        messages.success(
+            request,
+            "Collaboration request accepted."
+        )
+    else:
+        messages.info(
+            request,
+            "Collaboration request rejected."
+        )
+
+    return redirect(
+        "collaborations:workspace",
+        collaboration_id=collaboration.id,
     )

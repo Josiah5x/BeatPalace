@@ -3,303 +3,431 @@
 {% block content %}
 
 <style>
-.chat-container {
-    background: #151515;
-    border: 1px solid rgba(255,255,255,.08);
-    border-radius: 18px;
-    overflow: hidden;
-}
-
-.chat-header {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 20px;
-}
-
-.chat-messages {
-    height: 550px;
-    overflow-y: auto;
-    padding: 30px;
-    background: #101010;
-}
-
-.message-row {
-    display: flex;
-    margin-bottom: 20px;
-}
-
-.message-left {
-    justify-content: flex-start;
-}
-
-.message-right {
-    justify-content: flex-end;
-}
-
-.message-content {
-    max-width: 70%;
-}
-
-.message-bubble {
-    padding: 12px 16px;
-    background: #242424;
-    color: #eee;
-    border-radius: 16px;
-    line-height: 1.5;
-    word-break: break-word;
-}
-
-.own-message {
-    background: #0d6efd;
-    color: white;
-    border-bottom-right-radius: 4px;
-}
-
-.message-left .message-bubble {
-    border-bottom-left-radius: 4px;
-}
-
-.message-sender {
-    color: #aaa;
-    font-size: 13px;
-    margin-bottom: 5px;
-    margin-left: 5px;
-}
-
-.message-time {
-    display: block;
-    color: #666;
-    font-size: 11px;
-    margin-top: 5px;
-}
-
-.message-right .message-time {
-    text-align: right;
-}
-
-.chat-input {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 15px;
-    background: #181818;
-    border-top: 1px solid rgba(255,255,255,.08);
-}
-
-.chat-input textarea {
-    resize: none;
-    background: #242424;
-    border: 1px solid rgba(255,255,255,.08);
-    color: white;
-    border-radius: 12px;
-}
-
-.chat-input textarea:focus {
-    background: #242424;
-    color: white;
-    border-color: #0d6efd;
-    box-shadow: none;
-}
-
-.chat-input textarea::placeholder {
-    color: #777;
-}
-
-.chat-empty {
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    color: #777;
-    text-align: center;
-}
-
-.chat-empty i {
-    font-size: 50px;
-    margin-bottom: 15px;
-}
-
-@media (max-width: 768px) {
-
-    .chat-messages {
-        height: 450px;
-        padding: 20px 15px;
+    .chat-wrapper {
+        max-width: 1100px;
+        margin: 40px auto;
     }
 
-    .message-content {
-        max-width: 85%;
+    .chat-card {
+        height: 75vh;
+        min-height: 550px;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        border-radius: 20px;
+        background: #111827;
+        color: #fff;
+        box-shadow: 0 20px 50px rgba(0,0,0,.25);
     }
 
     .chat-header {
-        align-items: flex-start;
-        flex-direction: column;
+        padding: 18px 24px;
+        border-bottom: 1px solid rgba(255,255,255,.08);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
     }
 
+    .chat-user {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .chat-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        object-fit: cover;
+        background: #374151;
+    }
+
+    .chat-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 25px;
+        background: #0b1120;
+    }
+
+    .message-row {
+        display: flex;
+        margin-bottom: 18px;
+    }
+
+    .message-row.sent {
+        justify-content: flex-end;
+    }
+
+    .message-bubble {
+        max-width: 70%;
+        padding: 12px 16px;
+        border-radius: 16px;
+        background: #1f2937;
+    }
+
+    .message-row.sent .message-bubble {
+        background: #7c3aed;
+        border-bottom-right-radius: 4px;
+    }
+
+    .message-row.received .message-bubble {
+        border-bottom-left-radius: 4px;
+    }
+
+    .message-text {
+        margin: 0;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+
+    .message-time {
+        display: block;
+        margin-top: 5px;
+        font-size: 11px;
+        opacity: .65;
+    }
+
+    .chat-input {
+        padding: 15px;
+        border-top: 1px solid rgba(255,255,255,.08);
+        background: #111827;
+    }
+
+    .chat-input form {
+        display: flex;
+        gap: 10px;
+    }
+
+    .chat-input textarea {
+        flex: 1;
+        resize: none;
+        border: 0;
+        outline: none;
+        border-radius: 14px;
+        padding: 13px 16px;
+        background: #1f2937;
+        color: #fff;
+    }
+
+    .send-btn {
+        width: 52px;
+        border: 0;
+        border-radius: 14px;
+        background: #7c3aed;
+        color: white;
+        font-size: 20px;
+    }
+
+    .send-btn:hover {
+        opacity: .9;
+    }
+
+    .empty-chat {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: #9ca3af;
+    }
+
+    .music-message {
+    margin-top: 10px;
+    padding: 12px;
+    border-radius: 14px;
+    background: rgba(0, 0, 0, .18);
+}
+
+.music-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.music-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,.12);
+    font-size: 20px;
+}
+
+.music-details {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.music-details strong {
+    font-size: 13px;
+}
+
+.music-details small {
+    font-size: 11px;
+    opacity: .65;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 220px;
+}
+
+.music-message audio {
+    width: 100%;
+    height: 38px;
 }
 </style>
 
-<div class="container py-5">
 
-    <!-- HEADER -->
+<div class="container">
 
-    <div class="chat-header mb-4">
+    <div class="chat-wrapper">
 
-        <div>
+        <div class="chat-card">
 
-            <a
-                href="{% url 'collaborations:workspace' collaboration.id %}"
-                class="text-secondary text-decoration-none"
-            >
-                <i class="bi bi-arrow-left"></i>
-                Back to Workspace
-            </a>
+            <!-- HEADER -->
 
-            <h2 class="text-white mt-3 mb-1">
-                Collaboration Chat
-            </h2>
+            <div class="chat-header">
 
-            <p class="text-secondary mb-0">
+                <div class="chat-user">
 
-                {{ collaboration.artist.username }}
+                    {% if request.user == collaboration.artist %}
 
-                <span class="mx-2">
-                    <i class="bi bi-arrow-left-right"></i>
-                </span>
+                        {% if collaboration.producer.avatar %}
+                            <img
+                                src="{{ collaboration.producer.avatar.url }}"
+                                class="chat-avatar"
+                                alt="Producer"
+                            >
+                        {% endif %}
 
-                {{ collaboration.producer.username }}
+                        <div>
+                            <h5 class="mb-0">
+                                {{ collaboration.producer.producer_profile.full_name|default:collaboration.producer.username }}
+                            </h5>
 
-            </p>
-
-        </div>
-
-        <span class="badge bg-success">
-            {{ collaboration.get_status_display }}
-        </span>
-
-    </div>
-
-
-    <!-- CHAT -->
-
-    <div class="chat-container">
-
-        <div
-            class="chat-messages"
-            id="chatMessages"
-        >
-
-            {% for message in conversation.messages.all %}
-
-                {% if message.sender == request.user %}
-
-                    <!-- CURRENT USER -->
-
-                    <div class="message-row message-right">
-
-                        <div class="message-content">
-
-                            <div class="message-bubble own-message">
-
-                                {{ message.message|linebreaksbr }}
-
-                            </div>
-
-                            <small class="message-time">
-
-                                {{ message.created_at|date:"M d, H:i" }}
-
+                            <small class="text-secondary">
+                                Producer
                             </small>
-
                         </div>
 
-                    </div>
+                    {% else %}
 
-                {% else %}
+                        {% if collaboration.artist.avatar %}
+                            <img
+                                src="{{ collaboration.artist.avatar.url }}"
+                                class="chat-avatar"
+                                alt="Artist"
+                            >
+                        {% endif %}
 
-                    <!-- OTHER USER -->
+                        <div>
+                            <h5 class="mb-0">
+                                {{ collaboration.artist.artist_profile.artist_name|default:collaboration.artist.username }}
+                            </h5>
 
-                    <div class="message-row message-left">
-
-                        <div class="message-content">
-
-                            <div class="message-sender">
-
-                                {{ message.sender.username }}
-
-                            </div>
-
-                            <div class="message-bubble">
-
-                                {{ message.message|linebreaksbr }}
-
-                            </div>
-
-                            <small class="message-time">
-
-                                {{ message.created_at|date:"M d, H:i" }}
-
+                            <small class="text-secondary">
+                                Artist
                             </small>
-
                         </div>
 
-                    </div>
-
-                {% endif %}
-
-            {% empty %}
-
-                <div class="chat-empty">
-
-                    <i class="bi bi-chat-dots"></i>
-
-                    <h5>
-                        No messages yet
-                    </h5>
-
-                    <p>
-                        Start the conversation about your project.
-                    </p>
+                    {% endif %}
 
                 </div>
 
-            {% endfor %}
+
+                <a
+                    href="{% url 'collaborations:workspace' collaboration.id %}"
+                    class="btn btn-outline-light btn-sm"
+                >
+                    <i class="bi bi-arrow-left"></i>
+                    Workspace
+                </a>
+
+            </div>
+
+
+            <!-- MESSAGES -->
+
+            <div class="chat-body" id="chatMessages">
+
+                {% for message in messages %}
+
+                    <div class="message-row
+                        {% if message.sender == request.user %}
+                            sent
+                        {% else %}
+                            received
+                        {% endif %}
+                    ">
+
+                        <div class="message-bubble">
+
+                            {% if message.message %}
+
+    <p class="message-text">
+        {{ message.message }}
+    </p>
+
+{% endif %}
+
+
+{% if message.audio %}
+
+    <div class="music-message">
+
+        <div class="music-info">
+
+            <div class="music-icon">
+                <i class="bi bi-music-note-beamed"></i>
+            </div>
+
+            <div class="music-details">
+
+                <strong>
+                    Music
+                </strong>
+
+                <small>
+                    {{ message.audio.name }}
+                </small>
+
+            </div>
 
         </div>
 
-
-        <!-- MESSAGE FORM -->
-
-        <form
-            method="POST"
-            class="chat-input"
+        <audio
+            controls
+            preload="metadata"
         >
+            <source
+                src="{{ message.audio.url }}"
+            >
 
-            {% csrf_token %}
+            Your browser does not support audio playback.
+
+        </audio>
+
+    </div>
+
+{% endif %}
+
+
+<small class="message-time">
+    {{ message.created_at|date:"M d, Y · h:i A" }}
+</small>
+
+                        </div>
+
+                    </div>
+
+                {% empty %}
+
+                    <div class="empty-chat">
+
+                        <div>
+
+                            <i
+                                class="bi bi-chat-dots"
+                                style="font-size: 50px;"
+                            ></i>
+
+                            <h5 class="mt-3">
+                                Start the conversation
+                            </h5>
+
+                            <p>
+                                Send a message to your collaborator.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+
+            <!-- INPUT -->
+
+<!-- INPUT -->
+
+<div class="chat-input">
+
+    <form
+        method="POST"
+        enctype="multipart/form-data"
+    >
+
+        {% csrf_token %}
+
+        <div class="message-input-wrapper">
 
             <textarea
                 name="message"
-                class="form-control"
                 rows="1"
                 placeholder="Write a message..."
-                required
+                id="messageInput"
             ></textarea>
+
+            <!-- MUSIC BUTTON -->
+
+            <label
+                for="audioInput"
+                class="music-btn"
+                title="Attach music"
+            >
+                <i class="bi bi-music-note-beamed"></i>
+            </label>
+
+            <input
+                type="file"
+                name="audio"
+                id="audioInput"
+                accept=".mp3,.wav,.flac,.m4a,.aac,.ogg,audio/*"
+                hidden
+            >
 
             <button
                 type="submit"
-                class="btn btn-primary"
+                class="send-btn"
+                title="Send message"
             >
-
                 <i class="bi bi-send-fill"></i>
-
-                <span class="d-none d-md-inline">
-                    Send
-                </span>
-
             </button>
 
-        </form>
+        </div>
+
+        <!-- SELECTED MUSIC -->
+
+        <div
+            id="selectedAudio"
+            class="selected-audio"
+            style="display:none;"
+        >
+
+            <i class="bi bi-music-note-beamed"></i>
+
+            <span id="audioName"></span>
+
+            <button
+                type="button"
+                id="removeAudio"
+            >
+                <i class="bi bi-x"></i>
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+        </div>
 
     </div>
 
@@ -308,22 +436,56 @@
 
 <script>
 
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
+    const chatMessages =
+        document.getElementById("chatMessages");
 
-        const chat =
-            document.getElementById("chatMessages");
+    if (chatMessages) {
+        chatMessages.scrollTop =
+            chatMessages.scrollHeight;
+    }
 
-        if (chat) {
 
-            chat.scrollTop =
-                chat.scrollHeight;
+    // Music upload
 
+    const audioInput =
+        document.getElementById("audioInput");
+
+    const selectedAudio =
+        document.getElementById("selectedAudio");
+
+    const audioName =
+        document.getElementById("audioName");
+
+    const removeAudio =
+        document.getElementById("removeAudio");
+
+
+    audioInput.addEventListener("change", function () {
+
+        if (this.files.length > 0) {
+
+            const file = this.files[0];
+
+            audioName.textContent =
+                file.name;
+
+            selectedAudio.style.display =
+                "flex";
         }
 
-    }
-);
+    });
+
+
+    removeAudio.addEventListener("click", function () {
+
+        audioInput.value = "";
+
+        audioName.textContent = "";
+
+        selectedAudio.style.display =
+            "none";
+
+    });
 
 </script>
 

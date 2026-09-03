@@ -3,12 +3,14 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 
 from collaborations.models import Collaboration
+
 from .models import Conversation, Message
 
 
 @login_required
 def chat(request, collaboration_id):
 
+    # 1. Get the collaboration first
     collaboration = get_object_or_404(
         Collaboration.objects.select_related(
             "artist",
@@ -17,24 +19,24 @@ def chat(request, collaboration_id):
         id=collaboration_id,
     )
 
-    # Only the artist and producer involved
-    # in this collaboration can access the chat.
+    # 2. Check that the logged-in user belongs to this collaboration
     if request.user not in [
         collaboration.artist,
         collaboration.producer,
     ]:
         messages.error(
             request,
-            "You do not have access to this conversation."
+            "You do not have access to this conversation.",
         )
 
         return redirect("dashboard")
 
-    # Chat is only available after acceptance.
+    # 3. Chat is only available after acceptance
     if collaboration.status != "accepted":
+
         messages.warning(
             request,
-            "This collaboration has not been accepted yet."
+            "This collaboration has not been accepted yet.",
         )
 
         return redirect(
@@ -42,20 +44,31 @@ def chat(request, collaboration_id):
             collaboration_id=collaboration.id,
         )
 
+    # 4. Get or create conversation
     conversation, created = Conversation.objects.get_or_create(
         collaboration=collaboration
     )
 
+    # 5. Send a new message
     if request.method == "POST":
 
-        text = request.POST.get("message", "").strip()
+        text = request.POST.get(
+            "message",
+            ""
+        ).strip()
 
-        if text:
+        audio = request.FILES.get(
+            "audio"
+        )
+
+        # Make sure something was sent
+        if text or audio:
 
             Message.objects.create(
                 conversation=conversation,
                 sender=request.user,
                 message=text,
+                audio=audio,
             )
 
             conversation.save(
@@ -67,7 +80,7 @@ def chat(request, collaboration_id):
             collaboration_id=collaboration.id,
         )
 
-    # Mark messages sent by the other person as read.
+    # 6. Mark messages from the other user as read
     conversation.messages.filter(
         is_read=False
     ).exclude(
@@ -76,12 +89,18 @@ def chat(request, collaboration_id):
         is_read=True
     )
 
+    # 7. Get all messages
+    messages_list = conversation.messages.select_related(
+        "sender"
+    ).all()
+
+    # 8. Render chat
     return render(
         request,
         "messaging/chat.html",
         {
             "conversation": conversation,
             "collaboration": collaboration,
+            "messages": messages_list,
         },
     )
-
