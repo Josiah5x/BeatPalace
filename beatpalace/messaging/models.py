@@ -75,6 +75,16 @@ class Message(models.Model):
         validators=[validate_audio_file],
     )
 
+
+    audio_start = models.FloatField(
+        default=0,
+    )
+
+    audio_end = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
     is_read = models.BooleanField(
         default=False
     )

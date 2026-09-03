@@ -3,6 +3,10 @@
 {% block content %}
 
 <style>
+    /* =========================================================
+       CHAT
+    ========================================================= */
+
     .chat-wrapper {
         max-width: 1100px;
         margin: 40px auto;
@@ -11,18 +15,25 @@
     .chat-card {
         height: 75vh;
         min-height: 550px;
+
         display: flex;
         flex-direction: column;
+
         overflow: hidden;
+
         border-radius: 20px;
+
         background: #111827;
         color: #fff;
-        box-shadow: 0 20px 50px rgba(0,0,0,.25);
+
+        box-shadow: 0 20px 50px rgba(0, 0, 0, .25);
     }
 
     .chat-header {
         padding: 18px 24px;
-        border-bottom: 1px solid rgba(255,255,255,.08);
+
+        border-bottom: 1px solid rgba(255, 255, 255, .08);
+
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -37,20 +48,27 @@
     .chat-avatar {
         width: 48px;
         height: 48px;
+
         border-radius: 50%;
+
         object-fit: cover;
+
         background: #374151;
     }
 
     .chat-body {
         flex: 1;
+
         overflow-y: auto;
+
         padding: 25px;
+
         background: #0b1120;
     }
 
     .message-row {
         display: flex;
+
         margin-bottom: 18px;
     }
 
@@ -60,13 +78,17 @@
 
     .message-bubble {
         max-width: 70%;
+
         padding: 12px 16px;
+
         border-radius: 16px;
+
         background: #1f2937;
     }
 
     .message-row.sent .message-bubble {
         background: #7c3aed;
+
         border-bottom-right-radius: 4px;
     }
 
@@ -76,109 +98,666 @@
 
     .message-text {
         margin: 0;
+
         white-space: pre-wrap;
+
         word-break: break-word;
     }
 
     .message-time {
         display: block;
+
         margin-top: 5px;
+
         font-size: 11px;
+
         opacity: .65;
     }
 
+
+    /* =========================================================
+       AUDIO MESSAGE
+    ========================================================= */
+
+    .audio-message {
+        margin-top: 8px;
+    }
+
+    .audio-message audio {
+        width: 100%;
+
+        max-width: 330px;
+
+        height: 40px;
+    }
+
+    .audio-range {
+        margin-top: 5px;
+
+        font-size: 11px;
+
+        opacity: .7;
+    }
+
+
+    /* =========================================================
+       CHAT INPUT
+    ========================================================= */
+
     .chat-input {
         padding: 15px;
-        border-top: 1px solid rgba(255,255,255,.08);
+
+        border-top: 1px solid rgba(255, 255, 255, .08);
+
         background: #111827;
     }
 
     .chat-input form {
         display: flex;
+
+        align-items: flex-end;
+
         gap: 10px;
     }
 
     .chat-input textarea {
         flex: 1;
+
         resize: none;
+
         border: 0;
+
         outline: none;
+
         border-radius: 14px;
+
         padding: 13px 16px;
+
         background: #1f2937;
+
         color: #fff;
     }
 
-    .send-btn {
-        width: 52px;
-        border: 0;
-        border-radius: 14px;
-        background: #7c3aed;
-        color: white;
-        font-size: 20px;
-    }
-
-    .send-btn:hover {
-        opacity: .9;
-    }
-
-    .empty-chat {
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
+    .chat-input textarea::placeholder {
         color: #9ca3af;
     }
 
-    .music-message {
-    margin-top: 10px;
-    padding: 12px;
-    border-radius: 14px;
-    background: rgba(0, 0, 0, .18);
-}
+    .send-btn,
+    .music-btn {
 
-.music-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
-}
+        width: 52px;
+        height: 52px;
 
-.music-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(255,255,255,.12);
-    font-size: 20px;
-}
+        flex-shrink: 0;
 
-.music-details {
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-}
+        border: 0;
 
-.music-details strong {
-    font-size: 13px;
-}
+        border-radius: 14px;
 
-.music-details small {
-    font-size: 11px;
-    opacity: .65;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 220px;
-}
+        color: white;
 
-.music-message audio {
-    width: 100%;
-    height: 38px;
-}
+        font-size: 20px;
+    }
+
+    .send-btn {
+        background: #7c3aed;
+    }
+
+    .music-btn {
+        background: #1f2937;
+    }
+
+    .send-btn:hover,
+    .music-btn:hover {
+        opacity: .9;
+    }
+
+
+    /* =========================================================
+       AUDIO TRIMMER
+    ========================================================= */
+
+    .audio-trimmer-wrapper {
+
+        width: 100%;
+
+        max-width: 720px;
+
+        min-width: 300px;
+
+        min-height: 350px;
+
+        max-height: 80vh;
+
+        margin: auto;
+
+        padding: 20px;
+
+        box-sizing: border-box;
+
+        background: #080b12;
+
+        border: 1px solid rgba(255, 255, 255, .10);
+
+        border-radius: 18px;
+
+        resize: both;
+
+        overflow: auto;
+
+        position: relative;
+    }
+
+
+    /* Resize corner */
+
+    .audio-trimmer-wrapper::after {
+
+        content: "";
+
+        position: absolute;
+
+        right: 5px;
+
+        bottom: 5px;
+
+        width: 18px;
+
+        height: 18px;
+
+        cursor: nwse-resize;
+
+        opacity: .6;
+
+        background:
+            linear-gradient(135deg,
+                transparent 45%,
+                #9ca3af 46%,
+                #9ca3af 52%,
+                transparent 53%),
+            linear-gradient(135deg,
+                transparent 60%,
+                #6b7280 61%,
+                #6b7280 67%,
+                transparent 68%);
+    }
+
+
+    /* =========================================================
+       TRIMMER HEADER
+    ========================================================= */
+
+    .audio-trimmer-header {
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        gap: 15px;
+
+        margin-bottom: 18px;
+    }
+
+    .audio-trimmer-title {
+
+        margin: 0;
+
+        color: white;
+
+        font-size: 18px;
+
+        font-weight: 600;
+    }
+
+    .audio-trimmer-subtitle {
+
+        margin-top: 4px;
+
+        color: #8b93a7;
+
+        font-size: 12px;
+    }
+
+
+    /* =========================================================
+       UPLOAD
+    ========================================================= */
+
+    .audio-upload-box {
+
+        display: block;
+
+        padding: 22px;
+
+        text-align: center;
+
+        border: 1px dashed rgba(255, 255, 255, .18);
+
+        border-radius: 14px;
+
+        cursor: pointer;
+
+        transition: .2s;
+    }
+
+    .audio-upload-box:hover {
+
+        border-color: #8b5cf6;
+
+        background: rgba(124, 58, 237, .06);
+    }
+
+    .audio-upload-icon {
+
+        font-size: 32px;
+
+        color: #8b5cf6;
+    }
+
+    .audio-file-name {
+
+        margin-top: 8px;
+
+        color: white;
+
+        font-size: 13px;
+
+        word-break: break-word;
+    }
+
+
+    /* =========================================================
+       RULER
+    ========================================================= */
+
+    .ruler-viewport {
+
+        width: 100%;
+
+        height: 110px;
+
+        margin-top: 20px;
+
+        position: relative;
+
+        overflow-x: auto;
+
+        overflow-y: hidden;
+
+        border-radius: 14px;
+
+        background: #0f172a;
+
+        scrollbar-width: thin;
+    }
+
+    .ruler {
+
+        position: relative;
+
+        width: max-content;
+
+        min-width: 100%;
+
+        height: 100%;
+
+        display: flex;
+
+        align-items: flex-end;
+    }
+
+    .tick {
+
+        width: 3px;
+
+        height: 20px;
+
+        margin-right: 7px;
+
+        flex-shrink: 0;
+
+        background: #374151;
+
+        border-radius: 3px;
+    }
+
+    .tick.major {
+
+        height: 38px;
+
+        background: #6b7280;
+    }
+
+
+    /* =========================================================
+       SELECTION WINDOW
+    ========================================================= */
+
+    .selection-window {
+
+        position: absolute;
+
+        top: 0;
+
+        bottom: 0;
+
+        left: 0;
+
+        width: 180px;
+
+        background: rgba(124, 58, 237, .18);
+
+        border-left: 2px solid #a78bfa;
+
+        border-right: 2px solid #a78bfa;
+
+        z-index: 20;
+
+        cursor: move;
+
+        touch-action: none;
+    }
+
+
+    /* =========================================================
+       RESIZE HANDLES
+    ========================================================= */
+
+    .selection-handle {
+
+        position: absolute;
+
+        top: 0;
+
+        bottom: 0;
+
+        width: 14px;
+
+        background: #7c3aed;
+
+        cursor: ew-resize;
+
+        z-index: 40;
+
+        touch-action: none;
+    }
+
+    .selection-left {
+
+        left: -7px;
+
+        border-radius: 7px 0 0 7px;
+    }
+
+    .selection-right {
+
+        right: -7px;
+
+        border-radius: 0 7px 7px 0;
+    }
+
+
+    .selection-handle::after {
+
+        content: "";
+
+        position: absolute;
+
+        width: 3px;
+
+        height: 36px;
+
+        left: 50%;
+
+        top: 50%;
+
+        transform: translate(-50%, -50%);
+
+        background: white;
+
+        border-radius: 5px;
+    }
+
+
+    /* =========================================================
+       SELECTION LABEL
+    ========================================================= */
+
+    .selection-duration {
+
+        position: absolute;
+
+        top: 8px;
+
+        left: 50%;
+
+        transform: translateX(-50%);
+
+        padding: 4px 9px;
+
+        border-radius: 6px;
+
+        background: #7c3aed;
+
+        color: white;
+
+        font-size: 10px;
+
+        font-weight: 700;
+
+        pointer-events: none;
+
+        white-space: nowrap;
+    }
+
+
+    /* =========================================================
+       PLAYHEAD
+    ========================================================= */
+
+    .playhead {
+
+        position: absolute;
+
+        top: 0;
+
+        bottom: 0;
+
+        left: 50%;
+
+        width: 2px;
+
+        background: white;
+
+        z-index: 50;
+
+        pointer-events: none;
+    }
+
+
+    /* =========================================================
+       MINI TIMELINE
+    ========================================================= */
+
+    .mini-timeline {
+
+        position: relative;
+
+        width: 100%;
+
+        height: 8px;
+
+        margin-top: 18px;
+
+        overflow: hidden;
+
+        border-radius: 20px;
+
+        background: #1f2937;
+    }
+
+    .mini-highlight {
+
+        position: absolute;
+
+        left: 0;
+
+        top: 0;
+
+        height: 100%;
+
+        width: 15%;
+
+        border-radius: 20px;
+
+        background: #8b5cf6;
+    }
+
+
+    /* =========================================================
+       AUDIO CONTROLS
+    ========================================================= */
+
+    .audio-controls {
+
+        display: flex;
+
+        justify-content: center;
+
+        align-items: center;
+
+        gap: 10px;
+
+        margin-top: 20px;
+    }
+
+    .audio-control-btn {
+
+        width: 44px;
+
+        height: 44px;
+
+        border: 0;
+
+        border-radius: 50%;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        color: white;
+
+        background: #1f2937;
+
+        cursor: pointer;
+    }
+
+    .audio-control-btn:hover {
+
+        background: #374151;
+    }
+
+    .audio-play-btn {
+
+        width: 54px;
+
+        height: 54px;
+
+        background: #7c3aed;
+    }
+
+
+    /* =========================================================
+       SELECTION INFO
+    ========================================================= */
+
+    .selection-info {
+
+        margin-top: 14px;
+
+        text-align: center;
+
+        color: #9ca3af;
+
+        font-size: 13px;
+    }
+
+    .selection-info strong {
+
+        color: white;
+    }
+
+
+    /* =========================================================
+       AUDIO PREVIEW
+    ========================================================= */
+
+    .audio-preview {
+
+        margin-top: 15px;
+
+        text-align: center;
+    }
+
+    .audio-preview audio {
+
+        width: 100%;
+
+        height: 40px;
+    }
+
+
+    /* =========================================================
+       MOBILE
+    ========================================================= */
+
+    @media (max-width: 600px) {
+
+        .chat-wrapper {
+
+            margin: 10px auto;
+        }
+
+        .chat-card {
+
+            height: 90vh;
+
+            min-height: 500px;
+
+            border-radius: 12px;
+        }
+
+        .chat-header {
+
+            padding: 14px;
+        }
+
+        .chat-body {
+
+            padding: 15px;
+        }
+
+        .message-bubble {
+
+            max-width: 85%;
+        }
+
+        .audio-trimmer-wrapper {
+
+            min-width: 280px;
+
+            padding: 14px;
+        }
+
+        .ruler-viewport {
+
+            height: 90px;
+        }
+    }
 </style>
 
 
@@ -188,7 +767,10 @@
 
         <div class="chat-card">
 
-            <!-- HEADER -->
+
+            <!-- =================================================
+                 HEADER
+            ================================================= -->
 
             <div class="chat-header">
 
@@ -196,236 +778,386 @@
 
                     {% if request.user == collaboration.artist %}
 
-                        {% if collaboration.producer.avatar %}
-                            <img
-                                src="{{ collaboration.producer.avatar.url }}"
-                                class="chat-avatar"
-                                alt="Producer"
-                            >
-                        {% endif %}
+                    {% if collaboration.producer.avatar %}
 
-                        <div>
-                            <h5 class="mb-0">
-                                {{ collaboration.producer.producer_profile.full_name|default:collaboration.producer.username }}
-                            </h5>
+                    <img src="{{ collaboration.producer.avatar.url }}" class="chat-avatar" alt="Producer">
 
-                            <small class="text-secondary">
-                                Producer
-                            </small>
-                        </div>
+                    {% endif %}
+
+                    <div>
+
+                        <h5 class="mb-0">
+
+                            {{ collaboration.producer.producer_profile.full_name|default:collaboration.producer.username
+                            }}
+
+                        </h5>
+
+                        <small class="text-secondary">
+                            Producer
+                        </small>
+
+                    </div>
 
                     {% else %}
 
-                        {% if collaboration.artist.avatar %}
-                            <img
-                                src="{{ collaboration.artist.avatar.url }}"
-                                class="chat-avatar"
-                                alt="Artist"
-                            >
-                        {% endif %}
+                    {% if collaboration.artist.avatar %}
 
-                        <div>
-                            <h5 class="mb-0">
-                                {{ collaboration.artist.artist_profile.artist_name|default:collaboration.artist.username }}
-                            </h5>
+                    <img src="{{ collaboration.artist.avatar.url }}" class="chat-avatar" alt="Artist">
 
-                            <small class="text-secondary">
-                                Artist
-                            </small>
-                        </div>
+                    {% endif %}
+
+                    <div>
+
+                        <h5 class="mb-0">
+
+                            {{ collaboration.artist.artist_profile.artist_name|default:collaboration.artist.username }}
+
+                        </h5>
+
+                        <small class="text-secondary">
+                            Artist
+                        </small>
+
+                    </div>
 
                     {% endif %}
 
                 </div>
 
 
-                <a
-                    href="{% url 'collaborations:workspace' collaboration.id %}"
-                    class="btn btn-outline-light btn-sm"
-                >
+                <a href="{% url 'collaborations:workspace' collaboration.id %}" class="btn btn-outline-light btn-sm">
+
                     <i class="bi bi-arrow-left"></i>
+
                     Workspace
+
                 </a>
 
             </div>
 
 
-            <!-- MESSAGES -->
+            <!-- =================================================
+                 MESSAGES
+            ================================================= -->
 
             <div class="chat-body" id="chatMessages">
 
                 {% for message in messages %}
 
-                    <div class="message-row
+                <div class="message-row
                         {% if message.sender == request.user %}
                             sent
                         {% else %}
                             received
+                        {% endif %}">
+
+                    <div class="message-bubble">
+
+
+                        {% if message.message %}
+
+                        <p class="message-text">
+                            {{ message.message }}
+                        </p>
+
                         {% endif %}
-                    ">
-
-                        <div class="message-bubble">
-
-                            {% if message.message %}
-
-    <p class="message-text">
-        {{ message.message }}
-    </p>
-
-{% endif %}
 
 
-{% if message.audio %}
+                        {% if message.audio %}
 
-    <div class="music-message">
+                        <div class="audio-message">
 
-        <div class="music-info">
+                            <audio controls preload="metadata">
 
-            <div class="music-icon">
-                <i class="bi bi-music-note-beamed"></i>
-            </div>
+                                <source src="{{ message.audio.url }}">
 
-            <div class="music-details">
-
-                <strong>
-                    Music
-                </strong>
-
-                <small>
-                    {{ message.audio.name }}
-                </small>
-
-            </div>
-
-        </div>
-
-        <audio
-            controls
-            preload="metadata"
-        >
-            <source
-                src="{{ message.audio.url }}"
-            >
-
-            Your browser does not support audio playback.
-
-        </audio>
-
-    </div>
-
-{% endif %}
+                            </audio>
 
 
-<small class="message-time">
-    {{ message.created_at|date:"M d, Y · h:i A" }}
-</small>
+                            {% if message.audio_start is not None %}
+
+                            <div class="audio-range">
+
+                                Selected:
+                                {{ message.audio_start|floatformat:2 }}s
+                                –
+                                {{ message.audio_end|floatformat:2 }}s
+
+                            </div>
+
+                            {% endif %}
 
                         </div>
 
+                        {% endif %}
+
+
+                        <small class="message-time">
+
+                            {{ message.created_at|date:"M d, Y · h:i A" }}
+
+                        </small>
+
                     </div>
+
+                </div>
 
                 {% empty %}
 
-                    <div class="empty-chat">
+                <div class="empty-chat">
 
-                        <div>
+                    <div>
 
-                            <i
-                                class="bi bi-chat-dots"
-                                style="font-size: 50px;"
-                            ></i>
+                        <i class="bi bi-chat-dots" style="font-size: 50px;"></i>
 
-                            <h5 class="mt-3">
-                                Start the conversation
-                            </h5>
+                        <h5 class="mt-3">
+                            Start the conversation
+                        </h5>
 
-                            <p>
-                                Send a message to your collaborator.
-                            </p>
-
-                        </div>
+                        <p>
+                            Send a message to your collaborator.
+                        </p>
 
                     </div>
+
+                </div>
 
                 {% endfor %}
 
             </div>
 
 
-            <!-- INPUT -->
+            <!-- =================================================
+                 MESSAGE FORM
+            ================================================= -->
 
-<!-- INPUT -->
+            <div class="chat-input">
 
-<div class="chat-input">
+                <form method="POST" enctype="multipart/form-data" id="chatForm">
 
-    <form
-        method="POST"
-        enctype="multipart/form-data"
-    >
+                    {% csrf_token %}
 
-        {% csrf_token %}
+                    <input type="hidden" name="audio_start" id="audioStart" value="">
 
-        <div class="message-input-wrapper">
+                    <input type="hidden" name="audio_end" id="audioEnd" value="">
 
-            <textarea
-                name="message"
-                rows="1"
-                placeholder="Write a message..."
-                id="messageInput"
-            ></textarea>
+                    <textarea name="message" id="messageInput" rows="1" placeholder="Write a message..."></textarea>
 
-            <!-- MUSIC BUTTON -->
+                    <button type="button" class="music-btn" id="musicButton">
+                        <i class="bi bi-music-note-beamed"></i>
+                    </button>
 
-            <label
-                for="audioInput"
-                class="music-btn"
-                title="Attach music"
-            >
-                <i class="bi bi-music-note-beamed"></i>
-            </label>
+                    <button type="submit" class="send-btn">
+                        <i class="bi bi-send-fill"></i>
+                    </button>
 
-            <input
-                type="file"
-                name="audio"
-                id="audioInput"
-                accept=".mp3,.wav,.flac,.m4a,.aac,.ogg,audio/*"
-                hidden
-            >
+                </form>
 
-            <button
-                type="submit"
-                class="send-btn"
-                title="Send message"
-            >
-                <i class="bi bi-send-fill"></i>
-            </button>
+            </div>
 
         </div>
 
-        <!-- SELECTED MUSIC -->
-
-        <div
-            id="selectedAudio"
-            class="selected-audio"
-            style="display:none;"
-        >
-
-            <i class="bi bi-music-note-beamed"></i>
-
-            <span id="audioName"></span>
-
-            <button
-                type="button"
-                id="removeAudio"
-            >
-                <i class="bi bi-x"></i>
-            </button>
-
-        </div>
-
-    </form>
+    </div>
 
 </div>
+
+
+<!-- =========================================================
+     AUDIO MODAL
+========================================================= -->
+
+<div class="modal fade" id="audioModal" tabindex="-1" aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+
+        <div class="modal-content bg-dark text-white">
+
+            <div class="modal-body p-3">
+
+
+                <div class="audio-trimmer-wrapper">
+
+
+                    <!-- HEADER -->
+
+                    <div class="audio-trimmer-header">
+
+                        <div>
+
+                            <h5 class="audio-trimmer-title">
+
+                                <i class="bi bi-music-note-beamed"></i>
+
+                                Select Music
+
+                            </h5>
+
+                            <div class="audio-trimmer-subtitle">
+
+                                Select up to 15 seconds of your track
+
+                            </div>
+
+                        </div>
+
+
+                        <button type="button" class="btn btn-sm btn-outline-light" data-bs-dismiss="modal">
+
+                            <i class="bi bi-x-lg"></i>
+
+                        </button>
+
+                    </div>
+
+
+                    <!-- UPLOAD -->
+
+                    <label for="audioFileInput" class="audio-upload-box">
+
+                        <div class="audio-upload-icon">
+
+                            <i class="bi bi-cloud-arrow-up"></i>
+
+                        </div>
+
+                        <div class="text-white mt-2">
+
+                            Select music
+
+                        </div>
+
+                        <small class="text-secondary">
+
+                            MP3, WAV, FLAC, M4A, OGG
+
+                        </small>
+
+
+                        <div class="audio-file-name" id="audioFileName"></div>
+
+                    </label>
+
+
+                    <input type="file" id="audioFileInput" name="audio" accept="audio/*" form="chatForm" hidden>
+
+
+                    <!-- RULER -->
+
+                    <div class="ruler-viewport" id="rulerViewport">
+
+                        <div class="ruler" id="ruler"></div>
+
+
+                        <div class="selection-window" id="selectionWindow">
+
+                            <div class="selection-handle selection-left" id="selectionLeft"></div>
+
+
+                            <div class="selection-duration" id="selectionDuration">
+                                15.00s
+                            </div>
+
+
+                            <div class="selection-handle selection-right" id="selectionRight"></div>
+
+                        </div>
+
+
+                        <div class="playhead"></div>
+
+                    </div>
+
+
+                    <!-- MINI TIMELINE -->
+
+                    <div class="mini-timeline">
+
+                        <div class="mini-highlight" id="miniHighlight"></div>
+
+                    </div>
+
+
+                    <!-- CONTROLS -->
+
+                    <div class="audio-controls">
+
+
+                        <button type="button" class="audio-control-btn" id="rewindBtn" title="Rewind">
+
+                            <i class="bi bi-skip-backward-fill"></i>
+
+                        </button>
+
+
+                        <button type="button" class="audio-control-btn audio-play-btn" id="playBtn" title="Play">
+
+                            <i class="bi bi-play-fill"></i>
+
+                        </button>
+
+
+                        <button type="button" class="audio-control-btn" id="resetBtn" title="Reset">
+
+                            <i class="bi bi-arrow-counterclockwise"></i>
+
+                        </button>
+
+
+                        <button type="button" class="audio-control-btn" id="forwardBtn" title="Forward">
+
+                            <i class="bi bi-skip-forward-fill"></i>
+
+                        </button>
+
+
+                    </div>
+
+
+                    <!-- SELECTION INFO -->
+
+                    <div class="selection-info" id="selectionInfo">
+
+                        Selection:
+
+                        <strong>0.00s</strong>
+
+                        –
+
+                        <strong>15.00s</strong>
+
+                    </div>
+
+
+                    <!-- AUDIO PREVIEW -->
+
+                    <div class="audio-preview" id="audioPreview"></div>
+
+
+                </div>
+
+            </div>
+
+
+            <div class="modal-footer bg-dark border-secondary">
+
+
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+
+                    Cancel
+
+                </button>
+
+
+                <button type="button" class="btn btn-primary" id="useAudioButton">
+
+                    <i class="bi bi-check-lg"></i>
+
+                    Use Selection
+
+                </button>
+
+            </div>
 
         </div>
 
@@ -436,56 +1168,1459 @@
 
 <script>
 
-    const chatMessages =
-        document.getElementById("chatMessages");
-
-    if (chatMessages) {
-        chatMessages.scrollTop =
-            chatMessages.scrollHeight;
-    }
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
 
 
-    // Music upload
+            /* =====================================================
+               ELEMENTS
+            ===================================================== */
 
-    const audioInput =
-        document.getElementById("audioInput");
+            const audioFileInput =
+                document.getElementById(
+                    "audioFileInput"
+                );
 
-    const selectedAudio =
-        document.getElementById("selectedAudio");
+            const audioFileName =
+                document.getElementById(
+                    "audioFileName"
+                );
 
-    const audioName =
-        document.getElementById("audioName");
+            const rulerViewport =
+                document.getElementById(
+                    "rulerViewport"
+                );
 
-    const removeAudio =
-        document.getElementById("removeAudio");
+            const ruler =
+                document.getElementById(
+                    "ruler"
+                );
+
+            const selectionWindow =
+                document.getElementById(
+                    "selectionWindow"
+                );
+
+            const selectionLeft =
+                document.getElementById(
+                    "selectionLeft"
+                );
+
+            const selectionRight =
+                document.getElementById(
+                    "selectionRight"
+                );
+
+            const selectionDuration =
+                document.getElementById(
+                    "selectionDuration"
+                );
+
+            const selectionInfo =
+                document.getElementById(
+                    "selectionInfo"
+                );
+
+            const miniHighlight =
+                document.getElementById(
+                    "miniHighlight"
+                );
+
+            const playBtn =
+                document.getElementById(
+                    "playBtn"
+                );
+
+            const rewindBtn =
+                document.getElementById(
+                    "rewindBtn"
+                );
+
+            const resetBtn =
+                document.getElementById(
+                    "resetBtn"
+                );
+
+            const forwardBtn =
+                document.getElementById(
+                    "forwardBtn"
+                );
+
+            const musicButton =
+                document.getElementById(
+                    "musicButton"
+                );
+
+            const useAudioButton =
+                document.getElementById(
+                    "useAudioButton"
+                );
+
+            const audioStartInput =
+                document.getElementById(
+                    "audioStart"
+                );
+
+            const audioEndInput =
+                document.getElementById(
+                    "audioEnd"
+                );
+
+            const audioPreview =
+                document.getElementById(
+                    "audioPreview"
+                );
 
 
-    audioInput.addEventListener("change", function () {
+            /* =====================================================
+               SETTINGS
+            ===================================================== */
 
-        if (this.files.length > 0) {
+            const MAX_SELECTION = 15;
 
-            const file = this.files[0];
+            const MIN_SELECTION = 1;
 
-            audioName.textContent =
-                file.name;
 
-            selectedAudio.style.display =
-                "flex";
+            /* =====================================================
+               AUDIO VARIABLES
+            ===================================================== */
+
+            let audioCtx = null;
+
+            let audioBuffer = null;
+
+            let audioSourceNode = null;
+
+            let totalDuration = 0;
+
+            let selectionStart = 0;
+
+            let selectionEnd = 15;
+
+            let isPlaying = false;
+
+            let playbackStartTime = 0;
+
+            let playbackOffset = 0;
+
+            let animationFrame = null;
+
+
+            /* =====================================================
+               DRAG VARIABLES
+            ===================================================== */
+
+            let dragMode = null;
+
+            let dragStartX = 0;
+
+            let originalStart = 0;
+
+            let originalEnd = 0;
+
+
+            /* =====================================================
+               BOOTSTRAP MODAL
+            ===================================================== */
+
+            const audioModalElement =
+                document.getElementById(
+                    "audioModal"
+                );
+
+            const audioModal =
+                bootstrap.Modal.getOrCreateInstance(
+                    audioModalElement
+                );
+
+
+            musicButton.addEventListener(
+                "click",
+                function () {
+
+                    audioModal.show();
+
+                }
+            );
+
+
+            /* =====================================================
+               FORMAT TIME
+            ===================================================== */
+
+            function formatTime(seconds) {
+
+                return Number(seconds)
+                    .toFixed(2) + "s";
+
+            }
+
+
+            /* =====================================================
+               CREATE RULER
+            ===================================================== */
+
+            function createRuler() {
+
+                ruler.innerHTML = "";
+
+                if (!audioBuffer) {
+                    return;
+                }
+
+
+                const tickCount = 150;
+
+
+                for (
+                    let i = 0;
+                    i <= tickCount;
+                    i++
+                ) {
+
+                    const tick =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    tick.className =
+                        "tick";
+
+
+                    if (
+                        i % 10 === 0
+                    ) {
+
+                        tick.classList.add(
+                            "major"
+                        );
+
+                    }
+
+
+                    ruler.appendChild(
+                        tick
+                    );
+
+                }
+
+
+                /*
+                 * Give ruler a useful width
+                 */
+
+                const minimumWidth = 1200;
+
+                const calculatedWidth =
+                    Math.max(
+                        minimumWidth,
+                        rulerViewport.clientWidth * 3
+                    );
+
+
+                ruler.style.width =
+                    `${calculatedWidth}px`;
+
+            }
+
+
+            /* =====================================================
+               LOAD AUDIO
+            ===================================================== */
+
+            audioFileInput.addEventListener(
+                "change",
+                async function () {
+
+                    const file =
+                        this.files[0];
+
+
+                    if (!file) {
+                        return;
+                    }
+
+
+                    audioFileName.textContent =
+                        file.name;
+
+
+                    stopAudio();
+
+
+                    try {
+
+                        if (!audioCtx) {
+
+                            audioCtx =
+                                new (
+                                    window.AudioContext ||
+                                    window.webkitAudioContext
+                                )();
+
+                        }
+
+
+                        const arrayBuffer =
+                            await file.arrayBuffer();
+
+
+                        audioBuffer =
+                            await audioCtx.decodeAudioData(
+                                arrayBuffer
+                            );
+
+
+                        totalDuration =
+                            audioBuffer.duration;
+
+
+                        /*
+                         * Default selection
+                         */
+
+                        selectionStart = 0;
+
+
+                        selectionEnd =
+                            Math.min(
+                                MAX_SELECTION,
+                                totalDuration
+                            );
+
+
+                        createRuler();
+
+
+                        updateSelectionWindow();
+
+
+                        createPreview();
+
+
+                    } catch (error) {
+
+                        console.error(
+                            error
+                        );
+
+                        alert(
+                            "Unable to read this audio file."
+                        );
+
+                    }
+
+                }
+            );
+
+
+            /* =====================================================
+               UPDATE SELECTION WINDOW
+            ===================================================== */
+
+            function updateSelectionWindow() {
+
+                if (!audioBuffer) {
+                    return;
+                }
+
+
+                const rulerWidth =
+                    ruler.scrollWidth;
+
+
+                if (!rulerWidth) {
+                    return;
+                }
+
+
+                const startPixels =
+                    (
+                        selectionStart /
+                        totalDuration
+                    ) * rulerWidth;
+
+
+                const endPixels =
+                    (
+                        selectionEnd /
+                        totalDuration
+                    ) * rulerWidth;
+
+
+                const width =
+                    endPixels -
+                    startPixels;
+
+
+                selectionWindow.style.left =
+                    `${startPixels}px`;
+
+
+                selectionWindow.style.width =
+                    `${Math.max(width, 10)}px`;
+
+
+                const duration =
+                    selectionEnd -
+                    selectionStart;
+
+
+                selectionDuration.textContent =
+                    `${duration.toFixed(2)}s`;
+
+
+                selectionInfo.innerHTML = `
+                Selection:
+                <strong>
+                    ${formatTime(selectionStart)}
+                </strong>
+                –
+                <strong>
+                    ${formatTime(selectionEnd)}
+                </strong>
+                <br>
+                Duration:
+                <strong>
+                    ${duration.toFixed(2)} seconds
+                </strong>
+            `;
+
+
+                updateMiniTimeline();
+
+            }
+
+
+            /* =====================================================
+               MINI TIMELINE
+            ===================================================== */
+
+            function updateMiniTimeline() {
+
+                if (!audioBuffer) {
+                    return;
+                }
+
+
+                const left =
+                    (
+                        selectionStart /
+                        totalDuration
+                    ) * 100;
+
+
+                const width =
+                    (
+                        (
+                            selectionEnd -
+                            selectionStart
+                        ) /
+                        totalDuration
+                    ) * 100;
+
+
+                miniHighlight.style.left =
+                    `${left}%`;
+
+
+                miniHighlight.style.width =
+                    `${width}%`;
+
+            }
+
+
+            /* =====================================================
+               PIXELS -> SECONDS
+            ===================================================== */
+
+            function pixelsToSeconds(
+                pixels
+            ) {
+
+                if (!audioBuffer) {
+                    return 0;
+                }
+
+
+                const rulerWidth =
+                    ruler.scrollWidth;
+
+
+                return (
+                    pixels /
+                    rulerWidth
+                ) * totalDuration;
+
+            }
+
+
+            /* =====================================================
+               LEFT HANDLE
+            ===================================================== */
+
+            selectionLeft.addEventListener(
+                "pointerdown",
+                function (event) {
+
+                    if (!audioBuffer) {
+                        return;
+                    }
+
+
+                    dragMode = "left";
+
+
+                    dragStartX =
+                        event.clientX;
+
+
+                    originalStart =
+                        selectionStart;
+
+
+                    originalEnd =
+                        selectionEnd;
+
+
+                    selectionLeft.setPointerCapture(
+                        event.pointerId
+                    );
+
+
+                    event.preventDefault();
+
+                }
+            );
+
+
+            /* =====================================================
+               RIGHT HANDLE
+            ===================================================== */
+
+            selectionRight.addEventListener(
+                "pointerdown",
+                function (event) {
+
+                    if (!audioBuffer) {
+                        return;
+                    }
+
+
+                    dragMode = "right";
+
+
+                    dragStartX =
+                        event.clientX;
+
+
+                    originalStart =
+                        selectionStart;
+
+
+                    originalEnd =
+                        selectionEnd;
+
+
+                    selectionRight.setPointerCapture(
+                        event.pointerId
+                    );
+
+
+                    event.preventDefault();
+
+                }
+            );
+
+
+            /* =====================================================
+               MOVE WHOLE SELECTION
+            ===================================================== */
+
+            selectionWindow.addEventListener(
+                "pointerdown",
+                function (event) {
+
+                    if (
+                        event.target ===
+                        selectionLeft
+                    ) {
+                        return;
+                    }
+
+
+                    if (
+                        event.target ===
+                        selectionRight
+                    ) {
+                        return;
+                    }
+
+
+                    if (!audioBuffer) {
+                        return;
+                    }
+
+
+                    dragMode =
+                        "move";
+
+
+                    dragStartX =
+                        event.clientX;
+
+
+                    originalStart =
+                        selectionStart;
+
+
+                    originalEnd =
+                        selectionEnd;
+
+
+                    selectionWindow.setPointerCapture(
+                        event.pointerId
+                    );
+
+
+                    event.preventDefault();
+
+                }
+            );
+
+
+            /* =====================================================
+               POINTER MOVE
+            ===================================================== */
+
+            document.addEventListener(
+                "pointermove",
+                function (event) {
+
+                    if (!dragMode) {
+                        return;
+                    }
+
+
+                    if (!audioBuffer) {
+                        return;
+                    }
+
+
+                    const deltaX =
+                        event.clientX -
+                        dragStartX;
+
+
+                    const deltaTime =
+                        pixelsToSeconds(
+                            deltaX
+                        );
+
+
+                    /* =============================================
+                       MOVE WHOLE SELECTION
+                    ============================================= */
+
+                    if (
+                        dragMode ===
+                        "move"
+                    ) {
+
+                        const duration =
+                            originalEnd -
+                            originalStart;
+
+
+                        let newStart =
+                            originalStart +
+                            deltaTime;
+
+
+                        newStart =
+                            Math.max(
+                                0,
+                                Math.min(
+                                    newStart,
+                                    totalDuration -
+                                    duration
+                                )
+                            );
+
+
+                        selectionStart =
+                            newStart;
+
+
+                        selectionEnd =
+                            newStart +
+                            duration;
+
+                    }
+
+
+                    /* =============================================
+                       RESIZE LEFT
+                    ============================================= */
+
+                    if (
+                        dragMode ===
+                        "left"
+                    ) {
+
+                        let newStart =
+                            originalStart +
+                            deltaTime;
+
+
+                        /*
+                         * Minimum 1 second
+                         */
+
+                        newStart =
+                            Math.min(
+                                newStart,
+                                originalEnd -
+                                MIN_SELECTION
+                            );
+
+
+                        /*
+                         * Maximum 15 seconds
+                         */
+
+                        newStart =
+                            Math.max(
+                                newStart,
+                                originalEnd -
+                                MAX_SELECTION
+                            );
+
+
+                        newStart =
+                            Math.max(
+                                0,
+                                newStart
+                            );
+
+
+                        selectionStart =
+                            newStart;
+
+                    }
+
+
+                    /* =============================================
+                       RESIZE RIGHT
+                    ============================================= */
+
+                    if (
+                        dragMode ===
+                        "right"
+                    ) {
+
+                        let newEnd =
+                            originalEnd +
+                            deltaTime;
+
+
+                        /*
+                         * Minimum 1 second
+                         */
+
+                        newEnd =
+                            Math.max(
+                                newEnd,
+                                originalStart +
+                                MIN_SELECTION
+                            );
+
+
+                        /*
+                         * Maximum 15 seconds
+                         */
+
+                        newEnd =
+                            Math.min(
+                                newEnd,
+                                originalStart +
+                                MAX_SELECTION
+                            );
+
+
+                        newEnd =
+                            Math.min(
+                                totalDuration,
+                                newEnd
+                            );
+
+
+                        selectionEnd =
+                            newEnd;
+
+                    }
+
+
+                    updateSelectionWindow();
+
+                }
+            );
+
+
+            /* =====================================================
+               POINTER UP
+            ===================================================== */
+
+            document.addEventListener(
+                "pointerup",
+                function () {
+
+                    dragMode = null;
+
+                }
+            );
+
+
+            document.addEventListener(
+                "pointercancel",
+                function () {
+
+                    dragMode = null;
+
+                }
+            );
+
+
+            /* =====================================================
+               CREATE AUDIO SOURCE
+            ===================================================== */
+
+            function createAudioSource(
+                offset = 0
+            ) {
+
+                if (!audioBuffer) {
+                    return;
+                }
+
+
+                if (audioSourceNode) {
+
+                    try {
+
+                        audioSourceNode.stop();
+
+                    } catch (e) { }
+
+                }
+
+
+                audioSourceNode =
+                    audioCtx.createBufferSource();
+
+
+                audioSourceNode.buffer =
+                    audioBuffer;
+
+
+                audioSourceNode.connect(
+                    audioCtx.destination
+                );
+
+
+                const selectionLength =
+                    selectionEnd -
+                    selectionStart;
+
+
+                const safeOffset =
+                    Math.max(
+                        0,
+                        Math.min(
+                            offset,
+                            selectionLength
+                        )
+                    );
+
+
+                playbackStartTime =
+                    audioCtx.currentTime;
+
+
+                playbackOffset =
+                    safeOffset;
+
+
+                audioSourceNode.start(
+                    0,
+                    selectionStart +
+                    safeOffset,
+                    selectionLength -
+                    safeOffset
+                );
+
+
+                audioSourceNode.onended =
+                    function () {
+
+                        if (
+                            isPlaying
+                        ) {
+
+                            playbackOffset = 0;
+
+                            createAudioSource(
+                                0
+                            );
+
+                        }
+
+                    };
+
+            }
+
+
+            /* =====================================================
+               PLAY / PAUSE
+            ===================================================== */
+
+            playBtn.addEventListener(
+                "click",
+                async function () {
+
+                    if (!audioBuffer) {
+
+                        alert(
+                            "Please select an audio file first."
+                        );
+
+                        return;
+
+                    }
+
+
+                    if (
+                        audioCtx.state ===
+                        "suspended"
+                    ) {
+
+                        await audioCtx.resume();
+
+                    }
+
+
+                    if (isPlaying) {
+
+                        pauseAudio();
+
+                    } else {
+
+                        startAudio();
+
+                    }
+
+                }
+            );
+
+
+            /* =====================================================
+               START AUDIO
+            ===================================================== */
+
+            function startAudio() {
+
+                if (!audioBuffer) {
+                    return;
+                }
+
+
+                isPlaying = true;
+
+
+                playBtn.innerHTML =
+                    `<i class="bi bi-pause-fill"></i>`;
+
+
+                createAudioSource(
+                    playbackOffset
+                );
+
+
+                updatePlayhead();
+
+            }
+
+
+            /* =====================================================
+               PAUSE
+            ===================================================== */
+
+            function pauseAudio() {
+
+                if (
+                    !audioSourceNode ||
+                    !isPlaying
+                ) {
+                    return;
+                }
+
+
+                const elapsed =
+                    audioCtx.currentTime -
+                    playbackStartTime;
+
+
+                playbackOffset += elapsed;
+
+
+                const selectionLength =
+                    selectionEnd -
+                    selectionStart;
+
+
+                playbackOffset =
+                    Math.min(
+                        playbackOffset,
+                        selectionLength
+                    );
+
+
+                try {
+
+                    audioSourceNode.stop();
+
+                } catch (e) { }
+
+
+                isPlaying = false;
+
+
+                playBtn.innerHTML =
+                    `<i class="bi bi-play-fill"></i>`;
+
+
+                cancelAnimationFrame(
+                    animationFrame
+                );
+
+            }
+
+
+            /* =====================================================
+               STOP
+            ===================================================== */
+
+            function stopAudio() {
+
+                if (audioSourceNode) {
+
+                    try {
+
+                        audioSourceNode.stop();
+
+                    } catch (e) { }
+
+                }
+
+
+                audioSourceNode = null;
+
+                isPlaying = false;
+
+                playbackOffset = 0;
+
+
+                playBtn.innerHTML =
+                    `<i class="bi bi-play-fill"></i>`;
+
+
+                cancelAnimationFrame(
+                    animationFrame
+                );
+
+            }
+
+
+            /* =====================================================
+               PLAYHEAD
+            ===================================================== */
+
+            function updatePlayhead() {
+
+                if (!isPlaying) {
+                    return;
+                }
+
+
+                const elapsed =
+                    audioCtx.currentTime -
+                    playbackStartTime;
+
+
+                let current =
+                    selectionStart +
+                    playbackOffset +
+                    elapsed;
+
+
+                if (
+                    current >
+                    selectionEnd
+                ) {
+
+                    current =
+                        selectionStart;
+
+                }
+
+
+                const rulerWidth =
+                    ruler.scrollWidth;
+
+
+                const position =
+                    (
+                        current /
+                        totalDuration
+                    ) *
+                    rulerWidth;
+
+
+                rulerViewport.scrollLeft =
+                    Math.max(
+                        0,
+                        position -
+                        rulerViewport.clientWidth / 2
+                    );
+
+
+                animationFrame =
+                    requestAnimationFrame(
+                        updatePlayhead
+                    );
+
+            }
+
+
+            /* =====================================================
+               REWIND
+            ===================================================== */
+
+            rewindBtn.addEventListener(
+                "click",
+                function () {
+
+                    if (!audioBuffer) {
+                        return;
+                    }
+
+
+                    playbackOffset = 0;
+
+
+                    if (isPlaying) {
+
+                        createAudioSource(
+                            0
+                        );
+
+                    }
+
+                }
+            );
+
+
+            /* =====================================================
+               RESET
+            ===================================================== */
+
+            resetBtn.addEventListener(
+                "click",
+                function () {
+
+                    if (!audioBuffer) {
+                        return;
+                    }
+
+
+                    stopAudio();
+
+
+                    selectionStart = 0;
+
+
+                    selectionEnd =
+                        Math.min(
+                            MAX_SELECTION,
+                            totalDuration
+                        );
+
+
+                    updateSelectionWindow();
+
+                }
+            );
+
+
+            /* =====================================================
+               FORWARD
+            ===================================================== */
+
+            forwardBtn.addEventListener(
+                "click",
+                function () {
+
+                    if (!audioBuffer) {
+                        return;
+                    }
+
+
+                    const duration =
+                        selectionEnd -
+                        selectionStart;
+
+
+                    let newStart =
+                        selectionStart +
+                        duration;
+
+
+                    if (
+                        newStart +
+                        duration >
+                        totalDuration
+                    ) {
+
+                        newStart =
+                            totalDuration -
+                            duration;
+
+                    }
+
+
+                    newStart =
+                        Math.max(
+                            0,
+                            newStart
+                        );
+
+
+                    selectionStart =
+                        newStart;
+
+
+                    selectionEnd =
+                        newStart +
+                        duration;
+
+
+                    updateSelectionWindow();
+
+                }
+            );
+
+
+            /* =====================================================
+               AUDIO PREVIEW
+            ===================================================== */
+
+            function createPreview() {
+
+                audioPreview.innerHTML = "";
+
+
+                const audio =
+                    document.createElement(
+                        "audio"
+                    );
+
+
+                audio.controls = true;
+
+                audio.preload = "metadata";
+
+                audio.src =
+                    URL.createObjectURL(
+                        audioFileInput.files[0]
+                    );
+
+
+                audioPreview.appendChild(
+                    audio
+                );
+
+            }
+
+
+            /* =====================================================
+               USE AUDIO
+            ===================================================== */
+
+            useAudioButton.addEventListener(
+                "click",
+                function () {
+
+                    /* =========================================
+                       CHECK AUDIO
+                    ========================================= */
+
+                    if (!audioBuffer) {
+
+                        alert(
+                            "Please select an audio file first."
+                        );
+
+                        return;
+                    }
+
+
+                    /* =========================================
+                       CHECK FILE
+                    ========================================= */
+
+                    if (
+                        !audioFileInput.files ||
+                        audioFileInput.files.length === 0
+                    ) {
+
+                        alert(
+                            "Please select a music file first."
+                        );
+
+                        return;
+                    }
+
+
+                    /* =========================================
+                       SAVE SELECTION
+                    ========================================= */
+
+                    audioStartInput.value =
+                        selectionStart.toFixed(2);
+
+                    audioEndInput.value =
+                        selectionEnd.toFixed(2);
+
+
+                    /* =========================================
+                       CHECK VALUES
+                    ========================================= */
+
+                    console.log(
+                        "Audio:",
+                        audioFileInput.files[0].name
+                    );
+
+                    console.log(
+                        "Start:",
+                        audioStartInput.value
+                    );
+
+                    console.log(
+                        "End:",
+                        audioEndInput.value
+                    );
+
+
+                    /* =========================================
+                       SUBMIT CHAT FORM
+                    ========================================= */
+
+                    const chatForm =
+                        document.getElementById(
+                            "chatForm"
+                        );
+
+
+                    if (!chatForm) {
+
+                        alert(
+                            "Chat form was not found."
+                        );
+
+                        return;
+                    }
+
+
+                    /*
+                     * Close modal first
+                     */
+
+                    audioModal.hide();
+
+
+                    /*
+                     * Submit after modal closes
+                     */
+
+                    setTimeout(
+                        function () {
+
+                            chatForm.requestSubmit();
+
+                        },
+                        200
+                    );
+
+                }
+            );
+
+            /* =====================================================
+               MODAL CLOSE
+            ===================================================== */
+
+            audioModalElement.addEventListener(
+                "hidden.bs.modal",
+                function () {
+
+                    /*
+                     * Don't destroy the selected file.
+                     */
+
+                }
+            );
+
+
+            /* =====================================================
+               CHAT SCROLL
+            ===================================================== */
+
+            const chatMessages =
+                document.getElementById(
+                    "chatMessages"
+                );
+
+
+            if (chatMessages) {
+
+                chatMessages.scrollTop =
+                    chatMessages.scrollHeight;
+
+            }
+
+
+            /* =====================================================
+               WINDOW RESIZE
+            ===================================================== */
+
+            window.addEventListener(
+                "resize",
+                function () {
+
+                    if (audioBuffer) {
+
+                        updateSelectionWindow();
+
+                    }
+
+                }
+            );
+
         }
 
-    });
-
-
-    removeAudio.addEventListener("click", function () {
-
-        audioInput.value = "";
-
-        audioName.textContent = "";
-
-        selectedAudio.style.display =
-            "none";
-
-    });
+    );
 
 </script>
 
