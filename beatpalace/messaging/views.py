@@ -19,6 +19,8 @@ def chat(request, collaboration_id):
         id=collaboration_id,
     )
 
+
+
     # 2. Check that the logged-in user belongs to this collaboration
     if request.user not in [
         collaboration.artist,
@@ -94,6 +96,12 @@ def chat(request, collaboration_id):
         "sender"
     ).all()
 
+    audio_messages = conversation.messages.filter(
+    audio__isnull=False
+    ).exclude(
+        audio=""
+    ).select_related("sender")
+
     # 8. Render chat
     return render(
         request,
@@ -102,5 +110,6 @@ def chat(request, collaboration_id):
             "conversation": conversation,
             "collaboration": collaboration,
             "messages": messages_list,
+            "audio_messages": audio_messages,
         },
     )

@@ -758,6 +758,165 @@
             height: 90px;
         }
     }
+
+    /* ################################# */
+    .music-selector {
+    position: relative;
+}
+
+
+/* SELECT MUSIC BUTTON */
+
+.audio-upload-box {
+    width: 100%;
+    min-height: 120px;
+    border: 1px dashed rgba(255,255,255,.25);
+    background: rgba(255,255,255,.04);
+    border-radius: 14px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.audio-upload-box:hover {
+    background: rgba(255,255,255,.08);
+    border-color: rgba(255,255,255,.5);
+}
+
+
+/* DROPDOWN */
+
+.audio-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    width: 100%;
+    max-height: 350px;
+
+    overflow-y: auto;
+
+    background: #17171c;
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 14px;
+
+    padding: 8px;
+
+    z-index: 9999;
+
+    display: none;
+
+    box-shadow: 0 15px 40px rgba(0,0,0,.45);
+}
+
+
+.audio-dropdown.show {
+    display: block;
+}
+
+
+/* HEADER */
+
+.audio-dropdown-header {
+    padding: 12px;
+
+    color: #aaa;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+
+/* AUDIO ITEM */
+
+.audio-dropdown-item {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 12px;
+
+    border: 0;
+    border-radius: 10px;
+
+    background: transparent;
+
+    color: white;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition: .2s;
+}
+
+.audio-dropdown-item:hover {
+    background: rgba(255,255,255,.08);
+}
+
+
+/* ICON */
+
+.audio-item-icon {
+    width: 40px;
+    height: 40px;
+
+    border-radius: 10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(255,255,255,.08);
+
+    font-size: 20px;
+}
+
+
+/* INFO */
+
+.audio-item-info {
+    flex: 1;
+
+    min-width: 0;
+}
+
+.audio-item-name {
+    color: white;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.audio-item-info small {
+    color: #777;
+}
+
+
+/* EMPTY */
+
+.no-audio {
+    padding: 30px;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    gap: 8px;
+
+    color: #777;
+
+    font-size: 14px;
+}
 </style>
 
 
@@ -766,7 +925,12 @@
     <div class="chat-wrapper">
 
         <div class="chat-card">
-
+            <audio
+    id="trimAudioElement"
+    controls
+    preload="metadata"
+    style="width: 100%;"
+></audio>
 
             <!-- =================================================
                  HEADER
@@ -1013,30 +1177,87 @@
 
                     <!-- UPLOAD -->
 
-                    <label for="audioFileInput" class="audio-upload-box">
+<div class="music-selector">
 
-                        <div class="audio-upload-icon">
+    <button
+        type="button"
+        class="audio-upload-box"
+        id="musicSelectButton"
+    >
 
-                            <i class="bi bi-cloud-arrow-up"></i>
+        <div class="audio-upload-icon">
+            <i class="bi bi-music-note-beamed"></i>
+        </div>
 
-                        </div>
+        <div class="text-white mt-2">
+            Select music
+        </div>
 
-                        <div class="text-white mt-2">
+        <small class="text-secondary">
+            Choose from uploaded music
+        </small>
 
-                            Select music
-
-                        </div>
-
-                        <small class="text-secondary">
-
-                            MP3, WAV, FLAC, M4A, OGG
-
-                        </small>
+    </button>
 
 
-                        <div class="audio-file-name" id="audioFileName"></div>
+    <!-- AUDIO DROPDOWN -->
 
-                    </label>
+    <div
+        class="audio-dropdown"
+        id="audioDropdown"
+    >
+
+        <div class="audio-dropdown-header">
+            <i class="bi bi-music-note-list"></i>
+            Your uploaded music
+        </div>
+
+
+        {% for audio_message in audio_messages %}
+
+            <button
+                type="button"
+                class="audio-dropdown-item trim-audio-btn"
+                data-message-id="{{ audio_message.id }}"
+                data-audio-url="{{ audio_message.audio.url }}"
+            >
+
+                <div class="audio-item-icon">
+                    <i class="bi bi-file-earmark-music"></i>
+                </div>
+
+                <div class="audio-item-info">
+
+                    <div class="audio-item-name">
+                        {% if audio_message.message %}
+                            {{ audio_message.message|truncatechars:35 }}
+                        {% else %}
+                            Music file
+                        {% endif %}
+                    </div>
+
+                    <small>
+                        Uploaded by {{ audio_message.sender.username }}
+                    </small>
+
+                </div>
+
+                <i class="bi bi-chevron-right"></i>
+
+            </button>
+
+        {% empty %}
+
+            <div class="no-audio">
+                <i class="bi bi-music-note"></i>
+                <span>No uploaded music yet</span>
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
 
 
                     <input type="file" id="audioFileInput" name="audio" accept="audio/*" form="chatForm" hidden>
@@ -1514,6 +1735,106 @@
 
                 }
             );
+
+document.querySelectorAll(".trim-audio-btn")
+    .forEach(function (button) {
+
+        button.addEventListener("click", async function () {
+
+            currentAudioMessageId =
+                this.dataset.messageId;
+
+            currentAudioUrl =
+                this.dataset.audioUrl;
+
+            console.log(
+                "Selected message:",
+                currentAudioMessageId
+            );
+
+            console.log(
+                "Selected audio:",
+                currentAudioUrl
+            );
+
+            if (!trimAudio) {
+                console.error(
+                    "trimAudioElement was not found."
+                );
+                return;
+            }
+
+            trimAudio.src = currentAudioUrl;
+            trimAudio.load();
+
+            if (audioDropdown) {
+                audioDropdown.classList.remove("show");
+            }
+
+            try {
+
+                if (!audioCtx) {
+                    audioCtx = new (
+                        window.AudioContext ||
+                        window.webkitAudioContext
+                    )();
+                }
+
+                stopAudio();
+
+                const response =
+                    await fetch(currentAudioUrl);
+
+                if (!response.ok) {
+                    throw new Error(
+                        "Unable to load audio."
+                    );
+                }
+
+                const arrayBuffer =
+                    await response.arrayBuffer();
+
+                audioBuffer =
+                    await audioCtx.decodeAudioData(
+                        arrayBuffer
+                    );
+
+                totalDuration =
+                    audioBuffer.duration;
+
+                selectionStart = 0;
+
+                selectionEnd =
+                    Math.min(
+                        MAX_SELECTION,
+                        totalDuration
+                    );
+
+                createRuler();
+
+                updateSelectionWindow();
+
+                if (audioFileName) {
+                    audioFileName.textContent =
+                        this.dataset.audioName ||
+                        "Selected music";
+                }
+
+                audioModal.show();
+
+            } catch (error) {
+
+                console.error(
+                    "Audio loading error:",
+                    error
+                );
+
+                alert(
+                    "Unable to load this audio."
+                );
+            }
+        });
+    });
 
 
             /* =====================================================
@@ -2621,6 +2942,47 @@
         }
 
     );
+
+
+    
+
+
+
+const trimAudio = document.getElementById("trimAudioElement");
+
+const musicSelectButton =
+    document.getElementById("musicSelectButton");
+
+const audioDropdown =
+    document.getElementById("audioDropdown");
+
+let currentAudioMessageId = null;
+let currentAudioUrl = null;
+
+
+musicSelectButton.addEventListener("click", function (event) {
+
+    event.stopPropagation();
+
+    audioDropdown.classList.toggle("show");
+
+});
+
+
+/* Close when clicking outside */
+
+document.addEventListener("click", function (event) {
+
+    if (
+        !musicSelectButton.contains(event.target) &&
+        !audioDropdown.contains(event.target)
+    ) {
+
+        audioDropdown.classList.remove("show");
+
+    }
+
+});
 
 </script>
 
