@@ -1102,9 +1102,24 @@
 
                     {% csrf_token %}
 
-                    <input type="hidden" name="audio_start" id="audioStart" value="">
+                    <!-- <input
+                        type="hidden"
+                        name="audio_message_id"
+                        id="audioMessageId"
+                    > -->
 
-                    <input type="hidden" name="audio_end" id="audioEnd" value="">
+                    <input
+                        type="hidden"
+                        name="audio_start"
+                        id="audioStart"
+                        value="0"
+                    >
+
+                    <input
+                        type="hidden"
+                        name="audio_end"
+                        id="audioEnd"
+                    >
 
                     <textarea name="message" id="messageInput" rows="1" placeholder="Write a message..."></textarea>
 
@@ -2779,130 +2794,216 @@ document.querySelectorAll(".trim-audio-btn")
                USE AUDIO
             ===================================================== */
 
-            useAudioButton.addEventListener(
-                "click",
-                function () {
+useAudioButton.addEventListener(
+    "click",
+    function () {
 
-                    /* =========================================
-                       CHECK AUDIO
-                    ========================================= */
+        /* =========================================
+           CHECK AUDIO BUFFER
+        ========================================= */
 
-                    if (!audioBuffer) {
+        if (!audioBuffer) {
 
-                        alert(
-                            "Please select an audio file first."
-                        );
-
-                        return;
-                    }
-
-
-                    /* =========================================
-                       CHECK FILE
-                    ========================================= */
-
-                    if (
-                        !audioFileInput.files ||
-                        audioFileInput.files.length === 0
-                    ) {
-
-                        alert(
-                            "Please select a music file first."
-                        );
-
-                        return;
-                    }
-
-
-                    /* =========================================
-                       SAVE SELECTION
-                    ========================================= */
-
-                    audioStartInput.value =
-                        selectionStart.toFixed(2);
-
-                    audioEndInput.value =
-                        selectionEnd.toFixed(2);
-
-
-                    /* =========================================
-                       CHECK VALUES
-                    ========================================= */
-
-                    console.log(
-                        "Audio:",
-                        audioFileInput.files[0].name
-                    );
-
-                    console.log(
-                        "Start:",
-                        audioStartInput.value
-                    );
-
-                    console.log(
-                        "End:",
-                        audioEndInput.value
-                    );
-
-
-                    /* =========================================
-                       SUBMIT CHAT FORM
-                    ========================================= */
-
-                    const chatForm =
-                        document.getElementById(
-                            "chatForm"
-                        );
-
-
-                    if (!chatForm) {
-
-                        alert(
-                            "Chat form was not found."
-                        );
-
-                        return;
-                    }
-
-
-                    /*
-                     * Close modal first
-                     */
-
-                    audioModal.hide();
-
-
-                    /*
-                     * Submit after modal closes
-                     */
-
-                    setTimeout(
-                        function () {
-
-                            chatForm.requestSubmit();
-
-                        },
-                        200
-                    );
-
-                }
+            alert(
+                "Please select an audio file first."
             );
 
-            /* =====================================================
-               MODAL CLOSE
-            ===================================================== */
+            return;
+        }
 
-            audioModalElement.addEventListener(
-                "hidden.bs.modal",
-                function () {
 
-                    /*
-                     * Don't destroy the selected file.
-                     */
+        /* =========================================
+           CHECK SOURCE
+           
+           Either:
+           - Existing uploaded audio
+           - New local audio file
+        ========================================= */
 
-                }
+        const hasExistingAudio =
+            currentAudioMessageId !== null &&
+            currentAudioMessageId !== "";
+
+        const hasNewAudio =
+            audioFileInput &&
+            audioFileInput.files &&
+            audioFileInput.files.length > 0;
+
+
+        if (!hasExistingAudio && !hasNewAudio) {
+
+            alert(
+                "Please select a music file first."
             );
 
+            return;
+        }
+
+
+        /* =========================================
+           SAVE TRIM SELECTION
+        ========================================= */
+
+        audioStartInput.value =
+            selectionStart.toFixed(2);
+
+        audioEndInput.value =
+            selectionEnd.toFixed(2);
+
+
+        /* =========================================
+           GET CHAT FORM
+        ========================================= */
+
+        const chatForm =
+            document.getElementById("chatForm");
+
+
+        if (!chatForm) {
+
+            alert(
+                "Chat form was not found."
+            );
+
+            return;
+        }
+
+
+        /* =========================================
+           EXISTING AUDIO MESSAGE
+        ========================================= */
+
+        if (hasExistingAudio) {
+
+            let audioMessageInput =
+                document.getElementById(
+                    "audioMessageId"
+                );
+
+
+            if (!audioMessageInput) {
+
+                audioMessageInput =
+                    document.createElement(
+                        "input"
+                    );
+
+                audioMessageInput.type =
+                    "hidden";
+
+                audioMessageInput.name =
+                    "audio_message_id";
+
+                audioMessageInput.id =
+                    "audioMessageId";
+
+                chatForm.appendChild(
+                    audioMessageInput
+                );
+            }
+
+
+            audioMessageInput.value =
+                currentAudioMessageId;
+
+
+            console.log(
+                "Using existing audio message:",
+                currentAudioMessageId
+            );
+
+        } else {
+
+            /* =========================================
+               NEW LOCAL AUDIO
+               
+               Clear existing audio message ID
+               so Django knows this is a new upload.
+            ========================================= */
+
+            const audioMessageInput =
+                document.getElementById(
+                    "audioMessageId"
+                );
+
+
+            if (audioMessageInput) {
+
+                audioMessageInput.value = "";
+            }
+
+
+            console.log(
+                "Using newly uploaded audio:",
+                audioFileInput.files[0].name
+            );
+        }
+
+
+        /* =========================================
+           DEBUG
+        ========================================= */
+
+        console.log(
+            "Audio message ID:",
+            currentAudioMessageId
+        );
+
+        console.log(
+            "Start:",
+            audioStartInput.value
+        );
+
+        console.log(
+            "End:",
+            audioEndInput.value
+        );
+
+
+        /* =========================================
+           CLOSE MODAL
+        ========================================= */
+
+        audioModal.hide();
+
+
+        /* =========================================
+           SUBMIT CHAT FORM
+        ========================================= */
+
+        setTimeout(
+            function () {
+
+                chatForm.requestSubmit();
+
+            },
+            200
+        );
+    }
+);
+
+
+/* =====================================================
+   MODAL CLOSE
+===================================================== */
+
+audioModalElement.addEventListener(
+    "hidden.bs.modal",
+    function () {
+
+        /*
+         * Do not clear:
+         *
+         * currentAudioMessageId
+         * currentAudioUrl
+         * audioBuffer
+         *
+         * because the selected audio may still
+         * be needed when the form is submitted.
+         */
+
+    }
+);
 
             /* =====================================================
                CHAT SCROLL
@@ -2942,10 +3043,6 @@ document.querySelectorAll(".trim-audio-btn")
         }
 
     );
-
-
-    
-
 
 
 const trimAudio = document.getElementById("trimAudioElement");

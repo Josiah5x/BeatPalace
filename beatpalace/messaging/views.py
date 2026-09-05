@@ -10,7 +10,7 @@ from .models import Conversation, Message
 @login_required
 def chat(request, collaboration_id):
 
-    # 1. Get the collaboration first
+    # 1. Get the collaboration
     collaboration = get_object_or_404(
         Collaboration.objects.select_related(
             "artist",
@@ -18,8 +18,6 @@ def chat(request, collaboration_id):
         ),
         id=collaboration_id,
     )
-
-
 
     # 2. Check that the logged-in user belongs to this collaboration
     if request.user not in [
@@ -51,7 +49,10 @@ def chat(request, collaboration_id):
         collaboration=collaboration
     )
 
-    # 5. Send a new message
+    # ==========================================================
+    # 5. SEND MESSAGE
+    # ==========================================================
+
     if request.method == "POST":
 
         text = request.POST.get(
@@ -59,22 +60,115 @@ def chat(request, collaboration_id):
             ""
         ).strip()
 
+        # New uploaded audio file
         audio = request.FILES.get(
             "audio"
         )
 
-        # Make sure something was sent
-        if text or audio:
+        # Existing audio message selected from dropdown
+        audio_message_id = request.POST.get(
+            "audio_message_id"
+        )
+
+        # Trimmer values
+        audio_start_raw = request.POST.get(
+            "audio_start"
+        )
+
+        audio_end_raw = request.POST.get(
+            "audio_end"
+        )
+
+        # ------------------------------------------------------
+        # Convert trim values
+        # ------------------------------------------------------
+
+        audio_start = 0
+        audio_end = None
+
+        try:
+
+            if audio_start_raw:
+                audio_start = float(
+                    audio_start_raw
+                )
+
+            if audio_end_raw:
+                audio_end = float(
+                    audio_end_raw
+                )
+
+        except (
+            TypeError,
+            ValueError,
+        ):
+
+            audio_start = 0
+            audio_end = None
+
+        # ------------------------------------------------------
+        # Determine which audio should be saved
+        # ------------------------------------------------------
+
+        audio_to_save = None
+
+        # ======================================================
+        # OPTION 1
+        # Existing audio selected from chat
+        # ======================================================
+
+        if audio_message_id:
+
+            source_audio_message = get_object_or_404(
+                Message,
+                id=audio_message_id,
+                conversation=conversation,
+            )
+
+            if source_audio_message.audio:
+
+                # Reuse the existing FileField file.
+                #
+                # IMPORTANT:
+                # We save the existing storage NAME,
+                # not the URL.
+                #
+                # This means Django continues to support:
+                #
+                # {{ message.audio.url }}
+                #
+                audio_to_save = (
+                    source_audio_message.audio.name
+                )
+
+        # ======================================================
+        # OPTION 2
+        # New audio uploaded from computer
+        # ======================================================
+
+        elif audio:
+
+            audio_to_save = audio
+
+        # ======================================================
+        # 6. Create message
+        # ======================================================
+
+        if text or audio_to_save:
 
             Message.objects.create(
                 conversation=conversation,
                 sender=request.user,
                 message=text,
-                audio=audio,
+                audio=audio_to_save,
+                audio_start=audio_start,
+                audio_end=audio_end,
             )
 
             conversation.save(
-                update_fields=["updated_at"]
+                update_fields=[
+                    "updated_at"
+                ]
             )
 
         return redirect(
@@ -82,7 +176,10 @@ def chat(request, collaboration_id):
             collaboration_id=collaboration.id,
         )
 
-    # 6. Mark messages from the other user as read
+    # ==========================================================
+    # 7. Mark messages from the other user as read
+    # ==========================================================
+
     conversation.messages.filter(
         is_read=False
     ).exclude(
@@ -91,18 +188,37 @@ def chat(request, collaboration_id):
         is_read=True
     )
 
-    # 7. Get all messages
-    messages_list = conversation.messages.select_related(
-        "sender"
-    ).all()
+    # ==========================================================
+    # 8. Get all messages
+    # ==========================================================
 
-    audio_messages = conversation.messages.filter(
-    audio__isnull=False
-    ).exclude(
-        audio=""
-    ).select_related("sender")
+    messages_list = (
+        conversation.messages
+        .select_related("sender")
+        .all()
+    )
 
-    # 8. Render chat
+    # ==========================================================
+    # 9. Get uploaded audio messages
+    #
+    # These are used by the audio dropdown/trimmer.
+    # ==========================================================
+
+    audio_messages = (
+        conversation.messages
+        .filter(
+            audio__isnull=False
+        )
+        .exclude(
+            audio=""
+        )
+        .select_related("sender")
+    )
+
+    # ==========================================================
+    # 10. Render chat
+    # ==========================================================
+
     return render(
         request,
         "messaging/chat.html",
