@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+
+{% block title %}
+Booking Details
+{% endblock %}
+
+{% block content %}
+
+    <style>
+
+        body {
+            background: #0d0d12;
+            color: #fff;
+        }
+
+        .page {
+            max-width: 850px;
+            margin: 60px auto;
+            padding: 20px;
+        }
+
+        .card-box {
+            background: #171720;
+            border: 1px solid #292936;
+            border-radius: 18px;
+            padding: 35px;
+        }
+
+        .success-icon {
+            font-size: 55px;
+        }
+
+        .booking-number {
+            color: #c084fc;
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .row-item {
+            padding: 15px 0;
+            border-bottom: 1px solid #292936;
+        }
+
+        .total {
+            font-size: 28px;
+            color: #c084fc;
+            font-weight: 700;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="page">
+
+    <div class="card-box">
+
+        <div class="text-center mb-4">
+
+            <div class="success-icon">
+                🎙️
+            </div>
+
+            <h2>
+                Booking Request Submitted
+            </h2>
+
+            <p class="text-secondary">
+                Your recording session request has been
+                submitted successfully.
+            </p>
+
+            <div class="booking-number">
+                Booking #{{ booking.id }}
+            </div>
+
+        </div>
+
+
+        <div class="row-item">
+
+            <div class="text-secondary">
+                Studio
+            </div>
+
+            <strong>
+                {{ booking.studio.name }}
+            </strong>
+
+        </div>
+
+
+        <div class="row-item">
+
+            <div class="text-secondary">
+                Workspace
+            </div>
+
+            <strong>
+                {{ booking.workspace.name }}
+            </strong>
+
+        </div>
+
+
+        <div class="row-item">
+
+            <div class="text-secondary">
+                Date
+            </div>
+
+            <strong>
+                {{ booking.booking_date }}
+            </strong>
+
+        </div>
+
+
+        <div class="row-item">
+
+            <div class="text-secondary">
+                Time
+            </div>
+
+            <strong>
+                {{ booking.start_time }}
+                -
+                {{ booking.end_time }}
+            </strong>
+
+        </div>
+
+
+        <div class="row-item">
+
+            <div class="text-secondary">
+                Duration
+            </div>
+
+            <strong>
+                {{ booking.duration_hours }} hours
+            </strong>
+
+        </div>
+
+
+        <div class="row-item">
+
+            <div class="text-secondary">
+                Status
+            </div>
+
+            <strong>
+                {{ booking.get_status_display }}
+            </strong>
+
+        </div>
+
+
+        <div class="row-item">
+
+            <div class="text-secondary">
+                Studio Cost
+            </div>
+
+            <strong>
+                ₦{{ booking.subtotal }}
+            </strong>
+
+        </div>
+
+
+        <div class="row-item">
+
+            <div class="text-secondary">
+                Additional Services
+            </div>
+
+            <strong>
+                ₦{{ booking.service_fee }}
+            </strong>
+
+        </div>
+
+
+        <div class="d-flex
+                    justify-content-between
+                    align-items-center
+                    mt-4">
+
+            <strong>
+                Total
+            </strong>
+
+            <span class="total">
+                ₦{{ booking.total_amount }}
+            </span>
+
+        </div>
+
+
+        <div class="mt-5">
+
+            <a
+                href="/"
+                class="btn btn-outline-light"
+            >
+                Back to BeatPalace
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

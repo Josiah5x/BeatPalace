@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+
+{% block title %}
+Create Workspace
+{% endblock %}
+
+{% block content %}
+
+    <style>
+
+        body {
+            background: #0d0d12;
+            color: #fff;
+        }
+
+        .page {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .card-box {
+            background: #171720;
+            border: 1px solid #292936;
+            border-radius: 18px;
+            padding: 30px;
+        }
+
+        .form-control {
+            background: #101017;
+            border: 1px solid #30303d;
+            color: #fff;
+        }
+
+        .form-control:focus {
+            background: #101017;
+            color: #fff;
+            border-color: #a855f7;
+            box-shadow: none;
+        }
+
+        .form-control::placeholder {
+            color: #666;
+        }
+
+        .form-label {
+            color: #ddd;
+            font-weight: 500;
+        }
+
+        .section-title {
+            color: #c084fc;
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .studio-name {
+            color: #aaa;
+        }
+
+        .btn-primary {
+            background: #9333ea;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: #7e22ce;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="page">
+
+    <a
+        href="{% url 'studio:studio_owner_detail' studio.id %}"
+        class="text-secondary text-decoration-none"
+    >
+        ← Back to Studio
+    </a>
+
+    <div class="mt-4 mb-4">
+
+        <h2>
+            Add Workspace
+        </h2>
+
+        <p class="studio-name">
+            {{ studio.name }}
+        </p>
+
+    </div>
+
+
+    <div class="card-box">
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <div class="section-title">
+                Workspace Information
+            </div>
+
+            <div class="mb-4">
+
+                <label class="form-label">
+                    Workspace Name
+                </label>
+
+                {{ form.name }}
+
+                {% if form.name.errors %}
+                    <div class="text-danger small">
+                        {{ form.name.errors }}
+                    </div>
+                {% endif %}
+
+            </div>
+
+
+            <div class="mb-4">
+
+                <label class="form-label">
+                    Description
+                </label>
+
+                {{ form.description }}
+
+            </div>
+
+
+            <div class="row g-4">
+
+                <div class="col-md-6">
+
+                    <label class="form-label">
+                        Hourly Rate (₦)
+                    </label>
+
+                    {{ form.hourly_rate }}
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <label class="form-label">
+                        Maximum Capacity
+                    </label>
+
+                    {{ form.capacity }}
+
+                </div>
+
+            </div>
+
+
+            <div class="mt-4">
+
+                <label class="form-label">
+                    Equipment
+                </label>
+
+                {{ form.equipment }}
+
+            </div>
+
+
+            <div class="form-check mt-4">
+
+                {{ form.is_active }}
+
+                <label class="form-check-label">
+                    Make this workspace available for booking
+                </label>
+
+            </div>
+
+
+            <div class="d-flex justify-content-end gap-3 mt-5">
+
+                <a
+                    href="{% url 'studio:studio_owner_detail' studio.id %}"
+                    class="btn btn-outline-light"
+                >
+                    Cancel
+                </a>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary px-4"
+                >
+                    Create Workspace
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

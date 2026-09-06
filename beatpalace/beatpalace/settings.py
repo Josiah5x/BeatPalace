@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "dashboard",
     "engagement",
     "discovery",
+    "studio",
 ]
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

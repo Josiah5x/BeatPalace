@@ -1,0 +1,439 @@
+{% extends "base.html" %}
+
+{% block title %}
+Studio Dashboard
+{% endblock %}
+
+{% block content %}
+
+    <style>
+
+        body {
+            background: #0d0d12;
+            color: #fff;
+        }
+
+        .sidebar {
+            min-height: 100vh;
+            background: #15151d;
+            border-right: 1px solid #292936;
+        }
+
+        .brand {
+            font-size: 25px;
+            font-weight: 700;
+            padding: 25px;
+        }
+
+        .brand span {
+            color: #a855f7;
+        }
+
+        .nav-link {
+            color: #aaa;
+            padding: 13px 25px;
+        }
+
+        .nav-link:hover {
+            color: #fff;
+            background: #22222d;
+        }
+
+        .main {
+            padding: 30px;
+        }
+
+        .stat-card {
+            background: #171720;
+            border: 1px solid #282834;
+            border-radius: 15px;
+            padding: 25px;
+        }
+
+        .stat-number {
+            font-size: 30px;
+            font-weight: 700;
+        }
+
+        .studio-card {
+            background: #171720;
+            border: 1px solid #282834;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .studio-image {
+            height: 180px;
+            background: #242430;
+            object-fit: cover;
+            width: 100%;
+        }
+
+        .studio-content {
+            padding: 20px;
+        }
+
+        .badge-status {
+            background: #272733;
+            color: #c084fc;
+            padding: 6px 10px;
+            border-radius: 20px;
+        }
+
+        .table-box {
+            background: #171720;
+            border: 1px solid #282834;
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        .table {
+            --bs-table-bg: transparent;
+            --bs-table-color: #ddd;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container-fluid pt-5">
+
+    <div class="row">
+
+        <!-- SIDEBAR -->
+
+        <div class="col-md-3 col-lg-2 sidebar">
+
+            <div class="brand">
+                Beat<span>Palace</span>
+            </div>
+
+            <div class="nav flex-column">
+
+                <a class="nav-link"
+                   href="{% url 'studio:owner_dashboard' %}">
+                    Dashboard
+                </a>
+
+                <a class="nav-link"
+                   href="{% url 'studio:my_studios' %}">
+                    My Studios
+                </a>
+
+                <a class="nav-link">
+                    Workspaces
+                </a>
+
+                <a class="nav-link">
+                    Services
+                </a>
+
+                <a class="nav-link">
+                    Bookings
+                </a>
+
+                <a class="nav-link">
+                    Calendar
+                </a>
+
+                <a class="nav-link">
+                    Earnings
+                </a>
+
+                <a class="nav-link">
+                    Settings
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- MAIN -->
+
+        <div class="col-md-9 col-lg-9 main">
+
+            <div class="d-flex justify-content-between
+                        align-items-center mb-4">
+
+                <div>
+                    <h2>Studio Dashboard</h2>
+
+                    <p class="text-secondary">
+                        Manage your BeatPalace recording spaces.
+                    </p>
+                </div>
+
+               {% if user.role == "producer" or user.is_superuser %}
+
+                <a href="{% url 'studio:create_studio' %}"
+                class="btn btn-primary">
+                    <i class="bi bi-plus-lg"></i>
+                    Add Studio
+                </a>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- STATISTICS -->
+
+            <div class="row g-4 mb-4">
+
+                <div class="col-md-3">
+
+                    <div class="stat-card">
+
+                        <div class="text-secondary">
+                            Studios
+                        </div>
+
+                        <div class="stat-number">
+                            {{ total_studios }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-3">
+
+                    <div class="stat-card">
+
+                        <div class="text-secondary">
+                            Bookings
+                        </div>
+
+                        <div class="stat-number">
+                            {{ total_bookings }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-3">
+
+                    <div class="stat-card">
+
+                        <div class="text-secondary">
+                            Pending
+                        </div>
+
+                        <div class="stat-number">
+                            {{ pending_bookings }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-3">
+
+                    <div class="stat-card">
+
+                        <div class="text-secondary">
+                            Confirmed
+                        </div>
+
+                        <div class="stat-number">
+                            {{ confirmed_bookings }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- STUDIOS -->
+
+            <h4 class="mb-3">
+                Your Studios
+            </h4>
+
+            <div class="row g-4 mb-5">
+
+                {% for studio in studios %}
+
+                <div class="col-md-6 col-lg-4">
+
+                    <div class="studio-card">
+
+                        {% if studio.cover_image %}
+
+                        <img
+                            src="{{ studio.cover_image.url }}"
+                            class="studio-image"
+                        >
+
+                        {% endif %}
+
+
+                        <div class="studio-content">
+
+                            <h5>
+                                {{ studio.name }}
+                            </h5>
+
+                            <p class="text-secondary">
+                                {{ studio.city }}
+                            </p>
+
+                            <span class="badge-status">
+                                {{ studio.get_studio_type_display }}
+                            </span>
+
+                            <hr>
+
+                            <div class="d-flex
+                                        justify-content-between">
+
+                                <span>
+                                    ₦{{ studio.hourly_rate }}/hr
+                                </span>
+
+                                <a
+                                    href="{% url 'studio:studio_owner_detail' studio.id %}"
+                                    class="btn btn-sm btn-outline-light"
+                                >
+                                    Manage
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {% empty %}
+
+                <div class="col-12">
+
+                    <div class="table-box text-center">
+
+                        <h5>
+                            You haven't added a studio yet.
+                        </h5>
+
+                        <p class="text-secondary">
+                            Add your first recording space
+                            to start receiving bookings.
+                        </p>
+
+                        <a href="#"
+                           class="btn btn-primary">
+                            Add Your Studio
+                        </a>
+
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+
+            <!-- RECENT BOOKINGS -->
+
+            <h4 class="mb-3">
+                Recent Bookings
+            </h4>
+
+            <div class="table-box">
+
+                <div class="table-responsive">
+
+                    <table class="table align-middle">
+
+                        <thead>
+
+                            <tr>
+                                <th>Studio</th>
+                                <th>Customer</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                        {% for booking in bookings %}
+
+                            <tr>
+
+                                <td>
+                                    {{ booking.studio.name }}
+                                </td>
+
+                                <td>
+                                    {{ booking.customer }}
+                                </td>
+
+                                <td>
+                                    {{ booking.booking_date }}
+                                </td>
+
+                                <td>
+                                    {{ booking.start_time }}
+                                    -
+                                    {{ booking.end_time }}
+                                </td>
+
+                                <td>
+                                    ₦{{ booking.total_amount }}
+                                </td>
+
+                                <td>
+
+                                    <span class="badge-status">
+                                        {{ booking.get_status_display }}
+                                    </span>
+
+                                </td>
+
+                            </tr>
+
+                        {% empty %}
+
+                            <tr>
+
+                                <td colspan="6"
+                                    class="text-center text-secondary">
+
+                                    No bookings yet.
+
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

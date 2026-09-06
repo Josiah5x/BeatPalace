@@ -40,6 +40,11 @@ urlpatterns = [
             "discover/",
             include("discovery.urls")
         ),
+
+        path(
+        "studio/",
+        include("studio.urls"),
+        ),
 ]
 
 if settings.DEBUG:

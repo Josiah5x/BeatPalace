@@ -925,7 +925,7 @@
     <div class="chat-wrapper">
 
         <div class="chat-card">
-            <audio
+            <audio hidden
     id="trimAudioElement"
     controls
     preload="metadata"
@@ -944,7 +944,7 @@
 
                     {% if collaboration.producer.avatar %}
 
-                    <img src="{{ collaboration.producer.avatar.url }}" class="chat-avatar" alt="Producer">
+                    <img src="{{ collaborations.producer.avatar.url }}" class="chat-avatar" alt="Producer">
 
                     {% endif %}
 
@@ -952,8 +952,7 @@
 
                         <h5 class="mb-0">
 
-                            {{ collaboration.producer.producer_profile.full_name|default:collaboration.producer.username
-                            }}
+                            {{ collaboration.producer.producer_profile.full_name|default:collaboration.producer.username}}
 
                         </h5>
 
@@ -1032,11 +1031,28 @@
 
                         <div class="audio-message">
 
-                            <audio controls preload="metadata">
+                            {% if message.audio %}
+<div class="message-audio-player">
 
-                                <source src="{{ message.audio.url }}">
+    <audio
+        class="chat-audio"
+        controls
+        preload="metadata"
+        src="{{ message.audio.url }}"
+        data-start="{{ message.audio_start|default:0 }}"
+        data-end="{{ message.audio_end|default:'' }}"
+    ></audio>
 
-                            </audio>
+    {% if message.audio_end %}
+    <div class="audio-selection-time">
+        Selected:
+        {{ message.audio_start|floatformat:2 }}s –
+        {{ message.audio_end|floatformat:2 }}s
+    </div>
+    {% endif %}
+
+</div>
+{% endif %}
 
 
                             {% if message.audio_start is not None %}
@@ -2333,132 +2349,302 @@ document.querySelectorAll(".trim-audio-btn")
                CREATE AUDIO SOURCE
             ===================================================== */
 
-            function createAudioSource(
-                offset = 0
+            /* =====================================================
+   CREATE AUDIO SOURCE
+===================================================== */
+
+function createAudioSource(offset = 0) {
+
+    if (!audioBuffer || !audioCtx) {
+        return;
+    }
+
+    /*
+     * Stop previous source
+     */
+    if (audioSourceNode) {
+
+        try {
+            audioSourceNode.stop();
+        } catch (e) {}
+
+        try {
+            audioSourceNode.disconnect();
+        } catch (e) {}
+
+        audioSourceNode = null;
+    }
+
+
+    const selectionLength =
+        selectionEnd - selectionStart;
+
+    if (selectionLength <= 0) {
+        return;
+    }
+
+
+    /*
+     * Keep offset inside selection
+     */
+    offset = Math.max(
+        0,
+        Math.min(
+            offset,
+            selectionLength
+        )
+    );
+
+
+    /*
+     * IMPORTANT:
+     *
+     * selectionStart = actual position in song
+     *
+     * Example:
+     *
+     * selectionStart = 28.34
+     * selectionEnd   = 43.34
+     *
+     * offset = 0
+     *
+     * actualStart = 28.34
+     */
+    const actualStart =
+        selectionStart + offset;
+
+
+    const remainingDuration =
+        selectionEnd - actualStart;
+
+
+    if (remainingDuration <= 0) {
+
+        playbackOffset = 0;
+        isPlaying = false;
+
+        return;
+    }
+
+
+    audioSourceNode =
+        audioCtx.createBufferSource();
+
+
+    audioSourceNode.buffer =
+        audioBuffer;
+
+
+    audioSourceNode.connect(
+        audioCtx.destination
+    );
+
+
+    playbackStartTime =
+        audioCtx.currentTime;
+
+
+    /*
+     * THIS IS THE IMPORTANT PART
+     */
+    audioSourceNode.start(
+        0,
+        actualStart,
+        remainingDuration
+    );
+
+
+    audioSourceNode.onended =
+        function () {
+
+            if (!isPlaying) {
+                return;
+            }
+
+            playbackOffset = 0;
+
+            isPlaying = false;
+
+            playBtn.innerHTML =
+                `<i class="bi bi-play-fill"></i>`;
+
+            if (animationFrame) {
+
+                cancelAnimationFrame(
+                    animationFrame
+                );
+
+                animationFrame = null;
+            }
+        };
+}
+
+
+
+        /* =====================================================
+   CHAT AUDIO PLAYBACK
+   Plays only the selected audio section
+===================================================== */
+
+const chatAudioPlayers =
+    document.querySelectorAll(".chat-audio");
+
+chatAudioPlayers.forEach(function (audio) {
+
+    const start =
+        parseFloat(audio.dataset.start) || 0;
+
+    const endRaw =
+        parseFloat(audio.dataset.end);
+
+    let end = endRaw;
+
+    /*
+     * When metadata is loaded, make sure the
+     * starting position is valid.
+     */
+    audio.addEventListener(
+        "loadedmetadata",
+        function () {
+
+            if (!Number.isFinite(end)) {
+                end = audio.duration;
+            }
+
+            if (start >= audio.duration) {
+                console.warn(
+                    "Audio start is greater than duration:",
+                    start,
+                    audio.duration
+                );
+                return;
+            }
+
+            /*
+             * Start the player at the selected position.
+             */
+            audio.currentTime = start;
+        }
+    );
+
+
+    /*
+     * User clicks PLAY
+     */
+    audio.addEventListener(
+        "play",
+        function () {
+
+            if (!Number.isFinite(end)) {
+                end = audio.duration;
+            }
+
+            /*
+             * If player is outside the selection,
+             * move it back to the selection start.
+             */
+            if (
+                audio.currentTime < start ||
+                audio.currentTime >= end
+            ) {
+                audio.currentTime = start;
+            }
+
+            console.log(
+                "Playing selected audio:",
+                start,
+                "to",
+                end
+            );
+        }
+    );
+
+
+    /*
+     * Stop when selected section finishes.
+     */
+    audio.addEventListener(
+        "timeupdate",
+        function () {
+
+            if (
+                Number.isFinite(end) &&
+                audio.currentTime >= end
             ) {
 
-                if (!audioBuffer) {
-                    return;
-                }
+                audio.pause();
 
+                /*
+                 * Return to beginning of selection.
+                 */
+                audio.currentTime = start;
 
-                if (audioSourceNode) {
-
-                    try {
-
-                        audioSourceNode.stop();
-
-                    } catch (e) { }
-
-                }
-
-
-                audioSourceNode =
-                    audioCtx.createBufferSource();
-
-
-                audioSourceNode.buffer =
-                    audioBuffer;
-
-
-                audioSourceNode.connect(
-                    audioCtx.destination
+                console.log(
+                    "Selected audio finished:",
+                    start,
+                    end
                 );
-
-
-                const selectionLength =
-                    selectionEnd -
-                    selectionStart;
-
-
-                const safeOffset =
-                    Math.max(
-                        0,
-                        Math.min(
-                            offset,
-                            selectionLength
-                        )
-                    );
-
-
-                playbackStartTime =
-                    audioCtx.currentTime;
-
-
-                playbackOffset =
-                    safeOffset;
-
-
-                audioSourceNode.start(
-                    0,
-                    selectionStart +
-                    safeOffset,
-                    selectionLength -
-                    safeOffset
-                );
-
-
-                audioSourceNode.onended =
-                    function () {
-
-                        if (
-                            isPlaying
-                        ) {
-
-                            playbackOffset = 0;
-
-                            createAudioSource(
-                                0
-                            );
-
-                        }
-
-                    };
-
             }
+        }
+    );
+
+
+    /*
+     * Also protect against seeking outside
+     * the selected section.
+     */
+    audio.addEventListener(
+        "seeking",
+        function () {
+
+            if (!Number.isFinite(end)) {
+                return;
+            }
+
+            if (audio.currentTime < start) {
+                audio.currentTime = start;
+            }
+
+            if (audio.currentTime > end) {
+                audio.currentTime = start;
+            }
+        }
+    );
+
+});
+
 
 
             /* =====================================================
                PLAY / PAUSE
             ===================================================== */
 
-            playBtn.addEventListener(
-                "click",
-                async function () {
+            playBtn.addEventListener("click", function () {
 
-                    if (!audioBuffer) {
-
-                        alert(
-                            "Please select an audio file first."
-                        );
-
-                        return;
-
-                    }
-
-
-                    if (
-                        audioCtx.state ===
-                        "suspended"
-                    ) {
-
-                        await audioCtx.resume();
-
-                    }
-
-
-                    if (isPlaying) {
-
-                        pauseAudio();
-
-                    } else {
-
-                        startAudio();
-
-                    }
-
+                if (!audioBuffer) {
+                    alert("Please select an audio file first.");
+                    return;
                 }
-            );
+
+                if (isPlaying) {
+                    pauseAudio();
+                    return;
+                }
+
+                // Always begin from the selected start position
+                if (
+                    playbackOffset < 0 ||
+                    playbackOffset >=
+                        (selectionEnd - selectionStart)
+                ) {
+                    playbackOffset = 0;
+                }
+
+                startAudio();
+
+            });
+
+
 
 
             /* =====================================================
@@ -2467,117 +2653,155 @@ document.querySelectorAll(".trim-audio-btn")
 
             function startAudio() {
 
-                if (!audioBuffer) {
-                    return;
-                }
-
-
-                isPlaying = true;
-
-
-                playBtn.innerHTML =
-                    `<i class="bi bi-pause-fill"></i>`;
-
-
-                createAudioSource(
-                    playbackOffset
-                );
-
-
-                updatePlayhead();
-
+            if (!audioBuffer) {
+                return;
             }
 
+            const selectionLength =
+                selectionEnd - selectionStart;
+
+            // Nothing to play
+            if (selectionLength <= 0) {
+                return;
+            }
+
+            // Make sure offset is inside selection
+            if (
+                playbackOffset < 0 ||
+                playbackOffset >= selectionLength
+            ) {
+                playbackOffset = 0;
+            }
+
+            isPlaying = true;
+
+            playBtn.innerHTML =
+                `<i class="bi bi-pause-fill"></i>`;
+
+            playbackStartTime =
+                audioCtx.currentTime;
+
+            createAudioSource(
+                playbackOffset
+            );
+
+            updatePlayhead();
+        }
 
             /* =====================================================
                PAUSE
             ===================================================== */
 
-            function pauseAudio() {
+            /* =====================================================
+   PAUSE AUDIO
+===================================================== */
 
-                if (
-                    !audioSourceNode ||
-                    !isPlaying
-                ) {
-                    return;
-                }
+function pauseAudio() {
 
-
-                const elapsed =
-                    audioCtx.currentTime -
-                    playbackStartTime;
-
-
-                playbackOffset += elapsed;
+    if (
+        !audioSourceNode ||
+        !isPlaying
+    ) {
+        return;
+    }
 
 
-                const selectionLength =
-                    selectionEnd -
-                    selectionStart;
+    const elapsed =
+        audioCtx.currentTime -
+        playbackStartTime;
 
 
-                playbackOffset =
-                    Math.min(
-                        playbackOffset,
-                        selectionLength
-                    );
+    playbackOffset += elapsed;
 
 
-                try {
-
-                    audioSourceNode.stop();
-
-                } catch (e) { }
+    const selectionLength =
+        selectionEnd - selectionStart;
 
 
-                isPlaying = false;
+    playbackOffset =
+        Math.min(
+            playbackOffset,
+            selectionLength
+        );
 
 
-                playBtn.innerHTML =
-                    `<i class="bi bi-play-fill"></i>`;
+    try {
+        audioSourceNode.stop();
+    } catch (e) {}
 
 
-                cancelAnimationFrame(
-                    animationFrame
-                );
+    try {
+        audioSourceNode.disconnect();
+    } catch (e) {}
 
-            }
+
+    audioSourceNode = null;
+
+
+    isPlaying = false;
+
+
+    playBtn.innerHTML =
+        `<i class="bi bi-play-fill"></i>`;
+
+
+    if (animationFrame) {
+
+        cancelAnimationFrame(
+            animationFrame
+        );
+
+        animationFrame = null;
+    }
+}
 
 
             /* =====================================================
                STOP
             ===================================================== */
 
-            function stopAudio() {
+function stopAudio() {
 
-                if (audioSourceNode) {
+    // Stop Web Audio source if one exists
+    if (audioSourceNode) {
 
-                    try {
+        try {
+            audioSourceNode.stop();
+        } catch (error) {
+            // Already stopped
+        }
 
-                        audioSourceNode.stop();
+        audioSourceNode.disconnect();
+        audioSourceNode = null;
+    }
 
-                    } catch (e) { }
+    // Stop HTML audio
+    if (trimAudio) {
+        trimAudio.pause();
 
-                }
+        if (
+            Number.isFinite(selectionStart)
+        ) {
+            trimAudio.currentTime =
+                selectionStart;
+        }
+    }
 
+    isPlaying = false;
 
-                audioSourceNode = null;
+    if (animationFrame) {
+        cancelAnimationFrame(animationFrame);
+        animationFrame = null;
+    }
 
-                isPlaying = false;
+    if (playBtn) {
+        playBtn.innerHTML = `
+            <i class="bi bi-play-fill"></i>
+        `;
+    }
+}
 
-                playbackOffset = 0;
-
-
-                playBtn.innerHTML =
-                    `<i class="bi bi-play-fill"></i>`;
-
-
-                cancelAnimationFrame(
-                    animationFrame
-                );
-
-            }
-
+/////////////////////////////////////////////
 
             /* =====================================================
                PLAYHEAD
@@ -2639,6 +2863,14 @@ document.querySelectorAll(".trim-audio-btn")
 
             }
 
+            trimAudio.addEventListener("loadedmetadata", function () {
+
+                console.log(
+                    "Audio duration:",
+                    trimAudio.duration
+                );
+
+            });
 
             /* =====================================================
                REWIND
