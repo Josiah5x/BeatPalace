@@ -211,7 +211,7 @@ def create_workspace(request, studio_id):
     )
 
 
-@producer_required
+@login_required
 def create_booking(request, studio_id):
 
     studio = get_object_or_404(
@@ -406,9 +406,6 @@ def studio_list(request):
     )
 
 
-
-
-
 def studio_detail(request, studio_id):
     studio = get_object_or_404(
         Studio.objects
@@ -430,8 +427,6 @@ def studio_detail(request, studio_id):
             "services": services,
         },
     )
-
-
 
 
 @producer_required
