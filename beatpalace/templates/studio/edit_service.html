@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block title %}
+Edit Service
+{% endblock %}
+
+{% block content %}
+
+    <style>
+
+        body {
+            background: #08090d;
+            color: white;
+        }
+
+        .container-box {
+            max-width: 750px;
+            margin: 60px auto;
+        }
+
+        .card-dark {
+            background: #11131a;
+            border: 1px solid #292d39;
+            border-radius: 20px;
+            padding: 30px;
+        }
+
+        .form-control,
+        .form-select {
+            background: #181a22;
+            border: 1px solid #303440;
+            color: white;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            background: #181a22;
+            color: white;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 .2rem rgba(139,92,246,.15);
+        }
+
+        .btn-purple {
+            background: #7c3aed;
+            border: none;
+            color: white;
+        }
+
+        .btn-purple:hover {
+            background: #6d28d9;
+            color: white;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="container-box">
+
+        <a
+            href="{% url 'studio:studio_owner_detail' studio.id %}"
+            class="text-secondary text-decoration-none">
+
+            ← Back to {{ studio.name }}
+
+        </a>
+
+
+        <div class="card-dark mt-4">
+
+            <h2 class="fw-bold">
+                Edit Service
+            </h2>
+
+            <p class="text-secondary">
+                Update {{ service.name }}
+            </p>
+
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+                {{ form.non_field_errors }}
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Service Name
+                    </label>
+
+                    {{ form.name }}
+
+                </div>
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Description
+                    </label>
+
+                    {{ form.description }}
+
+                </div>
+
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            Price
+                        </label>
+
+                        {{ form.price }}
+
+                    </div>
+
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            Price Type
+                        </label>
+
+                        {{ form.price_type }}
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-check mb-4">
+
+                    {{ form.is_active }}
+
+                    <label class="form-check-label">
+                        Active
+                    </label>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-purple">
+
+                    Save Changes
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

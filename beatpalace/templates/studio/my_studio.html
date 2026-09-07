@@ -1,0 +1,451 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<style>
+    .studio-page {
+        min-height: 100vh;
+        background: #0b0b12;
+        color: #fff;
+        padding: 40px 0;
+    }
+
+    .page-header {
+        margin-bottom: 35px;
+    }
+
+    .page-header h1 {
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .page-header p {
+        color: #9b9ba7;
+    }
+
+    .studio-card {
+        background: #15151f;
+        border: 1px solid #272735;
+        border-radius: 18px;
+        overflow: hidden;
+        height: 100%;
+        transition: .25s ease;
+    }
+
+    .studio-card:hover {
+        transform: translateY(-4px);
+        border-color: #7c3aed;
+        box-shadow: 0 10px 35px rgba(124, 58, 237, .15);
+    }
+
+    .studio-cover {
+        height: 210px;
+        background: linear-gradient(
+            135deg,
+            #24134f,
+            #11111a
+        );
+        position: relative;
+        overflow: hidden;
+    }
+
+    .studio-cover img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .studio-cover-placeholder {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 55px;
+        color: #7c3aed;
+    }
+
+    .studio-type {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        background: rgba(0, 0, 0, .75);
+        color: #fff;
+        padding: 7px 12px;
+        border-radius: 30px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .studio-status {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        padding: 7px 12px;
+        border-radius: 30px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .status-active {
+        background: rgba(25, 135, 84, .9);
+        color: #fff;
+    }
+
+    .status-inactive {
+        background: rgba(220, 53, 69, .9);
+        color: #fff;
+    }
+
+    .studio-body {
+        padding: 22px;
+    }
+
+    .studio-name {
+        font-size: 21px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .studio-location {
+        color: #9999a6;
+        font-size: 14px;
+        margin-bottom: 18px;
+    }
+
+    .studio-location i {
+        color: #8b5cf6;
+    }
+
+    .studio-info {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+
+    .info-item {
+        background: #1d1d29;
+        border: 1px solid #2a2a38;
+        border-radius: 10px;
+        padding: 8px 12px;
+        color: #c9c9d2;
+        font-size: 13px;
+    }
+
+    .info-item strong {
+        color: #fff;
+    }
+
+    .studio-rate {
+        font-size: 18px;
+        font-weight: 700;
+        color: #a78bfa;
+        margin-bottom: 20px;
+    }
+
+    .studio-rate small {
+        color: #888895;
+        font-size: 12px;
+        font-weight: 400;
+    }
+
+    .btn-manage {
+        background: #7c3aed;
+        border: none;
+        color: #fff;
+    }
+
+    .btn-manage:hover {
+        background: #6d28d9;
+        color: #fff;
+    }
+
+    .btn-workspace {
+        background: transparent;
+        border: 1px solid #343445;
+        color: #ddd;
+    }
+
+    .btn-workspace:hover {
+        background: #1f1f2b;
+        border-color: #7c3aed;
+        color: #fff;
+    }
+
+    .empty-state {
+        background: #15151f;
+        border: 1px dashed #343445;
+        border-radius: 20px;
+        padding: 70px 30px;
+        text-align: center;
+    }
+
+    .empty-icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 20px;
+        border-radius: 50%;
+        background: rgba(124, 58, 237, .12);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 35px;
+        color: #8b5cf6;
+    }
+
+    .empty-state h3 {
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .empty-state p {
+        color: #90909d;
+        margin-bottom: 25px;
+    }
+
+    .btn-create {
+        background: linear-gradient(135deg, #7c3aed, #9333ea);
+        border: none;
+        color: #fff;
+        padding: 11px 22px;
+        border-radius: 10px;
+        font-weight: 600;
+    }
+
+    .btn-create:hover {
+        color: #fff;
+        opacity: .9;
+    }
+
+    @media (max-width: 767px) {
+        .studio-page {
+            padding: 25px 0;
+        }
+
+        .page-header h1 {
+            font-size: 26px;
+        }
+
+        .studio-cover {
+            height: 180px;
+        }
+    }
+</style>
+
+<div class="studio-page">
+
+```
+<div class="container">
+
+    <!-- PAGE HEADER -->
+    <div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+        <div>
+            <h1>
+                <i class="bi bi-building"></i>
+                My Studios
+            </h1>
+
+            <p class="mb-0">
+                Manage your studios, workspaces and bookings.
+            </p>
+        </div>
+
+        <a href="{% url 'studio:create_studio' %}"
+           class="btn btn-create">
+            <i class="bi bi-plus-circle"></i>
+            Create Studio
+        </a>
+
+    </div>
+
+
+    <!-- STUDIOS -->
+    {% if studios %}
+
+        <div class="row g-4">
+
+            {% for studio in studios %}
+
+                <div class="col-lg-6 col-xl-4">
+
+                    <div class="studio-card">
+
+                        <!-- COVER -->
+                        <div class="studio-cover">
+
+                            {% if studio.cover_image %}
+
+                                <img src="{{ studio.cover_image.url }}"
+                                     alt="{{ studio.name }}">
+
+                            {% else %}
+
+                                <div class="studio-cover-placeholder">
+                                    <i class="bi bi-music-note-beamed"></i>
+                                </div>
+
+                            {% endif %}
+
+
+                            <!-- STUDIO TYPE -->
+                            <span class="studio-type">
+                                {{ studio.get_studio_type_display }}
+                            </span>
+
+
+                            <!-- STATUS -->
+                            {% if studio.is_active %}
+
+                                <span class="studio-status status-active">
+                                    Active
+                                </span>
+
+                            {% else %}
+
+                                <span class="studio-status status-inactive">
+                                    Inactive
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- BODY -->
+                        <div class="studio-body">
+
+                            <div class="studio-name">
+                                {{ studio.name }}
+                            </div>
+
+
+                            <div class="studio-location">
+
+                                <i class="bi bi-geo-alt"></i>
+
+                                {{ studio.city }}
+
+                                {% if studio.state %}
+                                    , {{ studio.state }}
+                                {% endif %}
+
+                                {% if studio.country %}
+                                    , {{ studio.country }}
+                                {% endif %}
+
+                            </div>
+
+
+                            <!-- INFORMATION -->
+                            <div class="studio-info">
+
+                                <div class="info-item">
+
+                                    <i class="bi bi-people"></i>
+
+                                    <strong>
+                                        {{ studio.capacity }}
+                                    </strong>
+
+                                    people
+
+                                </div>
+
+
+                                <div class="info-item">
+
+                                    <i class="bi bi-door-open"></i>
+
+                                    <strong>
+                                        {{ studio.workspaces.count }}
+                                    </strong>
+
+                                    workspaces
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- RATE -->
+                            <div class="studio-rate">
+
+                                ₦{{ studio.hourly_rate|floatformat:2 }}
+
+                                <small>
+                                    / hour
+                                </small>
+
+                            </div>
+
+
+                            <!-- ACTIONS -->
+                            <div class="d-flex gap-2 flex-wrap">
+
+                                <a href="{% url 'studio:studio_owner_detail' studio_id=studio.pk %}"
+                                   class="btn btn-manage flex-grow-1">
+
+                                    <i class="bi bi-gear"></i>
+                                    Manage
+
+                                </a>
+
+
+                                <a href="{% url 'studio:create_workspace' studio_id=studio.pk %}"
+                                   class="btn btn-workspace flex-grow-1">
+
+                                    <i class="bi bi-plus-circle"></i>
+                                    Workspace
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <!-- EMPTY STATE -->
+        <div class="empty-state">
+
+            <div class="empty-icon">
+                <i class="bi bi-building"></i>
+            </div>
+
+            <h3>
+                No Studios Yet
+            </h3>
+
+            <p>
+                You haven't created any studio yet.
+                Create your first studio and start accepting bookings.
+            </p>
+
+            <a href="{% url 'studio:create_studio' %}"
+               class="btn btn-create">
+
+                <i class="bi bi-plus-circle"></i>
+                Create Your First Studio
+
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+</div>
+
+{% endblock %}

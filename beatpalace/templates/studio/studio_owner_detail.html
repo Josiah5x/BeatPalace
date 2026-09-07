@@ -76,7 +76,7 @@ Studio Owner Details
 
 <body>
 
-<div class="page">
+<div class="page pt-5">
 
     <div class="d-flex justify-content-between mb-4">
 
@@ -303,9 +303,13 @@ Studio Owner Details
             Studio Services
         </h3>
 
-        <button class="btn btn-outline-light">
-            + Add Service
-        </button>
+        <a href="{% url 'studio:create_service' studio.id %}" class="btn btn-purple">
+
+        <i class="bi bi-plus-lg me-1"></i>
+
+        Add Service
+
+    </a>
 
     </div>
 

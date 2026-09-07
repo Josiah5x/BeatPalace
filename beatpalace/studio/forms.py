@@ -1,4 +1,5 @@
 from django import forms
+from .models import StudioService
 
 from .models import (
     Studio,
@@ -391,3 +392,56 @@ class StudioBookingForm(forms.ModelForm):
                 )
 
         return cleaned_data
+
+
+
+
+class StudioServiceForm(forms.ModelForm):
+
+    class Meta:
+        model = StudioService
+
+        fields = [
+            "name",
+            "description",
+            "price",
+            "price_type",
+            "is_active",
+        ]
+
+        widgets = {
+            "name": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "e.g. Mixing & Mastering",
+                }
+            ),
+
+            "description": forms.Textarea(
+                attrs={
+                    "class": "form-control",
+                    "rows": 4,
+                    "placeholder": "Describe this service...",
+                }
+            ),
+
+            "price": forms.NumberInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "0.00",
+                    "step": "0.01",
+                }
+            ),
+
+            "price_type": forms.Select(
+                attrs={
+                    "class": "form-select",
+                }
+            ),
+
+            "is_active": forms.CheckboxInput(
+                attrs={
+                    "class": "form-check-input",
+                }
+            ),
+        }

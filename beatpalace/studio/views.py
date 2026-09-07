@@ -1,6 +1,9 @@
 from django.contrib.auth.decorators import login_required
+from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect, render
 from functools import wraps
+from django.contrib import messages
+from decimal import Decimal
 
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
@@ -10,13 +13,14 @@ from .models import (
     StudioBooking,
     StudioService,
     Workspace,
-
+    BookingService,
 )
 
 from .forms import (
     StudioForm,
     WorkspaceForm,
     StudioBookingForm,
+    StudioServiceForm,
 )
 
 
@@ -119,13 +123,13 @@ def my_studios(request):
 
     return render(
         request,
-        "studio/my_studios.html",
+        "studio/my_studio.html",
         {"studios": studios},
     )
 
 
 @producer_required
-def studio_detail_owner(request, studio_id):
+def studio_owner_detail(request, studio_id):
 
     studio = get_object_or_404(
         Studio,
@@ -134,32 +138,36 @@ def studio_detail_owner(request, studio_id):
     )
 
     workspaces = studio.workspaces.all()
+
     services = studio.services.all()
 
-    bookings = studio.bookings.select_related(
-        "customer",
-        "workspace",
+    bookings = (
+        studio.bookings
+        .select_related(
+            "customer",
+            "workspace",
+        )
+        .order_by(
+            "-booking_date",
+            "-start_time",
+        )
     )
-
-    context = {
-        "studio": studio,
-        "workspaces": workspaces,
-        "services": services,
-        "bookings": bookings,
-    }
 
     return render(
         request,
         "studio/studio_owner_detail.html",
-        context,
+        {
+            "studio": studio,
+            "workspaces": workspaces,
+            "services": services,
+            "bookings": bookings,
+        },
     )
-
 
 
 
 @producer_required
 def create_workspace(request, studio_id):
-
 
     studio = get_object_or_404(
         Studio,
@@ -169,19 +177,20 @@ def create_workspace(request, studio_id):
 
     if request.method == "POST":
 
-        form = WorkspaceForm(
-            request.POST
-        )
+        form = WorkspaceForm(request.POST)
 
         if form.is_valid():
 
-            workspace = form.save(
-                commit=False
-            )
+            workspace = form.save(commit=False)
 
             workspace.studio = studio
 
             workspace.save()
+
+            messages.success(
+                request,
+                "Workspace created successfully."
+            )
 
             return redirect(
                 "studio:studio_owner_detail",
@@ -420,6 +429,300 @@ def studio_detail(request, studio_id):
             "workspaces": workspaces,
             "services": services,
         },
+    )
+
+
+
+
+@producer_required
+def create_service(request, studio_id):
+
+    studio = get_object_or_404(
+        Studio,
+        id=studio_id,
+        owner=request.user,
+    )
+
+    if request.method == "POST":
+
+        form = StudioServiceForm(request.POST)
+
+        if form.is_valid():
+
+            service = form.save(commit=False)
+
+            service.studio = studio
+
+            service.save()
+
+            messages.success(
+                request,
+                f"{service.name} has been added successfully."
+            )
+
+            return redirect(
+                "studio:studio_owner_detail",
+                studio_id=studio.id,
+            )
+
+    else:
+
+        form = StudioServiceForm()
+
+    return render(
+        request,
+        "studio/create_service.html",
+        {
+            "form": form,
+            "studio": studio,
+        },
+    )
+
+
+
+@producer_required
+def edit_service(request, service_id):
+
+    service = get_object_or_404(
+        StudioService,
+        id=service_id,
+        studio__owner=request.user,
+    )
+
+    studio = service.studio
+
+    if request.method == "POST":
+
+        form = StudioServiceForm(
+            request.POST,
+            instance=service,
+        )
+
+        if form.is_valid():
+
+            form.save()
+
+            messages.success(
+                request,
+                f"{service.name} has been updated."
+            )
+
+            return redirect(
+                "studio:studio_owner_detail",
+                studio_id=studio.id,
+            )
+
+    else:
+
+        form = StudioServiceForm(
+            instance=service
+        )
+
+    return render(
+        request,
+        "studio/edit_service.html",
+        {
+            "form": form,
+            "service": service,
+            "studio": studio,
+        },
+    )
+
+
+
+@producer_required
+def delete_service(request, service_id):
+
+    service = get_object_or_404(
+        StudioService,
+        id=service_id,
+        studio__owner=request.user,
+    )
+
+    studio_id = service.studio.id
+
+    if request.method == "POST":
+
+        service_name = service.name
+
+        service.delete()
+
+        messages.success(
+            request,
+            f"{service_name} has been deleted."
+        )
+
+    return redirect(
+        "studio:studio_owner_detail",
+        studio_id=studio_id,
+    )
+
+@producer_required
+def confirm_booking(request, booking_id):
+
+    booking = get_object_or_404(
+        StudioBooking,
+        id=booking_id,
+        studio__owner=request.user,
+    )
+
+    if request.method == "POST":
+
+        if booking.status != "pending":
+
+            messages.warning(
+                request,
+                "Only pending bookings can be confirmed."
+            )
+
+        elif booking.overlaps_existing_booking():
+
+            messages.error(
+                request,
+                "This workspace is already booked during this time."
+            )
+
+        else:
+
+            booking.status = "confirmed"
+
+            booking.save(
+                update_fields=[
+                    "status",
+                    "updated_at",
+                ]
+            )
+
+            messages.success(
+                request,
+                "Booking confirmed successfully."
+            )
+
+    return redirect(
+        "studio:booking_detail",
+        booking_id=booking.id,
+    )
+
+
+
+@producer_required
+def reject_booking(request, booking_id):
+
+    booking = get_object_or_404(
+        StudioBooking,
+        id=booking_id,
+        studio__owner=request.user,
+    )
+
+    if request.method == "POST":
+
+        if booking.status != "pending":
+
+            messages.warning(
+                request,
+                "Only pending bookings can be rejected."
+            )
+
+        else:
+
+            booking.status = "rejected"
+
+            booking.save(
+                update_fields=[
+                    "status",
+                    "updated_at",
+                ]
+            )
+
+            messages.success(
+                request,
+                "Booking rejected."
+            )
+
+    return redirect(
+        "studio:booking_detail",
+        booking_id=booking.id,
+    )
+
+
+@producer_required
+def start_booking(request, booking_id):
+
+    booking = get_object_or_404(
+        StudioBooking,
+        id=booking_id,
+        studio__owner=request.user,
+    )
+
+    if request.method == "POST":
+
+        if booking.status != "confirmed":
+
+            messages.warning(
+                request,
+                "Only confirmed bookings can be started."
+            )
+
+        else:
+
+            booking.status = "in_session"
+
+            booking.save(
+                update_fields=[
+                    "status",
+                    "updated_at",
+                ]
+            )
+
+            messages.success(
+                request,
+                "Booking session has started."
+            )
+
+    return redirect(
+        "studio:booking_detail",
+        booking_id=booking.id,
+    )
+
+
+
+@producer_required
+def complete_booking(request, booking_id):
+
+    booking = get_object_or_404(
+        StudioBooking,
+        id=booking_id,
+        studio__owner=request.user,
+    )
+
+    if request.method == "POST":
+
+        if booking.status != "in_session":
+
+            messages.warning(
+                request,
+                "Only active sessions can be completed."
+            )
+
+        else:
+
+            booking.status = "completed"
+
+            booking.save(
+                update_fields=[
+                    "status",
+                    "updated_at",
+                ]
+            )
+
+            messages.success(
+                request,
+                "Booking has been completed."
+            )
+
+    return redirect(
+        "studio:booking_detail",
+        booking_id=booking.id,
     )
 
 
