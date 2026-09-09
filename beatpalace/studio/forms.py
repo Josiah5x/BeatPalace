@@ -1,3 +1,6 @@
+from django.utils import timezone
+from django.core.exceptions import ValidationError
+
 from django import forms
 from .models import StudioService
 
@@ -359,7 +362,7 @@ class StudioBookingForm(forms.ModelForm):
 
         if booking_date < timezone.localdate():
 
-            raise ValidationError(
+            raise forms.ValidationError(
                 "You cannot book a date in the past."
             )
 
