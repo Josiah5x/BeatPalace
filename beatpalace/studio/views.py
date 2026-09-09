@@ -24,6 +24,27 @@ from .forms import (
 )
 
 
+
+def studio_booker_required(view_func):
+    @login_required
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+
+        # Admin / superuser can always book
+        if request.user.is_superuser:
+            return view_func(request, *args, **kwargs)
+
+        # Only artists and producers can book
+        if getattr(request.user, "role", None) not in ["artist", "producer"]:
+            raise PermissionDenied(
+                "Only artists and producers can book studios."
+            )
+
+        return view_func(request, *args, **kwargs)
+
+    return wrapper
+
+
 def producer_required(view_func):
     @wraps(view_func)
     @login_required
@@ -211,29 +232,33 @@ def create_workspace(request, studio_id):
     )
 
 
-@login_required
+@studio_booker_required
 def create_booking(request, studio_id):
 
     studio = get_object_or_404(
-        Studio,
+        Studio.objects.select_related("owner"),
         id=studio_id,
         is_active=True,
     )
+
+    # A producer cannot book their own studio
+    if studio.owner == request.user and not request.user.is_superuser:
+        raise PermissionDenied(
+            "You cannot book your own studio."
+        )
 
     if request.method == "POST":
 
         form = StudioBookingForm(
             request.POST,
-            studio=studio,
+            studio=studio
         )
 
         if form.is_valid():
 
             with transaction.atomic():
 
-                booking = form.save(
-                    commit=False
-                )
+                booking = form.save(commit=False)
 
                 booking.customer = request.user
                 booking.studio = studio
@@ -243,24 +268,25 @@ def create_booking(request, studio_id):
 
                 duration = booking.duration_hours
 
+                # --------------------------------
+                # BASE BOOKING PRICE
+                # --------------------------------
+
                 if workspace:
-
                     booking.subtotal = (
-                        workspace.hourly_rate
-                        * duration
+                        workspace.hourly_rate * duration
                     )
-
                 else:
-
                     booking.subtotal = (
-                        studio.hourly_rate
-                        * duration
+                        studio.hourly_rate * duration
                     )
+
+                # --------------------------------
+                # SERVICES
+                # --------------------------------
 
                 selected_services = (
-                    form.cleaned_data.get(
-                        "services"
-                    )
+                    form.cleaned_data.get("services")
                 )
 
                 service_total = Decimal("0.00")
@@ -272,31 +298,30 @@ def create_booking(request, studio_id):
                     if service.price_type == "hourly":
 
                         service_total += (
-                            service.price
-                            * duration
+                            service.price * duration
+                        )
+
+                        service_total_item = (
+                            service.price * duration
                         )
 
                     else:
 
                         service_total += service.price
 
+                        service_total_item = service.price
+
                     BookingService.objects.create(
-
                         booking=booking,
-
                         service=service,
-
                         quantity=1,
-
                         price=service.price,
-
-                        total=(
-                            service.price
-                            * duration
-                            if service.price_type == "hourly"
-                            else service.price
-                        ),
+                        total=service_total_item,
                     )
+
+                # --------------------------------
+                # TOTAL
+                # --------------------------------
 
                 booking.service_fee = service_total
 
@@ -305,16 +330,22 @@ def create_booking(request, studio_id):
                     + booking.service_fee
                 )
 
-                booking.save()
+                booking.save(
+                    update_fields=[
+                        "service_fee",
+                        "total_amount",
+                        "updated_at",
+                    ]
+                )
 
             messages.success(
                 request,
-                "Your studio booking has been submitted."
+                "Your studio booking has been submitted successfully."
             )
 
             return redirect(
                 "studio:booking_detail",
-                booking_id=booking.id,
+                booking_id=booking.id
             )
 
     else:
@@ -329,7 +360,7 @@ def create_booking(request, studio_id):
         {
             "studio": studio,
             "form": form,
-        },
+        }
     )
 
 
@@ -340,6 +371,7 @@ def booking_detail(request, booking_id):
     booking = get_object_or_404(
         StudioBooking.objects.select_related(
             "studio",
+            "studio__owner",
             "workspace",
             "customer",
         ).prefetch_related(
@@ -348,12 +380,17 @@ def booking_detail(request, booking_id):
         id=booking_id,
     )
 
-    if (
-        booking.customer != request.user
-        and booking.studio.owner != request.user
-    ):
-        return redirect(
-            "studio:owner_dashboard"
+    # --------------------------------
+    # ACCESS CONTROL
+    # --------------------------------
+
+    is_customer = booking.customer == request.user
+    is_owner = booking.studio.owner == request.user
+    is_admin = request.user.is_superuser
+
+    if not (is_customer or is_owner or is_admin):
+        raise PermissionDenied(
+            "You do not have permission to view this booking."
         )
 
     return render(
@@ -361,7 +398,7 @@ def booking_detail(request, booking_id):
         "studio/booking_detail.html",
         {
             "booking": booking,
-        },
+        }
     )
 
 
@@ -680,7 +717,6 @@ def start_booking(request, booking_id):
     )
 
 
-
 @producer_required
 def complete_booking(request, booking_id):
 
@@ -719,6 +755,7 @@ def complete_booking(request, booking_id):
         "studio:booking_detail",
         booking_id=booking.id,
     )
+
 
 
 

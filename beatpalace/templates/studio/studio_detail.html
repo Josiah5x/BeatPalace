@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}
-Booking Details
+{{ studio.name }} | BeatPalace Studios
 {% endblock %}
 
 {% block content %}
@@ -9,850 +9,1261 @@ Booking Details
 
     <style>
 
-        body {
-            background: #08090d;
-            color: #fff;
+        :root {
+            --bg: #08090d;
+            --card: #11131a;
+            --card-2: #171a22;
+            --border: rgba(255,255,255,.08);
+            --text: #f4f5f7;
+            --muted: #969aa6;
+            --primary: #7c3aed;
+            --secondary: #00e5ff;
+            --success: #22c55e;
         }
 
-        .sidebar {
-            min-height: 100vh;
-            background: #0d0f15;
-            border-right: 1px solid #232631;
+        body {
+            background:
+                radial-gradient(
+                    circle at top right,
+                    rgba(124,58,237,.12),
+                    transparent 30%
+                ),
+                var(--bg);
+
+            color: var(--text);
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        /* NAVBAR */
+
+        .navbar {
+            background: rgba(8,9,13,.94);
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(15px);
         }
 
         .brand {
-            font-size: 25px;
+            font-size: 1.35rem;
             font-weight: 800;
+            color: white;
         }
 
         .brand span {
-            color: #8b5cf6;
+            color: var(--secondary);
         }
 
         .nav-link {
-            color: #9297a7;
-            padding: 13px 15px;
-            border-radius: 10px;
-            margin-bottom: 5px;
+            color: #b8bbc5 !important;
+            margin-left: 15px;
         }
 
-        .nav-link:hover,
-        .nav-link.active {
-            color: #fff;
-            background: rgba(139, 92, 246, .15);
+        .nav-link:hover {
+            color: white !important;
         }
 
-        .main {
-            padding: 30px;
+        /* BACK */
+
+        .back-link {
+            color: var(--muted);
+            transition: .2s;
         }
 
-        .top-card {
-            background: linear-gradient(
-                135deg,
-                #181326,
-                #10121a
-            );
-
-            border: 1px solid #302650;
-            border-radius: 20px;
-            padding: 30px;
+        .back-link:hover {
+            color: white;
         }
 
-        .card-dark {
-            background: #11131a;
-            border: 1px solid #242733;
-            border-radius: 17px;
-            padding: 22px;
+        /* HERO */
+
+        .studio-hero {
+            position: relative;
+            height: 480px;
+            border-radius: 24px;
+            overflow: hidden;
+            background: var(--card);
+            border: 1px solid var(--border);
         }
 
-        .stat-card {
-            background: #11131a;
-            border: 1px solid #242733;
-            border-radius: 15px;
-            padding: 20px;
+        .studio-hero img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
-        .stat-icon {
-            width: 45px;
-            height: 45px;
-            border-radius: 12px;
-            background: rgba(139, 92, 246, .15);
-            color: #a78bfa;
+        .hero-placeholder {
+            width: 100%;
+            height: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 21px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #171229,
+                    #0c2630
+                );
+
+            color: #777;
+            font-size: 5rem;
         }
 
-        .stat-number {
-            font-size: 27px;
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+
+            background:
+                linear-gradient(
+                    to top,
+                    rgba(0,0,0,.9),
+                    rgba(0,0,0,.05) 70%
+                );
+        }
+
+        .hero-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 35px;
+        }
+
+        .studio-type {
+            display: inline-block;
+            background: rgba(124,58,237,.85);
+            color: white;
+            padding: 7px 13px;
+            border-radius: 50px;
+            font-size: .78rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .studio-title {
+            font-size: 2.5rem;
             font-weight: 800;
+            margin-bottom: 8px;
         }
 
-        .muted {
-            color: #8f94a4;
+        .location {
+            color: #d0d2d8;
+        }
+
+        /* CARDS */
+
+        .card-dark {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 18px;
         }
 
         .section-title {
+            font-size: 1.25rem;
             font-weight: 700;
-            font-size: 20px;
+            margin-bottom: 20px;
         }
 
-        .workspace {
-            background: #171922;
-            border: 1px solid #292d39;
-            border-radius: 14px;
-            padding: 18px;
-            height: 100%;
-        }
+        /* PRICE */
 
-        .service {
-            background: #171922;
-            border: 1px solid #292d39;
-            border-radius: 14px;
-            padding: 18px;
+        .price-card {
+            position: sticky;
+            top: 90px;
         }
 
         .price {
-            color: #a78bfa;
+            font-size: 2rem;
             font-weight: 800;
         }
 
-        .btn-purple {
-            background: #7c3aed;
+        .price small {
+            color: var(--muted);
+            font-size: .85rem;
+            font-weight: normal;
+        }
+
+        .daily-price {
+            color: var(--muted);
+            font-size: .9rem;
+        }
+
+        /* BUTTON */
+
+        .btn-book {
+            width: 100%;
             border: none;
-            color: #fff;
+            padding: 14px;
+            border-radius: 12px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--primary),
+                    #4f46e5
+                );
+
+            color: white;
+            font-weight: 700;
+            transition: .25s;
         }
 
-        .btn-purple:hover {
-            background: #6d28d9;
-            color: #fff;
+        .btn-book:hover {
+            color: white;
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 10px 30px rgba(124,58,237,.3);
         }
 
-        .status {
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 12px;
+        /* INFO */
+
+        .info-item {
+            display: flex;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border);
         }
 
-        .status-pending {
-            background: rgba(245,158,11,.15);
-            color: #fbbf24;
+        .info-item:last-child {
+            border-bottom: none;
         }
 
-        .status-confirmed {
-            background: rgba(34,197,94,.15);
-            color: #4ade80;
+        .info-icon {
+            width: 42px;
+            height: 42px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 12px;
+
+            background: rgba(124,58,237,.12);
+            color: var(--secondary);
         }
 
-        .status-cancelled,
-        .status-rejected {
-            background: rgba(239,68,68,.15);
-            color: #f87171;
+        .info-label {
+            color: var(--muted);
+            font-size: .8rem;
         }
 
-        .status-completed {
-            background: rgba(59,130,246,.15);
-            color: #60a5fa;
+        .info-value {
+            font-weight: 600;
         }
 
-        .table {
-            color: #fff;
+        /* TAGS */
+
+        .tag {
+            display: inline-block;
+            padding: 7px 12px;
+            margin: 4px;
+
+            border-radius: 50px;
+
+            background: var(--card-2);
+            border: 1px solid var(--border);
+
+            color: #d7d9df;
+            font-size: .85rem;
         }
 
-        .table > :not(caption) > * > * {
-            background: transparent;
-            border-bottom-color: #252833;
+        /* WORKSPACE */
+
+        .workspace-card {
+            background: var(--card-2);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 20px;
+            height: 100%;
         }
 
-        @media (max-width: 991px) {
+        .workspace-price {
+            color: var(--secondary);
+            font-size: 1.15rem;
+            font-weight: 700;
+        }
 
-            .sidebar {
-                min-height: auto;
-                border-right: none;
-                border-bottom: 1px solid #232631;
+        /* SERVICE */
+
+        .service-card {
+            background: var(--card-2);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 20px;
+            height: 100%;
+        }
+
+        .service-price {
+            color: #a78bfa;
+            font-weight: 700;
+        }
+
+        /* GALLERY */
+
+        .gallery-img {
+            height: 180px;
+            width: 100%;
+            object-fit: cover;
+            border-radius: 14px;
+        }
+
+        /* OWNER */
+
+        .owner-avatar {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--primary),
+                    var(--secondary)
+                );
+
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        /* EMPTY */
+
+        .empty {
+            padding: 30px;
+            text-align: center;
+            color: var(--muted);
+        }
+
+        /* MOBILE */
+
+        @media(max-width: 768px) {
+
+            .studio-hero {
+                height: 350px;
             }
 
-            .main {
+            .studio-title {
+                font-size: 1.8rem;
+            }
+
+            .hero-content {
                 padding: 20px;
+            }
+
+            .price-card {
+                position: static;
             }
 
         }
 
     </style>
+</head>
+
+<body>
+
+<!-- =====================================================
+     NAVBAR
+===================================================== -->
+
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+
+    <div class="container">
+
+        <a class="navbar-brand brand" href="/">
+            Beat<span>Palace</span>
+        </a>
+
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarMenu"
+        >
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div
+            class="collapse navbar-collapse"
+            id="navbarMenu"
+        >
+
+            <ul class="navbar-nav ms-auto">
+
+                <li class="nav-item">
+                    <a
+                        class="nav-link"
+                        href="{% url 'studio:studio_list' %}"
+                    >
+                        Studios
+                    </a>
+                </li>
+
+                {% if user.is_authenticated %}
+
+                    {% if user.role == "producer" or user.is_superuser %}
+
+                        <li class="nav-item">
+                            <a
+                                class="nav-link"
+                                href="{% url 'studio:owner_dashboard' %}"
+                            >
+                                My Studios
+                            </a>
+                        </li>
+
+                    {% endif %}
+
+                {% endif %}
+
+            </ul>
+
+        </div>
+
+    </div>
+
+</nav>
 
 
-<div class="container-fluid">
+<!-- =====================================================
+     MAIN
+===================================================== -->
 
-    <div class="row">
+<div class="container py-4">
 
 
-        <!-- SIDEBAR -->
+    <!-- BACK -->
 
-        <aside class="col-lg-1 sidebar p-3">
+    <div class="mb-4">
 
-            <div class="brand mb-4">
+        <a
+            href="{% url 'studio:studio_list' %}"
+            class="back-link"
+        >
+            <i class="bi bi-arrow-left me-2"></i>
+            Back to Studios
+        </a>
 
-                Beat<span>Palace</span>
+    </div>
+
+
+    <!-- =================================================
+         HERO
+    ================================================= -->
+
+    <div class="studio-hero mb-5">
+
+        {% if studio.cover_image %}
+
+            <img
+                src="{{ studio.cover_image.url }}"
+                alt="{{ studio.name }}"
+            >
+
+        {% else %}
+
+            <div class="hero-placeholder">
+
+                <i class="bi bi-mic-fill"></i>
+
+            </div>
+
+        {% endif %}
+
+
+        <div class="hero-overlay"></div>
+
+
+        <div class="hero-content">
+
+            <span class="studio-type">
+
+                {{ studio.get_studio_type_display }}
+
+            </span>
+
+            <h1 class="studio-title">
+
+                {{ studio.name }}
+
+            </h1>
+
+            <div class="location">
+
+                <i class="bi bi-geo-alt-fill me-1"></i>
+
+                {{ studio.city }}
+
+                {% if studio.state %}
+                    , {{ studio.state }}
+                {% endif %}
+
+                {% if studio.country %}
+                    , {{ studio.country }}
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="row g-4">
+
+
+        <!-- =================================================
+             LEFT
+        ================================================= -->
+
+        <div class="col-lg-8">
+
+
+            <!-- DESCRIPTION -->
+
+            <div class="card-dark p-4 mb-4">
+
+                <h2 class="section-title">
+
+                    About This Studio
+
+                </h2>
+
+                <p class="text-secondary mb-0">
+
+                    {{ studio.description|linebreaksbr }}
+
+                </p>
 
             </div>
 
 
-            <div class="text-uppercase muted small mb-2">
-                Studio Manager
-            </div>
 
+            <!-- =================================================
+                 STUDIO INFORMATION
+            ================================================= -->
 
-            <nav>
+            <div class="card-dark p-4 mb-4">
 
-                <a href="{% url 'studio:owner_dashboard' %}"
-                   class="nav-link">
+                <h2 class="section-title">
 
-                    <i class="bi bi-speedometer2 me-2"></i>
+                    Studio Information
 
-                    Dashboard
+                </h2>
 
-                </a>
+                <div class="row">
 
+                    <div class="col-md-6">
 
-                <a href="{% url 'studio:my_studios' %}"
-                   class="nav-link active">
+                        <div class="info-item">
 
-                    <i class="bi bi-building me-2"></i>
-
-                    My Studios
-
-                </a>
-
-
-                <a href="{% url 'studio:create_booking' studio.id %}"
-                   class="nav-link">
-
-                    <i class="bi bi-calendar-check me-2"></i>
-
-                    Bookings
-
-                </a>
-
-
-                <a href="#workspaces"
-                   class="nav-link">
-
-                    <i class="bi bi-grid me-2"></i>
-
-                    Workspaces
-
-                </a>
-
-
-                <a href="#services"
-                   class="nav-link">
-
-                    <i class="bi bi-stars me-2"></i>
-
-                    Services
-
-                </a>
-
-            </nav>
-
-        </aside>
-
-
-        <!-- MAIN -->
-
-
-        <main class="col-lg-9 main pt-5">
-            <!-- HEADER -->
-
-            <div class="d-flex justify-content-between align-items-center mb-4 pt-5">
-
-                <div>
-
-                    <div class="muted mb-1">
-                        Studio Management
-                    </div>
-
-                    <h2 class="fw-bold mb-0">
-                        {{ studio.name }}
-                    </h2>
-
-                </div>
-
-
-                <a
-                    href="{% url 'studio:studio_detail' studio.id %}"
-                    target="_blank"
-                    class="btn btn-outline-light">
-
-                    <i class="bi bi-eye me-1"></i>
-
-                    View Public Page
-
-                </a>
-
-            </div>
-
-
-            <!-- STUDIO HERO -->
-
-            <div class="top-card mb-4">
-
-                <div class="row align-items-center">
-
-                    <div class="col-md-8">
-
-                        <span class="badge bg-secondary mb-3">
-
-                            {{ studio.get_studio_type_display }}
-
-                        </span>
-
-
-                        <h1 class="fw-bold">
-                            {{ studio.name }}
-                        </h1>
-
-
-                        <p class="muted">
-
-                            <i class="bi bi-geo-alt"></i>
-
-                            {{ studio.address }},
-                            {{ studio.city }}
-
-                            {% if studio.state %}
-                                , {{ studio.state }}
-                            {% endif %}
-
-                        </p>
-
-
-                        <p class="muted mb-0">
-
-                            {{ studio.description|truncatewords:35 }}
-
-                        </p>
-
-                    </div>
-
-
-                    <div class="col-md-4 text-md-end mt-4 mt-md-0">
-
-                        <div class="muted">
-                            Starting rate
-                        </div>
-
-                        <div class="display-6 fw-bold">
-
-                            ₦{{ studio.hourly_rate }}
-
-                        </div>
-
-                        <div class="muted">
-                            per hour
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- STATS -->
-
-            <div class="row g-3 mb-4">
-
-                <div class="col-md-3">
-
-                    <div class="stat-card">
-
-                        <div class="d-flex
-                                    justify-content-between">
-
-                            <div>
-
-                                <div class="muted">
-                                    Workspaces
-                                </div>
-
-                                <div class="stat-number">
-                                    {{ workspaces|length }}
-                                </div>
-
-                            </div>
-
-                            <div class="stat-icon">
-
-                                <i class="bi bi-grid"></i>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <div class="col-md-3">
-
-                    <div class="stat-card">
-
-                        <div class="d-flex
-                                    justify-content-between">
-
-                            <div>
-
-                                <div class="muted">
-                                    Services
-                                </div>
-
-                                <div class="stat-number">
-                                    {{ services|length }}
-                                </div>
-
-                            </div>
-
-                            <div class="stat-icon">
-
-                                <i class="bi bi-stars"></i>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <div class="col-md-3">
-
-                    <div class="stat-card">
-
-                        <div class="d-flex
-                                    justify-content-between">
-
-                            <div>
-
-                                <div class="muted">
-                                    Bookings
-                                </div>
-
-                                <div class="stat-number">
-                                    {{ bookings|length }}
-                                </div>
-
-                            </div>
-
-                            <div class="stat-icon">
-
-                                <i class="bi bi-calendar-check"></i>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <div class="col-md-3">
-
-                    <div class="stat-card">
-
-                        <div class="d-flex
-                                    justify-content-between">
-
-                            <div>
-
-                                <div class="muted">
-                                    Capacity
-                                </div>
-
-                                <div class="stat-number">
-                                    {{ studio.capacity }}
-                                </div>
-
-                            </div>
-
-                            <div class="stat-icon">
+                            <div class="info-icon">
 
                                 <i class="bi bi-people"></i>
 
                             </div>
 
+                            <div>
+
+                                <div class="info-label">
+                                    Capacity
+                                </div>
+
+                                <div class="info-value">
+
+                                    {{ studio.capacity }} people
+
+                                </div>
+
+                            </div>
+
                         </div>
 
                     </div>
 
+
+                    <div class="col-md-6">
+
+                        <div class="info-item">
+
+                            <div class="info-icon">
+
+                                <i class="bi bi-geo-alt"></i>
+
+                            </div>
+
+                            <div>
+
+                                <div class="info-label">
+                                    Address
+                                </div>
+
+                                <div class="info-value">
+
+                                    {{ studio.address }}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    {% if studio.phone %}
+
+                    <div class="col-md-6">
+
+                        <div class="info-item">
+
+                            <div class="info-icon">
+
+                                <i class="bi bi-telephone"></i>
+
+                            </div>
+
+                            <div>
+
+                                <div class="info-label">
+                                    Phone
+                                </div>
+
+                                <div class="info-value">
+
+                                    {{ studio.phone }}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    {% endif %}
+
+
+                    {% if studio.email %}
+
+                    <div class="col-md-6">
+
+                        <div class="info-item">
+
+                            <div class="info-icon">
+
+                                <i class="bi bi-envelope"></i>
+
+                            </div>
+
+                            <div>
+
+                                <div class="info-label">
+                                    Email
+                                </div>
+
+                                <div class="info-value">
+
+                                    {{ studio.email }}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    {% endif %}
+
                 </div>
 
             </div>
-            
 
 
-            <!-- WORKSPACES -->
 
-            <section id="workspaces"
-                     class="card-dark mb-4">
+            <!-- =================================================
+                 WORKSPACES
+            ================================================= -->
 
-                <div class="d-flex
-                            justify-content-between
-                            align-items-center mb-4">
+            <div class="card-dark p-4 mb-4">
 
-                    <h3 class="section-title mb-0">
+                <h2 class="section-title">
 
-                        Workspaces
+                    Available Workspaces
 
-                    </h3>
-
-
-                    <a
-                        href="{% url 'studio:create_workspace' studio.id %}"
-                        class="btn btn-purple">
-
-                        <i class="bi bi-plus-lg me-1"></i>
-
-                        Add Workspace
-
-                    </a>
-
-                </div>
+                </h2>
 
 
                 {% if workspaces %}
 
-                <div class="row g-3">
+                    <div class="row g-3">
 
-                    {% for workspace in workspaces %}
+                        {% for workspace in workspaces %}
 
-                    <div class="col-md-6 col-xl-4">
+                            <div class="col-md-6">
 
-                        <div class="workspace">
+                                <div class="workspace-card">
 
-                            <h5>
-                                {{ workspace.name }}
-                            </h5>
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
 
-                            <p class="muted">
-                                {{ workspace.description }}
-                            </p>
+                                        <h5 class="mb-0">
 
+                                            {{ workspace.name }}
 
-                            <div class="price">
-                                ₦{{ workspace.hourly_rate }}
-                                <small class="muted">
-                                    /hour
-                                </small>
-                            </div>
+                                        </h5>
+
+                                        <i class="bi bi-music-note-beamed text-info"></i>
+
+                                    </div>
 
 
-                            <div class="muted mt-2">
+                                    {% if workspace.description %}
 
-                                <i class="bi bi-people"></i>
+                                        <p class="text-secondary small">
 
-                                {{ workspace.capacity }}
-                                people
+                                            {{ workspace.description }}
 
-                            </div>
+                                        </p>
+
+                                    {% endif %}
 
 
-                            {% if workspace.equipment %}
+                                    <div class="workspace-price">
 
-                            <div class="mt-3">
+                                        ₦{{ workspace.hourly_rate|floatformat:2 }}
 
-                                <small class="muted">
-                                    Equipment
-                                </small>
+                                        <small class="text-secondary">
+                                            / hour
+                                        </small>
 
-                                <div style="white-space:pre-line;">
-                                    {{ workspace.equipment }}
+                                    </div>
+
+
+                                    <div class="mt-3 small text-secondary">
+
+                                        <i class="bi bi-people me-1"></i>
+
+                                        Up to {{ workspace.capacity }} people
+
+                                    </div>
+
+
+                                    {% if workspace.equipment %}
+
+                                        <div class="mt-3">
+
+                                            <small class="text-secondary">
+
+                                                Equipment
+
+                                            </small>
+
+                                            <p class="small mb-0">
+
+                                                {{ workspace.equipment|linebreaksbr }}
+
+                                            </p>
+
+                                        </div>
+
+                                    {% endif %}
+
                                 </div>
 
                             </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% else %}
+
+                    <div class="empty">
+
+                        <i class="bi bi-building fs-2 d-block mb-2"></i>
+
+                        No specific workspaces have been added.
+
+                        <br>
+
+                        You can book the main studio.
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+
+
+            <!-- =================================================
+                 EQUIPMENT
+            ================================================= -->
+
+            {% if studio.equipment %}
+
+            <div class="card-dark p-4 mb-4">
+
+                <h2 class="section-title">
+
+                    <i class="bi bi-speaker me-2 text-info"></i>
+
+                    Equipment
+
+                </h2>
+
+                <div class="text-secondary">
+
+                    {{ studio.equipment|linebreaksbr }}
+
+                </div>
+
+            </div>
+
+            {% endif %}
+
+
+
+            <!-- =================================================
+                 AMENITIES
+            ================================================= -->
+
+            {% if studio.amenities %}
+
+            <div class="card-dark p-4 mb-4">
+
+                <h2 class="section-title">
+
+                    <i class="bi bi-stars me-2 text-warning"></i>
+
+                    Amenities
+
+                </h2>
+
+                <div>
+
+                    {{ studio.amenities|linebreaksbr }}
+
+                </div>
+
+            </div>
+
+            {% endif %}
+
+
+
+            <!-- =================================================
+                 RULES
+            ================================================= -->
+
+            {% if studio.rules %}
+
+            <div class="card-dark p-4 mb-4">
+
+                <h2 class="section-title">
+
+                    <i class="bi bi-shield-check me-2 text-success"></i>
+
+                    Studio Rules
+
+                </h2>
+
+                <div class="text-secondary">
+
+                    {{ studio.rules|linebreaksbr }}
+
+                </div>
+
+            </div>
+
+            {% endif %}
+
+
+
+            <!-- =================================================
+                 SERVICES
+            ================================================= -->
+
+            <div class="card-dark p-4 mb-4">
+
+                <h2 class="section-title">
+
+                    Additional Services
+
+                </h2>
+
+
+                {% if services %}
+
+                    <div class="row g-3">
+
+                        {% for service in services %}
+
+                            <div class="col-md-6">
+
+                                <div class="service-card">
+
+                                    <div class="d-flex justify-content-between">
+
+                                        <h5>
+
+                                            {{ service.name }}
+
+                                        </h5>
+
+                                        <i class="bi bi-plus-circle text-info"></i>
+
+                                    </div>
+
+
+                                    {% if service.description %}
+
+                                        <p class="text-secondary small">
+
+                                            {{ service.description }}
+
+                                        </p>
+
+                                    {% endif %}
+
+
+                                    <div class="service-price">
+
+                                        ₦{{ service.price|floatformat:2 }}
+
+                                        {% if service.price_type == "hourly" %}
+
+                                            <small class="text-secondary">
+                                                / hour
+                                            </small>
+
+                                        {% endif %}
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% else %}
+
+                    <div class="empty">
+
+                        No additional services available.
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+
+
+            <!-- =================================================
+                 GALLERY
+            ================================================= -->
+
+            {% if studio.images.all %}
+
+            <div class="card-dark p-4 mb-4">
+
+                <h2 class="section-title">
+
+                    Studio Gallery
+
+                </h2>
+
+                <div class="row g-3">
+
+                    {% for image in studio.images.all %}
+
+                        <div class="col-md-4 col-6">
+
+                            <img
+                                src="{{ image.image.url }}"
+                                alt="{{ image.caption|default:studio.name }}"
+                                class="gallery-img"
+                            >
+
+                            {% if image.caption %}
+
+                                <div class="small text-secondary mt-2">
+
+                                    {{ image.caption }}
+
+                                </div>
 
                             {% endif %}
 
                         </div>
 
-                    </div>
-
                     {% endfor %}
 
                 </div>
 
-                {% else %}
+            </div>
 
-                <div class="text-center py-5">
-
-                    <i class="bi bi-grid display-4 muted"></i>
-
-                    <p class="muted mt-3">
-                        No workspaces have been added yet.
-                    </p>
-
-                    <a
-                        href="{% url 'studio:create_workspace' studio.id %}"
-                        class="btn btn-purple">
-
-                        Add First Workspace
-
-                    </a>
-
-                </div>
-
-                {% endif %}
-
-            </section>
+            {% endif %}
 
 
-            <!-- SERVICES -->
 
-            <section id="services"
-                     class="card-dark mb-4">
+            <!-- =================================================
+                 OWNER
+            ================================================= -->
 
-                <div class="d-flex
-                            justify-content-between
-                            align-items-center mb-4">
+            <div class="card-dark p-4 mb-4">
 
-                    <h3 class="section-title mb-0">
+                <h2 class="section-title">
 
-                        Studio Services
+                    Studio Owner
 
-                    </h3>
+                </h2>
 
+                <div class="d-flex align-items-center">
 
-                    <button class="btn btn-purple">
+                    <div class="owner-avatar me-3">
 
-                        <i class="bi bi-plus-lg me-1"></i>
+                        {{ studio.owner.username|first|upper }}
 
-                        Add Service
+                    </div>
 
-                    </button>
+                    <div>
 
-                </div>
+                        <h5 class="mb-1">
 
+                            {{ studio.owner.get_full_name|default:studio.owner.username }}
 
-                {% if services %}
+                        </h5>
 
-                <div class="row g-3">
+                        <div class="text-secondary small">
 
-                    {% for service in services %}
-
-                    <div class="col-md-6">
-
-                        <div class="service">
-
-                            <div class="d-flex
-                                        justify-content-between">
-
-                                <h5>
-                                    {{ service.name }}
-                                </h5>
-
-                                <strong class="price">
-
-                                    ₦{{ service.price }}
-
-                                </strong>
-
-                            </div>
-
-
-                            <p class="muted mb-1">
-
-                                {{ service.description }}
-
-                            </p>
-
-
-                            <small class="muted">
-
-                                {{ service.get_price_type_display }}
-
-                            </small>
+                            Studio Producer
 
                         </div>
 
                     </div>
 
-                    {% endfor %}
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             RIGHT SIDEBAR
+        ================================================= -->
+
+        <div class="col-lg-4">
+
+
+            <div class="card-dark p-4 price-card">
+
+
+                <!-- PRICE -->
+
+                <div class="mb-4">
+
+                    <div class="price">
+
+                        ₦{{ studio.hourly_rate|floatformat:2 }}
+
+                        <small>/ hour</small>
+
+                    </div>
+
+
+                    {% if studio.daily_rate %}
+
+                        <div class="daily-price mt-1">
+
+                            <i class="bi bi-calendar3 me-1"></i>
+
+                            ₦{{ studio.daily_rate|floatformat:2 }}
+
+                            per day
+
+                        </div>
+
+                    {% endif %}
 
                 </div>
 
-                {% else %}
 
-                <p class="muted mb-0">
-
-                    No services have been added yet.
-
-                </p>
-
-                {% endif %}
-
-            </section>
+                <hr class="border-secondary opacity-25">
 
 
-            <!-- BOOKINGS -->
+                <!-- BOOK BUTTON -->
 
-            <section id="bookings"
-                     class="card-dark">
+                <div class="mt-4">
 
-                <div class="d-flex
-                            justify-content-between
-                            align-items-center mb-4">
+                    {% if user.is_authenticated %}
 
-                    <h3 class="section-title mb-0">
+                        {% if user.is_superuser or user.role == "artist" or user.role == "producer" %}
 
-                        Recent Bookings
-
-                    </h3>
-
-                </div>
-
-
-                {% if bookings %}
-
-                <div class="table-responsive">
-
-                    <table class="table align-middle">
-
-                        <thead>
-
-                            <tr>
-
-                                <th>Customer</th>
-
-                                <th>Workspace</th>
-
-                                <th>Date</th>
-
-                                <th>Time</th>
-
-                                <th>Total</th>
-
-                                <th>Status</th>
-
-                                <th></th>
-
-                            </tr>
-
-                        </thead>
-
-
-                        <tbody>
-
-                        {% for booking in bookings %}
-
-                        <tr>
-
-                            <td>
-
-                                <strong>
-                                    {{ booking.customer.username }}
-                                </strong>
-
-                            </td>
-
-
-                            <td>
-
-                                {% if booking.workspace %}
-
-                                    {{ booking.workspace.name }}
-
-                                {% else %}
-
-                                    Main Studio
-
-                                {% endif %}
-
-                            </td>
-
-
-                            <td>
-
-                                {{ booking.booking_date }}
-
-                            </td>
-
-
-                            <td>
-
-                                {{ booking.start_time }}
-                                -
-                                {{ booking.end_time }}
-
-                            </td>
-
-
-                            <td>
-
-                                ₦{{ booking.total_amount }}
-
-                            </td>
-
-
-                            <td>
-
-                                <span class="status
-                                    status-{{ booking.status }}">
-
-                                    {{ booking.get_status_display }}
-
-                                </span>
-
-                            </td>
-
-
-                            <td>
+                            {% if studio.owner != user or user.is_superuser %}
 
                                 <a
-                                    href="{% url 'studio:booking_detail' booking.id %}"
-                                    class="btn btn-sm btn-outline-light">
+                                    href="{% url 'studio:create_booking' studio.id %}"
+                                    class="btn-book d-block text-center"
+                                >
 
-                                    View
+                                    <i class="bi bi-calendar-check me-2"></i>
+
+                                    Book This Studio
 
                                 </a>
 
-                            </td>
+                            {% else %}
 
-                        </tr>
+                                <button
+                                    class="btn btn-secondary w-100"
+                                    disabled
+                                >
 
-                        {% endfor %}
+                                    <i class="bi bi-building me-2"></i>
 
-                        </tbody>
+                                    Your Studio
 
-                    </table>
+                                </button>
+
+                            {% endif %}
+
+                        {% else %}
+
+                            <div class="alert alert-secondary">
+
+                                <i class="bi bi-info-circle me-2"></i>
+
+                                Only artists and producers can book
+                                studios.
+
+                            </div>
+
+                        {% endif %}
+
+                    {% else %}
+
+                        <a
+                            href="{% url 'login' %}?next={% url 'studio:create_booking' studio.id %}"
+                            class="btn-book d-block text-center"
+                        >
+
+                            <i class="bi bi-box-arrow-in-right me-2"></i>
+
+                            Login to Book
+
+                        </a>
+
+                    {% endif %}
 
                 </div>
 
-                {% else %}
 
-                <div class="text-center py-5">
+                <!-- BOOKING INFO -->
 
-                    <i class="bi bi-calendar-x display-4 muted"></i>
+                <div class="mt-4">
 
-                    <p class="muted mt-3">
-                        No bookings yet.
-                    </p>
+                    <div class="d-flex mb-3">
+
+                        <i class="bi bi-clock text-info me-3"></i>
+
+                        <div>
+
+                            <strong>Flexible Booking</strong>
+
+                            <div class="small text-secondary">
+
+                                Book by the hour
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="d-flex mb-3">
+
+                        <i class="bi bi-shield-check text-success me-3"></i>
+
+                        <div>
+
+                            <strong>Secure Booking</strong>
+
+                            <div class="small text-secondary">
+
+                                Your booking is protected
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="d-flex">
+
+                        <i class="bi bi-headphones text-warning me-3"></i>
+
+                        <div>
+
+                            <strong>Professional Space</strong>
+
+                            <div class="small text-secondary">
+
+                                Built for music creators
+
+                            </div>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
-                {% endif %}
+            </div>
 
-            </section>
-
-
-        </main>
+        </div>
 
     </div>
 
 </div>
+
+
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
+<footer class="border-top border-secondary border-opacity-10 mt-5">
+
+    <div class="container py-4">
+
+        <div class="text-center text-secondary small">
+
+            © {% now "Y" %} BeatPalace.
+
+            Music. Studios. Collaboration.
+
+        </div>
+
+    </div>
+
+</footer>
 
 
 
