@@ -42,7 +42,7 @@ urlpatterns = [
         name="producer_add_project"
     ),
     path(
-        "projects/add/",
+        "skills/add/",
         producer_add_skill,
         name="producer_add_skill"
     ),

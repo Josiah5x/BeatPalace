@@ -9,9 +9,19 @@ app_name = "collaborations"
 urlpatterns = [
 
     path(
-        "send/<str:user_id>/",
+        "send/<str:username>/",
         views.send_collaboration,
         name="send_collaboration",
+    ),
+    path(
+        "accept/<str:pk>/",
+        views.accept_collaboration,
+        name="accept_collaboration",
+    ),
+    path(
+        "send/<str:pk>/",
+        views.reject_collaboration,
+        name="reject_collaboration",
     ),
 
     path(

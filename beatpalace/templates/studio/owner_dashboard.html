@@ -6,93 +6,142 @@ Studio Dashboard
 
 {% block content %}
 
-    <style>
+<style>
+    :root {
+    --bg: #080a0b;           /* Pure Obsidian */
+    --sidebar: #0f1315;      /* Deep Teal Black */
+    --card-deep: #050607;    /* Carved waveform channels */
+    --card: #161c1f;         /* Main Card (High Distinction) */
+    --card-raised: #222b30;  /* Raised/Hover state */
+    --input-bg: #0d1113;     /* Sleek input wells */
 
-        body {
-            background: #0d0d12;
-            color: #fff;
-        }
+    /* Brand Accents */
+    --primary: #10b981;      /* Electric Mint (Primary action / Playheads) */
+    --primary-light: #34d399;/* Mint Hover */
+    --primary-soft: #0d281e; /* Deep mint backdrop shadow */
+    --secondary: #6366f1;    /* Cyber Indigo (Secondary options / MIDI notes) */
+    --pink: #f43f5e;         /* Neon Rose (Clipping / Alert actions) */
 
-        .sidebar {
-            min-height: 100vh;
-            background: #15151d;
-            border-right: 1px solid #292936;
-        }
+    /* Text & Borders */
+    --text: #f0fdf4;         /* Mint-tinted crisp white */
+    --muted-strong: #94a3b8; /* Secondary labels */
+    --muted: #4b5563;        /* Dark metadata fields */
+    --border: #242f35;       /* High-visibility panel lines */
+}
 
-        .brand {
-            font-size: 25px;
-            font-weight: 700;
-            padding: 25px;
-        }
+/* Global body override to enforce the audio-branding theme */
+body {
+    background-color: var(--bg);
+    color: var(--text);
+}
 
-        .brand span {
-            color: #a855f7;
-        }
+.sidebar {
+    min-height: 100vh;
+    background: var(--sidebar);
+    border-right: 1px solid var(--border);
+}
 
-        .nav-link {
-            color: #aaa;
-            padding: 13px 25px;
-        }
+.brand {
+    font-size: 25px;
+    font-weight: 700;
+    padding: 25px;
+    color: var(--text);
+}
 
-        .nav-link:hover {
-            color: #fff;
-            background: #22222d;
-        }
+.brand span {
+    color: var(--secondary); /* Switched from legacy purple to Cyber Indigo */
+}
 
-        .main {
-            padding: 30px;
-        }
+.nav-link {
+    color: var(--muted-strong);
+    padding: 13px 25px;
+    transition: all 0.2s ease;
+}
 
-        .stat-card {
-            background: #171720;
-            border: 1px solid #282834;
-            border-radius: 15px;
-            padding: 25px;
-        }
+.nav-link:hover {
+    color: var(--text);
+    background: var(--card-raised);
+}
 
-        .stat-number {
-            font-size: 30px;
-            font-weight: 700;
-        }
+.main {
+    padding: 30px;
+}
 
-        .studio-card {
-            background: #171720;
-            border: 1px solid #282834;
-            border-radius: 15px;
-            overflow: hidden;
-        }
+.stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 4px 12px var(--card-deep);
+}
 
-        .studio-image {
-            height: 180px;
-            background: #242430;
-            object-fit: cover;
-            width: 100%;
-        }
+.stat-number {
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--primary); /* Accented with Electric Mint */
+}
 
-        .studio-content {
-            padding: 20px;
-        }
+.studio-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    overflow: hidden;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
 
-        .badge-status {
-            background: #272733;
-            color: #c084fc;
-            padding: 6px 10px;
-            border-radius: 20px;
-        }
+.studio-card:hover {
+    background: var(--card-raised);
+    transform: translateY(-2px);
+}
 
-        .table-box {
-            background: #171720;
-            border: 1px solid #282834;
-            border-radius: 15px;
-            padding: 20px;
-        }
+.studio-image {
+    height: 180px;
+    background: var(--card-deep);
+    object-fit: cover;
+    width: 100%;
+}
 
-        .table {
-            --bs-table-bg: transparent;
-            --bs-table-color: #ddd;
-        }
+.studio-content {
+    padding: 20px;
+}
 
-    </style>
+.badge-status {
+    background: var(--primary-soft);
+    color: var(--primary-light); /* Mint-tinted state metrics */
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.table-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    padding: 20px;
+}
+
+.table {
+    --bs-table-bg: transparent;
+    --bs-table-color: var(--text);
+    border-color: var(--border);
+}
+
+/* Custom styles to properly override Bootstrap default button accent colors */
+.btn-primary {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: var(--bg);
+    font-weight: 600;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-light);
+    border-color: var(--primary-light);
+    color: var(--bg);
+}
+
+</style>
 
 </head>
 

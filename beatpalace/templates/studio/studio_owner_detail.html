@@ -6,71 +6,78 @@ Studio Owner Details
 
 {% block content %}
 
-    <style>
+   <style>
+    .page {
+        max-width: 1200px;
+        margin: 30px auto;
+        padding: 20px;
+    }
 
-        body {
-            background: #0d0d12;
-            color: #fff;
-        }
+    /* Outer Wrapper Card */
+    .box {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 25px;
+    }
 
-        .page {
-            max-width: 1200px;
-            margin: 30px auto;
-            padding: 20px;
-        }
+    .cover {
+        width: 100%;
+        height: 300px;
+        object-fit: cover;
+        border-radius: 14px;
+    }
 
-        .box {
-            background: #171720;
-            border: 1px solid #292936;
-            border-radius: 16px;
-            padding: 25px;
-        }
+    /* Inner Workspace/Track Lane Card */
+    .workspace-card {
+        background: var(--card-deep);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 20px;
+    }
 
-        .cover {
-            width: 100%;
-            height: 300px;
-            object-fit: cover;
-            border-radius: 14px;
-        }
+    .price {
+        color: var(--price-color);
+        font-weight: 600;
+    }
 
-        .workspace-card {
-            background: #101017;
-            border: 1px solid #292936;
-            border-radius: 14px;
-            padding: 20px;
-        }
+    .btn-primary {
+        background: var(--primary);
+        color: var(--text);
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.2s ease;
+    }
 
-        .price {
-            color: #c084fc;
-            font-weight: 600;
-        }
+    .btn-primary:hover {
+        background: var(--primary-light);
+    }
 
-        .btn-primary {
-            background: #9333ea;
-            border: none;
-        }
+    .muted {
+        color: var(--muted);
+    }
 
-        .muted {
-            color: #888;
-        }
+    .badge-active {
+        background: var(--badge-success-bg);
+        color: var(--badge-success-text);
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        display: inline-block;
+    }
 
-        .badge-active {
-            background: #16351f;
-            color: #67e08a;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-        }
-
-        .badge-inactive {
-            background: #392020;
-            color: #ff8585;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-        }
-
-    </style>
+    .badge-inactive {
+        background: var(--badge-error-bg);
+        color: var(--badge-error-text);
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        display: inline-block;
+    }
+   </style>
 
 </head>
 

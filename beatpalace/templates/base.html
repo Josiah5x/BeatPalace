@@ -36,31 +36,24 @@
     
 </head>
 
-<nav class="navbar fixed-top bg-dark" data-bs-theme="dark">
-
+<nav class="navbar fixed-top text-light btn btn-primary">
     <div class="container-fluid d-flex justify-content-between align-items-center">
 
         <!-- LEFT SIDE -->
         {% if user.role == "artist" %}
 
-            <a
-                class="navbar-brand"
-                href="{% url 'artist_dashboard' %}"
-            >
+            <a class="navbar-brand" href="{% url 'artist_dashboard' %}">
                 <i class="bi bi-music-note-beamed"></i>
                 BeatPalace
             </a>
 
         {% elif user.role == "producer" %}
 
-            <a
-                class="navbar-brand"
-                href="{% url 'producer_dashboard' %}"
+            <a class="navbar-brand text-dark" href="{% url 'producer_dashboard' %}"
             >
                 <i class="bi bi-music-note-beamed"></i>
                 BeatPalace
             </a>
-
         {% else %}
 
             <a
@@ -92,6 +85,16 @@
 
         </div>
 
+        <button
+    type="button"
+    class="theme-toggle"
+    id="themeToggle"
+    aria-label="Switch to light theme"
+>
+    <i class="fas fa-sun" id="themeIcon"></i>
+    <span id="themeLabel">Light mode</span>
+</button>
+
     </div>
 
 </nav>
@@ -109,6 +112,48 @@
 </script>
 
 {% block javascript %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const root = document.documentElement;
+    const toggleButton = document.getElementById("themeToggle");
+    const themeIcon = document.getElementById("themeIcon");
+    const themeLabel = document.getElementById("themeLabel");
+
+    if (!toggleButton) return;
+
+    // Restore the saved theme; default to dark.
+    const savedTheme = localStorage.getItem("beatpalace-theme") || "dark";
+
+    function applyTheme(theme) {
+        root.setAttribute("data-theme", theme);
+
+        const isDark = theme === "dark";
+
+        themeIcon.className = isDark
+            ? "fas fa-sun"
+            : "fas fa-moon";
+
+        themeLabel.textContent = isDark
+            ? "Light mode"
+            : "Dark mode";
+
+        toggleButton.setAttribute(
+            "aria-label",
+            isDark ? "Switch to light theme" : "Switch to dark theme"
+        );
+
+        localStorage.setItem("beatpalace-theme", theme);
+    }
+
+    applyTheme(savedTheme);
+
+    toggleButton.addEventListener("click", function () {
+        const currentTheme = root.getAttribute("data-theme") || "dark";
+
+        applyTheme(currentTheme === "dark" ? "light" : "dark");
+    });
+});
+</script>
 <!-- <script src="{% static 'js/dashboard.js' %}"></script> -->
 {% endblock %}
 

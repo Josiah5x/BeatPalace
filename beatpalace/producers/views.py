@@ -187,7 +187,7 @@ def producer_add_project(request):
             )
 
             return redirect(
-                "producer_edit_profile"
+                "producers:producer_edit_profile"
             )
 
     else:
@@ -235,7 +235,7 @@ def producer_delete_project(
         )
 
     return redirect(
-        "producer_edit_profile"
+        "producers:producer_edit_profile"
     )
 
 
@@ -273,7 +273,7 @@ def producer_add_skill(request):
             )
 
             return redirect(
-                "producer_edit_profile"
+                "producers:producer_edit_profile"
             )
 
     else:
@@ -321,7 +321,7 @@ def producer_delete_skill(
         )
 
     return redirect(
-        "producer_edit_profile"
+        "producers:producer_edit_profile"
     )
 
 

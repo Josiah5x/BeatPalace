@@ -20,7 +20,7 @@ def create_user_profile(sender, instance, created, **kwargs):
 
         ProducerProfile.objects.create(
             user=instance,
-            stage_name=instance.username
+            full_name=instance.username
         )
 
     elif instance.role == "artist":
